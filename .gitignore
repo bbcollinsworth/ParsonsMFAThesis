@@ -67,4 +67,8 @@ Thumbs.db
 *.txt
 
 # Environment Files
-.env
+.env
+# Elastic Beanstalk Files
+.elasticbeanstalk/*
+!.elasticbeanstalk/*.cfg.yml
+!.elasticbeanstalk/*.global.yml
