@@ -1,0 +1,46 @@
+#app {
+	margin: auto;
+	/*height: 100%;*/
+	min-height: ;
+	
+	width: 400px;
+	display: block;
+	text-align: center;
+	/*position: static;*/
+	position: fixed;
+	left: calc(50% - 200px);
+	top: 0px;
+	height: 100vh;
+	overflow: hidden;
+}
+
+#container {
+	position: static;
+}
+
+#mobileHeader, #mobileFooter {
+	width: inherit;
+	margin: auto;
+}
+
+#alertText {
+	width: 100%;
+}
+
+#map {
+	margin: auto;
+	height: 100%;
+}
+
+/*-------------------- MEDIA QUERIES --------------------*/
+@media only screen and (max-width: 750px){
+
+	#app {
+		width: 100vw;
+		height: 100vh;
+		top: 0;
+		left: 0;
+		right: 0;
+		position: fixed; /*position: static;*/
+	}
+}

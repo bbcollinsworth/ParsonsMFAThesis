@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Gone Dark</title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width">
+  <script src='https://api.mapbox.com/mapbox.js/v2.2.3/mapbox.js'></script>
+  <link href='https://api.mapbox.com/mapbox.js/v2.2.3/mapbox.css' rel='stylesheet' />
+  <link rel="stylesheet" href="http://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.css">
+  
+  <link rel="stylesheet" href="css/style.css">
+  <script src="http://code.jquery.com/jquery-1.11.3.min.js"></script>
+  <!-- This disables jQueryMobile hash navigation -->
+  <script>
+  $(document).on("mobileinit", function () {
+    $.mobile.hashListeningEnabled = false;
+    $.mobile.pushStateEnabled = false;
+    $.mobile.changePage.defaults.changeHash = false;
+  });
+  </script>
+  <script src="http://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.js"></script>
+
+  <link href='http://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,400,300,600,700' rel='stylesheet' type='text/css'>
+</head>
+<body>
+
+  <div data-role="page" id="app">
+    <div data-role="header" id="mobileHeader" data-position="fixed" data-inset="false" data-fullscreen="false" data-tap-toggle="false">
+      <div id = "alertTxt" data-role="collapsible" data-collapsed="false" data-transition="slidedown" data-inset="true">
+        <h1>Welcome To My Homepage</h1>
+        <p>Alert Text</p>
+      </div>
+    </div>
+
+    <div data-role="main" class="ui-content" id="container">
+      <!-- <p>I Am Now A Mobile Developer!!</p> -->
+      <div id="map"></div>
+    </div>
+
+    <div data-role="footer" id="mobileFooter" data-position="fixed" data-fullscreen="false" data-tap-toggle="false">
+      <h1>Footer Text</h1>
+    </div>
+  </div> 
+
+</body>
+
+<script type="text/javascript" src="/socket.io/socket.io.js"></script>
+<script type="text/javascript" src="js/main.js"></script>
+</html>
