@@ -1,9 +1,22 @@
+var app = {};
+var socket;
+var connectedToServer = false;
+
+app.init = function () {
+	socket = io.connect();
+};
+
+
+//initializing mapbox.js / leaflet map
 L.mapbox.accessToken = 'pk.eyJ1IjoiZnVja3lvdXJhcGkiLCJhIjoiZEdYS2ZmbyJ9.6vnDgXe3K0iWoNtZ4pKvqA';
 
-var map = L.mapbox.map('app','fuckyourapi.o7ne7nmm',{  zoomControl:false }).setView([40.734801,-73.998799], 16);
+var map = L.mapbox.map('map', 'fuckyourapi.o7ne7nmm', {
+	zoomControl: false
+}).setView([40.734801, -73.998799], 16);
 
+//to override relative positioning from leaflet style
+$('#map').css({
+	"position": "static"
+});
 
-
-// L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
-//     attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
-// }).addTo(map);
+app.init();
