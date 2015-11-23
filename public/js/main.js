@@ -3,8 +3,10 @@ var socket;
 var connectedToServer = false;
 
 app.init = function () {
+	$('#alertBodyText').html('<p>Connecting...</p>');
 	socket = io.connect();
 };
+
 
 
 //initializing mapbox.js / leaflet map
@@ -20,3 +22,7 @@ $('#map').css({
 });
 
 app.init();
+
+socket.on('handshake',function (err,res) {
+	$('#alertBodyText').html('<p>Connected to server. Hello, Jasmine!</p>');
+});
