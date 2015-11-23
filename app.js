@@ -6,6 +6,7 @@ var server = require('http').Server(app);
 var io = require('socket.io')(server);
 var port = 9000;
 var admin = io.of('/admin');
+
 var geolib = require('geolib');
 var colors = require('colors');
 
@@ -28,7 +29,6 @@ server.listen(process.env.PORT || 9000, function() {
 	var serverUpString = 'Server running at port:' + port + ' ';
 	console.log(serverUpString.cyan.inverse);
 });
-
 
 
 /*––––––––––– SOCKET.IO starts here –––––––––––––––*/
