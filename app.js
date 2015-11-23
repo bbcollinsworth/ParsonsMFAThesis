@@ -24,7 +24,7 @@ app.use(function(req, res, next) {
 
 app.use('/', express.static(__dirname + '/public'));
 
-server.listen(process.env.PORT || port, function() {
+server.listen(process.env.PORT || 9000, function() {
 	var serverUpString = 'Server running at port:' + port + ' ';
 	console.log(serverUpString.cyan.inverse);
 });
