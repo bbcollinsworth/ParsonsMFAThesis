@@ -1,13 +1,13 @@
 var express = require('express');
 var bodyParser = require('body-parser');
-var geolib = require('geolib');
-var colors = require('colors');
 
 var app = express();
 var server = require('http').Server(app);
 var io = require('socket.io')(server);
 var port = 9000;
 var admin = io.of('/admin');
+var geolib = require('geolib');
+var colors = require('colors');
 
 app.use(bodyParser.json());
 app.use(function(req, res, next) {
