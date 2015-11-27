@@ -1,28 +1,80 @@
 var app = {};
 var socket;
-var connectedToServer = false;
+var gameState = {
+	connected: false
+};
 
-app.init = function () {
+app.init = function() {
 	$('#alertBodyText').html('<p>Connecting...</p>');
+	initMap();
 	socket = io.connect();
 };
 
+function emit(tag, emitObj) {
+	emitObj['tag'] = tag;
+	socket.emit('clientMsg', emitObj);
+	console.log('Sending ' + tag + ' to server');
+}
 
+function initMap() {
+	//initializing mapbox.js / leaflet map
+	L.mapbox.accessToken = 'pk.eyJ1IjoiZnVja3lvdXJhcGkiLCJhIjoiZEdYS2ZmbyJ9.6vnDgXe3K0iWoNtZ4pKvqA';
 
-//initializing mapbox.js / leaflet map
-L.mapbox.accessToken = 'pk.eyJ1IjoiZnVja3lvdXJhcGkiLCJhIjoiZEdYS2ZmbyJ9.6vnDgXe3K0iWoNtZ4pKvqA';
+	var map = L.mapbox.map('map', 'fuckyourapi.o7ne7nmm', {
+			zoomControl: false
+		})
+		.setView([40.734801, -73.998799], 16)
+		.on('ready', function() {
+			sendMapReady();
+		});
 
-var map = L.mapbox.map('map', 'fuckyourapi.o7ne7nmm', {
-	zoomControl: false
-}).setView([40.734801, -73.998799], 16);
+	//to override relative positioning from leaflet style
+	$('#map').css({
+		"position": "static"
+	});
+}
 
-//to override relative positioning from leaflet style
-$('#map').css({
-	"position": "static"
-});
+function sendMapReady() {
+	console.log("Map is initialized!");
+
+	if (gameState.connected) {
+		console.log("Connected. Alerting server...");
+		emit('mapLoaded', {});
+	} else {
+		var connectCounter = 60;
+		//off for demo
+		//mobileAlert("CONNECTING...");
+
+		var waitForConnect = setInterval(function() {
+
+			console.log("Waiting for server...");
+			if (gameState.connected) {
+				emit('mapLoaded', {});
+				console.log("Connected. Alerting server...");
+				//closeAlert();
+				//console.log("Close alert called");
+				clearInterval(waitForConnect);
+			} else if (connectCounter > 0) {
+				connectCounter--;
+				console.log(connectCounter * 0.5 + "seconds");
+			} else {
+				console.log("No connection. Reloading");
+				clearInterval(waitForConnect);
+				window.location.reload();
+			}
+		}, 500);
+	}
+}
 
 app.init();
 
-socket.on('handshake',function (err,res) {
-	$('#alertBodyText').html('<p>Connected to server. Hello, Jasmine!</p>');
+//INCOMING SOCKET FUNCTIONS
+socket.on('serverMsg', function(res, err) {
+
+	switch (res.tag) {
+		case 'handshake':
+			gameState.connected = true;
+			$('#alertBodyText').html('<p>Connected to server. Hello, Jasmine!</p>');
+			break;
+	}
 });
