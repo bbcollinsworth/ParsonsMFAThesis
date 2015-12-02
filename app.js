@@ -21,6 +21,7 @@ function log(text, styling) {
 }
 
 var emitModule = require('./my_modules/emit.js');
+var userModule = require('./my_modules/users.js');
 //var emitTo = require('./my_modules/emit.js')(io);
 //emitTo.start(io); //pass io to emitTo module
 
@@ -41,27 +42,30 @@ app.use('/', express.static(__dirname + '/public'));
 
 server.listen(process.env.PORT || port, function() {
 	var serverUpString = 'Server running at port:' + port + ' ';
-	log(serverUpString,colors.cyan.inverse);
+	log(serverUpString, colors.cyan.inverse);
 });
+
+//var players = [];
+var players = {};
 
 
 /*––––––––––– SOCKET.IO starts here –––––––––––––––*/
 io.on('connection', function(socket) {
 
-	//can I create a new for each socket? should prob be (io,socket)
-	var emitTo = new emitModule(io);
+	//create new instance of emit module for each socket
+	var emitTo = emitModule(io, socket);
+	var player = userModule(players, socket);
 
-	//emit TO THIS SOCKET function
-	var emit = function(tag, emitObj) {
-		emitObj['tag'] = tag;
-		socket.emit('serverMsg', emitObj);
-		log('Sending ' + tag + ' to ' + socket.id,colors.blue);
-	};
+	log('The user ' + socket.id + ' just connected!', colors.yellow);
+	emitTo.client('handshake', {});
 
-	//WHAT HAPPENS ON NEW SOCKET CONNECTION:
-	log('The user ' + socket.id + ' just connected!',colors.yellow);
 
-	emit('handshake', {});
+	player.create('ins');
+	players[player.userID] = player;
+	console.log('Added player to database:');
+	console.log(players[player.userID]);
+	// players.push(player);
+	// log('Added player ' + player.userID + " to players array");
 
 	socket.on('clientMsg', function(res, err) {
 
@@ -70,9 +74,22 @@ io.on('connection', function(socket) {
 				log("Map ready for " + socket.id);
 				//console.log("Map ready for " + socket.id);
 				break;
+			case 'clientReady':
+				log(socket.id + "ready to play!", colors.magenta.inverse);
+				//console.log("Map ready for " + socket.id);
+				break;
 		}
 
 	});
 
 });
 
+
+// //emit TO THIS SOCKET function
+// 	var emit = function(tag, emitObj) {
+// 		emitObj['tag'] = tag;
+// 		socket.emit('serverMsg', emitObj);
+// 		log('Sending ' + tag + ' to ' + socket.id,colors.blue);
+// 	};
+
+//emit('handshake', {});

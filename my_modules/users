@@ -1,13 +1,11 @@
-
-module.exports = function(io,socket) {
+module.exports = function(user,socket) {
 	//var socket;
 
 	return {
 		//emits to THIS user (i.e. socket.id)
-		client: function(tag,emitObj){
-			emitObj['tag'] = tag;
-			io.to(socket.id).emit('serverMsg', emitObj);
-			console.log('Sending ' + tag + ' to ' + socket.id);
+		addToTeam: function(teamName,isNewPlayer){
+			socket.join(team);
+			console.log('User ' + user.id + ' added to ' + team);
 		},
 		//emits to a specified user
 		user: function(user, tag, emitObj) {

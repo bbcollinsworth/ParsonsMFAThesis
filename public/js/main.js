@@ -1,7 +1,8 @@
 var app = {};
 var socket;
 var gameState = {
-	connected: false
+	connected: false,
+	mapReady: false
 };
 
 app.init = function() {
@@ -25,13 +26,45 @@ function initMap() {
 		})
 		.setView([40.734801, -73.998799], 16)
 		.on('ready', function() {
-			sendMapReady();
+			gameState.mapReady = true;
+			console.log("Map is initialized!");
+			//sendMapReady();
 		});
 
 	//to override relative positioning from leaflet style
 	$('#map').css({
 		"position": "static"
 	});
+}
+
+function readyCheck(){
+	if (gameState.connected && gameState.mapReady){
+		emit('readyToPlay',{});
+	} else {
+		var readyCounter = 60;
+		//off for demo
+		//mobileAlert("CONNECTING...");
+
+		var waitForReady = setInterval(function() {
+
+			console.log("Waiting for server...");
+			if (gameState.connected) {
+				emit('mapLoaded', {});
+				console.log("Connected. Alerting server...");
+				//closeAlert();
+				//console.log("Close alert called");
+				clearInterval(waitForReady);
+			} else if (readyCounter > 0) {
+				readyCounter--;
+				console.log(readyCounter * 0.5 + "seconds");
+			} else {
+				console.log("No connection. Reloading");
+				clearInterval(waitForReady);
+				window.location.reload();
+			}
+		}, 500);
+
+	}
 }
 
 function sendMapReady() {
@@ -74,6 +107,7 @@ socket.on('serverMsg', function(res, err) {
 	switch (res.tag) {
 		case 'handshake':
 			gameState.connected = true;
+			console.log("Connected to server");
 			$('#alertBodyText').html('<p>Connected to server. Hello, Jasmine!</p>');
 			break;
 	}
