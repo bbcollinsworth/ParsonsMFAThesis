@@ -25,16 +25,18 @@ app.init = function() {
 function parseHash() {
 	alert('Parsing hash...');
 	var thisHash = location.hash;
+	alert('Hash is ' + thisHash);
 	var parsedHash = thisHash.split("&");
 	parsedHash[0]=parsedHash[0].slice(1,100);
+	alert('Parsed hash is ' + parsedHash[0] + ', ' + parsedHash[1]);
 	console.log("Hash:");
 	console.log(parsedHash[0]);
 	console.log(parsedHash[1]);
 
 	teamHash = parsedHash[0];
 	uniqueHash = parsedHash[1];
-	localStorage.setItem("teamHash", teamHash);
-	localStorage.setItem("uniqueID", uniqueHash);
+	// localStorage.setItem("teamHash", teamHash);
+	// localStorage.setItem("uniqueID", uniqueHash);
 }
 
 function emit(tag, emitObj) {
