@@ -2,10 +2,12 @@ var app = {};
 var socket;
 var gameState = {
 	connected: false,
-	mapReady: false
+	mapLoaded: false,
+	ready: false
 };
 
 var govHash, insHash;
+var teamHash, uniqueHash;
 
 app.init = function() {
 	$('#alertBodyText').html('<p>Connecting...</p>');
@@ -18,25 +20,15 @@ app.init = function() {
 function parseHash() {
 	var thisHash = location.hash;
 	var parsedHash = thisHash.split("&");
+	parsedHash[0]=parsedHash[0].slice(1,100);
 	console.log("Hash:");
 	console.log(parsedHash[0]);
 	console.log(parsedHash[1]);
 
-	var teamHash = parsedHash[0];
-	var uniqueHash = parsedHash[1];
+	teamHash = parsedHash[0];
+	uniqueHash = parsedHash[1];
 	localStorage.setItem("teamHash", teamHash);
 	localStorage.setItem("uniqueID", uniqueHash);
-
-
-	// switch (parsedHash[0]) {
-	//     case govHash:
-	//         gameState['team'] = 'gov';
-	//         break;
-	//     case insHash:
-	//     default:
-	//         gameState['team'] = 'ins';
-	//         break;
-	// }
 }
 
 function emit(tag, emitObj) {
@@ -54,7 +46,7 @@ function initMap() {
 		})
 		.setView([40.734801, -73.998799], 16)
 		.on('ready', function() {
-			gameState.mapReady = true;
+			gameState.mapLoaded = true;
 			console.log("Map is initialized!");
 			//sendMapReady();
 		});
@@ -66,7 +58,8 @@ function initMap() {
 }
 
 function readyCheck() {
-	if (gameState.connected && gameState.mapReady) {
+	if (gameState.connected && gameState.mapLoaded) {
+		gameState.ready = true;
 		emit('clientReady', {});
 	} else {
 		var readyCounter = 60;
@@ -76,7 +69,8 @@ function readyCheck() {
 		var waitForReady = setInterval(function() {
 
 			console.log("Waiting for ready state...");
-			if (gameState.connected && gameState.mapReady) {
+			if (gameState.connected && gameState.mapLoaded) {
+				gameState.ready = true;
 				emit('clientReady', {});
 				console.log("Ready. Alerting server...");
 				//closeAlert();
@@ -87,7 +81,7 @@ function readyCheck() {
 				if (!gameState.connected) {
 					console.log("Waiting for connection.");
 				}
-				if (!gameState.mapReady) {
+				if (!gameState.mapLoaded) {
 					console.log("Waiting for map.");
 				}
 
@@ -102,38 +96,6 @@ function readyCheck() {
 	}
 }
 
-function sendMapReady() {
-	console.log("Map is initialized!");
-
-	if (gameState.connected) {
-		console.log("Connected. Alerting server...");
-		emit('mapLoaded', {});
-	} else {
-		var connectCounter = 60;
-		//off for demo
-		//mobileAlert("CONNECTING...");
-
-		var waitForConnect = setInterval(function() {
-
-			console.log("Waiting for server...");
-			if (gameState.connected) {
-				emit('mapLoaded', {});
-				console.log("Connected. Alerting server...");
-				//closeAlert();
-				//console.log("Close alert called");
-				clearInterval(waitForConnect);
-			} else if (connectCounter > 0) {
-				connectCounter--;
-				console.log(connectCounter * 0.5 + "seconds");
-			} else {
-				console.log("No connection. Reloading");
-				clearInterval(waitForConnect);
-				window.location.reload();
-			}
-		}, 500);
-	}
-}
-
 app.init();
 
 //INCOMING SOCKET FUNCTIONS
@@ -141,15 +103,17 @@ socket.on('serverMsg', function(res, err) {
 
 	var handleServerMsg = {
 
-		connected: function(){
+		connected: function() {
 			gameState.connected = true;
 			console.log("Connected to server");
 			$('#alertBodyText').html('<p>Connected to server. Hello, Jasmine!</p>');
 		},
 
-		playerTypeCheck: function(){
+		//check for new/returning player + teamHash, uniqueID
+		playerTypeCheck: function() {
 			var storedUserFound = false;
 			var allIDs = res.userIDs;
+			//check for stored id matching existing player:
 			if (localStorage.userID !== undefined) {
 				for (var i in allIDs) {
 					if (localStorage.userID == allIDs[i]) {
@@ -159,32 +123,27 @@ socket.on('serverMsg', function(res, err) {
 					}
 				}
 			}
+
+			if (storedUserFound) { //send returning player
+				emit('returningPlayer', {
+					userID: localStorage.userID
+				});
+			} else { //send new player
+				emit('newPlayer', {
+					teamHash: teamHash,
+					uniqueID: uniqueHash
+				});
+			}
+		},
+
+		newUserID: function() {
+			localStorage.setItem("userID", res.newID);
+			console.log("UserID stored locally as: " + localStorage.userID);
 		}
+
 	};
 
 	handleServerMsg[res.tag]();
 
-	// switch (res.tag) {
 
-	// 	case 'connected':
-	// 		gameState.connected = true;
-	// 		console.log("Connected to server");
-	// 		$('#alertBodyText').html('<p>Connected to server. Hello, Jasmine!</p>');
-	// 		break;
-
-	// 	case 'playerTypeCheck':
-	// 		var storedUserFound = false;
-	// 		var allIDs = res.userIDs;
-	// 		if (localStorage.userID !== undefined) {
-	// 			for (var i in allIDs) {
-	// 				if (localStorage.userID == allIDs[i]) {
-	// 					console.log("Stored User Found!:" + allIDs[i]);
-	// 					storedUserFound = true;
-	// 					break;
-	// 				}
-	// 			}
-	// 		}
-	// 		break;
-
-	// }
 });

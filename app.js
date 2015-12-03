@@ -10,15 +10,16 @@ var admin = io.of('/admin');
 var geolib = require('geolib');
 
 var colors = require('colors');
+var log = require('./my_modules/logWithColor.js');
 //custom console logging function
-function log(text, styling) {
-	var t = text.toString();
-	if (styling !== undefined) {
-		console.log(styling(t));
-	} else {
-		console.log(t);
-	}
-}
+// function log(text, styling) {
+// 	var t = text.toString();
+// 	if (styling !== undefined) {
+// 		console.log(styling(t));
+// 	} else {
+// 		console.log(t);
+// 	}
+// }
 
 var emitModule = require('./my_modules/emit.js');
 var userModule = require('./my_modules/users.js');
@@ -48,23 +49,29 @@ server.listen(process.env.PORT || port, function() {
 //var players = [];
 var players = {};
 
+var teams = {
+	'g': 'gov',
+	'i': 'ins',
+	'default': 'ins'
+};
+
 
 /*––––––––––– SOCKET.IO starts here –––––––––––––––*/
 io.on('connection', function(socket) {
 
 	var checkPlayerType = function() {
-        var existingUserIDs = [];
-        for (p in players) {
-            console.log("Existing player: " + players[p].userID);
-            existingUserIDs.push(players[p].userID);
-        }
+		var existingUserIDs = [];
+		for (p in players) {
+			console.log("Existing player: " + players[p].userID);
+			existingUserIDs.push(players[p].userID);
+		}
 
-        console.log("ExistingIDs List length: " + existingUserIDs.length);
-        emitTo.socket('playerTypeCheck', {
-            userIDs: existingUserIDs
-        });
-        console.log("Checking if new player...");
-    };
+		console.log("ExistingIDs List length: " + existingUserIDs.length);
+		emitTo.socket('playerTypeCheck', {
+			userIDs: existingUserIDs
+		});
+		console.log("Checking if new player...");
+	};
 
 	//create new instance of emit module for each socket
 	var emitTo = emitModule(io, socket);
@@ -74,45 +81,56 @@ io.on('connection', function(socket) {
 	emitTo.socket('connected', {});
 
 
-	player.create('ins');
-	players[player.userID] = player;
-	console.log('Added player to database:');
-	console.log(players[player.userID]);
-	// players.push(player);
-	// log('Added player ' + player.userID + " to players array");
-
 	socket.on('clientMsg', function(res, err) {
 
+		var getTeam = function(hash) {
+			log("teamhash is: " + hash);
+			var t;
+			if (teams[hash] !== undefined) {
+				t = teams[hash];
+			} else {
+				t = teams['default'];
+			}
+			log('Team is: ' + t);
+			return t;
+		};
+
 		var handleClientMsg = {
-			mapLoaded: function(){
+
+			mapLoaded: function() {
 				log("Map ready for " + socket.id);
 			},
-			clientReady: function(){
+
+			clientReady: function() {
 				log(socket.id + "ready to play!", colors.magenta.inverse);
 				checkPlayerType();
 			},
-			playerType: function(){
+			
+			newPlayer: function() {
+				player = userModule(players, socket, log); //instantiate new player object
 
+				var team = getTeam(res.teamHash); //create player
+				player.create(team);
+
+				//add player to playersObject:
+				players[player.userID] = player;
+				log('Added player to database:');
+				log(players[player.userID]);
+
+				//send new ID to player:
+				emitTo.socket('newUserID', {
+					newID: player.userID
+				});
+			},
+
+			returningPlayer: function() {
+				log('Requesting update of player ' + players[res.userID].userID, colors.italic);
+				players[res.userID].update(socket);
 			}
 		};
 
 		handleClientMsg[res.tag]();
 
-		// switch (res.tag) {
-		// 	case 'mapLoaded':
-		// 		log("Map ready for " + socket.id);
-		// 		//console.log("Map ready for " + socket.id);
-		// 		break;
-		// 	case 'clientReady':
-		// 		log(socket.id + "ready to play!", colors.magenta.inverse);
-		// 		//console.log("Map ready for " + socket.id);
-		// 		checkPlayerType();
-		// 		break;
-		// 	case 'playerType':
-		// 		break;
-		// }
-
 	});
 
 });
-

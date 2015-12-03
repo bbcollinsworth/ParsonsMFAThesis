@@ -1,8 +1,13 @@
-module.exports = function(users, socket) {
+var colors = require('colors');
+//var log = require('./my_modules/logWithColor.js');
+
+module.exports = function(users, _socket, log) {
+	
+	var socket = _socket;
 
 	function getTeamSize(t) {
 		var existingTeamMembers = 0;
-		
+
 		for (u in users) {
 			if (users[u].team == t) {
 				existingTeamMembers++;
@@ -18,7 +23,7 @@ module.exports = function(users, socket) {
 	}
 
 	var user = {
-
+		//stores properties of new user
 		create: function(team) {
 			//will this work?
 			user['socketID'] = socket.id;
@@ -38,14 +43,20 @@ module.exports = function(users, socket) {
 			user['lockedOut'] = false;
 			userID = 'ins1';
 
-			console.log('Created player: ');
+			log('Created player: ',colors.green);
 			console.log(user);
 
 		},
-		//emits to THIS user (i.e. socket.id)
-		addToTeam: function(teamName, isNewPlayer) {
+		//switches user socket when reconnecting to server
+		update: function(newSocket){
+			socket = newSocket;
+			user['socketID'] = socket.id;
+			console.log(user.userID + " socket updated to: " + socket.id,colors.green);
+		},
+		//adds user to team
+		addToTeam: function(teamName,isNewPlayer) {
 			socket.join(team);
-			console.log('User ' + user.id + ' added to ' + team);
+			log('User ' + user.id + ' added to ' + team,colors.green);
 		}
 	};
 
