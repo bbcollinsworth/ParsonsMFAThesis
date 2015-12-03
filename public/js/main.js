@@ -106,7 +106,7 @@ socket.on('serverMsg', function(res, err) {
 		connected: function() {
 			gameState.connected = true;
 			console.log("Connected to server");
-			$('#alertBodyText').html('<p>Connected to server. Hello, Jasmine!</p>');
+			$('#alertBodyText').html('<p>Connected to server.</p>');
 		},
 
 		//check for new/returning player + teamHash, uniqueID
@@ -139,6 +139,7 @@ socket.on('serverMsg', function(res, err) {
 		newUserID: function() {
 			localStorage.setItem("userID", res.newID);
 			console.log("UserID stored locally as: " + localStorage.userID);
+			$('#alertBodyText').html('<p>Hello Player ' + res.newID + '!</p>');
 		}
 
 	};

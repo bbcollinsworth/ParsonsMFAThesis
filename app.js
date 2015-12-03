@@ -11,15 +11,6 @@ var geolib = require('geolib');
 
 var colors = require('colors');
 var log = require('./my_modules/logWithColor.js');
-//custom console logging function
-// function log(text, styling) {
-// 	var t = text.toString();
-// 	if (styling !== undefined) {
-// 		console.log(styling(t));
-// 	} else {
-// 		console.log(t);
-// 	}
-// }
 
 var emitModule = require('./my_modules/emit.js');
 var userModule = require('./my_modules/users.js');
@@ -107,7 +98,7 @@ io.on('connection', function(socket) {
 			},
 			
 			newPlayer: function() {
-				player = userModule(players, socket, log); //instantiate new player object
+				player = userModule(players, socket); //instantiate new player object
 
 				var team = getTeam(res.teamHash); //create player
 				player.create(team);

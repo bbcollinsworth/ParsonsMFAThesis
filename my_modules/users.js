@@ -1,7 +1,7 @@
 var colors = require('colors');
-//var log = require('./my_modules/logWithColor.js');
+var log = require('./logWithColor.js');
 
-module.exports = function(users, _socket, log) {
+module.exports = function(users, _socket, _log) {
 	
 	var socket = _socket;
 
