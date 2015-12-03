@@ -40,7 +40,7 @@ module.exports = function(users, _socket) {
 			userID = 'ins1';
 
 			log('Created player: ',colors.green);
-			log(user);
+			console.log(user);
 
 		},
 		//switches user socket when reconnecting to server
