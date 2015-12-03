@@ -9,15 +9,21 @@ var gameState = {
 var govHash, insHash;
 var teamHash, uniqueHash;
 
+var alert = function(text){
+	$('#alertBodyText').html('<p>'+text+'</p>');
+};
+
 app.init = function() {
-	$('#alertBodyText').html('<p>Connecting...</p>');
+	alert('Connecting...');
 	parseHash();
 	initMap();
 	socket = io.connect();
+	alert("Initializing socket");
 	readyCheck();
 };
 
 function parseHash() {
+	alert('Parsing hash...');
 	var thisHash = location.hash;
 	var parsedHash = thisHash.split("&");
 	parsedHash[0]=parsedHash[0].slice(1,100);
@@ -38,6 +44,7 @@ function emit(tag, emitObj) {
 }
 
 function initMap() {
+	alert("Initializing map");
 	//initializing mapbox.js / leaflet map
 	L.mapbox.accessToken = 'pk.eyJ1IjoiZnVja3lvdXJhcGkiLCJhIjoiZEdYS2ZmbyJ9.6vnDgXe3K0iWoNtZ4pKvqA';
 
@@ -58,6 +65,7 @@ function initMap() {
 }
 
 function readyCheck() {
+	alert("Checking if ready");
 	if (gameState.connected && gameState.mapLoaded) {
 		gameState.ready = true;
 		emit('clientReady', {});
