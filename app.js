@@ -52,12 +52,26 @@ var players = {};
 /*––––––––––– SOCKET.IO starts here –––––––––––––––*/
 io.on('connection', function(socket) {
 
+	var checkPlayerType = function() {
+        var existingUserIDs = [];
+        for (p in players) {
+            console.log("Existing player: " + players[p].userID);
+            existingUserIDs.push(players[p].userID);
+        }
+
+        console.log("ExistingIDs List length: " + existingUserIDs.length);
+        emitTo.socket('playerTypeCheck', {
+            userIDs: existingUserIDs
+        });
+        console.log("Checking if new player...");
+    };
+
 	//create new instance of emit module for each socket
 	var emitTo = emitModule(io, socket);
 	var player = userModule(players, socket);
 
 	log('The user ' + socket.id + ' just connected!', colors.yellow);
-	emitTo.client('handshake', {});
+	emitTo.socket('connected', {});
 
 
 	player.create('ins');
@@ -69,27 +83,36 @@ io.on('connection', function(socket) {
 
 	socket.on('clientMsg', function(res, err) {
 
-		switch (res.tag) {
-			case 'mapLoaded':
+		var handleClientMsg = {
+			mapLoaded: function(){
 				log("Map ready for " + socket.id);
-				//console.log("Map ready for " + socket.id);
-				break;
-			case 'clientReady':
+			},
+			clientReady: function(){
 				log(socket.id + "ready to play!", colors.magenta.inverse);
-				//console.log("Map ready for " + socket.id);
-				break;
-		}
+				checkPlayerType();
+			},
+			playerType: function(){
+
+			}
+		};
+
+		handleClientMsg[res.tag]();
+
+		// switch (res.tag) {
+		// 	case 'mapLoaded':
+		// 		log("Map ready for " + socket.id);
+		// 		//console.log("Map ready for " + socket.id);
+		// 		break;
+		// 	case 'clientReady':
+		// 		log(socket.id + "ready to play!", colors.magenta.inverse);
+		// 		//console.log("Map ready for " + socket.id);
+		// 		checkPlayerType();
+		// 		break;
+		// 	case 'playerType':
+		// 		break;
+		// }
 
 	});
 
 });
 
-
-// //emit TO THIS SOCKET function
-// 	var emit = function(tag, emitObj) {
-// 		emitObj['tag'] = tag;
-// 		socket.emit('serverMsg', emitObj);
-// 		log('Sending ' + tag + ' to ' + socket.id,colors.blue);
-// 	};
-
-//emit('handshake', {});

@@ -2,8 +2,8 @@ module.exports = function(users, socket) {
 
 	function getTeamSize(t) {
 		var existingTeamMembers = 0;
+		
 		for (u in users) {
-			console.log('u.team is ' + u.team);
 			if (users[u].team == t) {
 				existingTeamMembers++;
 			}
@@ -19,28 +19,6 @@ module.exports = function(users, socket) {
 
 	var user = {
 
-		// socketID: socket.id,
-		// index: users.length,
-		// team: '',
-		// numberOnTeam: -1,
-		// userID: '',
-		// locationData: [],
-		// captureData: {
-		// 	//# of responses received to fast capture pings
-		// 	resCount: 0,
-		// 	//# of times enough agents to capture were in range
-		// 	captureCount: 0
-		// },
-		// lockedOut: false,
-
-
-		// var get = function(property) {
-		// 	return user[property];
-		// };
-
-		// get: function(property) {
-		// 	return user[property];
-		// },
 		create: function(team) {
 			//will this work?
 			user['socketID'] = socket.id;

@@ -5,11 +5,39 @@ var gameState = {
 	mapReady: false
 };
 
+var govHash, insHash;
+
 app.init = function() {
 	$('#alertBodyText').html('<p>Connecting...</p>');
+	parseHash();
 	initMap();
 	socket = io.connect();
+	readyCheck();
 };
+
+function parseHash() {
+	var thisHash = location.hash;
+	var parsedHash = thisHash.split("&");
+	console.log("Hash:");
+	console.log(parsedHash[0]);
+	console.log(parsedHash[1]);
+
+	var teamHash = parsedHash[0];
+	var uniqueHash = parsedHash[1];
+	localStorage.setItem("teamHash", teamHash);
+	localStorage.setItem("uniqueID", uniqueHash);
+
+
+	// switch (parsedHash[0]) {
+	//     case govHash:
+	//         gameState['team'] = 'gov';
+	//         break;
+	//     case insHash:
+	//     default:
+	//         gameState['team'] = 'ins';
+	//         break;
+	// }
+}
 
 function emit(tag, emitObj) {
 	emitObj['tag'] = tag;
@@ -37,9 +65,9 @@ function initMap() {
 	});
 }
 
-function readyCheck(){
-	if (gameState.connected && gameState.mapReady){
-		emit('readyToPlay',{});
+function readyCheck() {
+	if (gameState.connected && gameState.mapReady) {
+		emit('clientReady', {});
 	} else {
 		var readyCounter = 60;
 		//off for demo
@@ -47,18 +75,25 @@ function readyCheck(){
 
 		var waitForReady = setInterval(function() {
 
-			console.log("Waiting for server...");
-			if (gameState.connected) {
-				emit('mapLoaded', {});
-				console.log("Connected. Alerting server...");
+			console.log("Waiting for ready state...");
+			if (gameState.connected && gameState.mapReady) {
+				emit('clientReady', {});
+				console.log("Ready. Alerting server...");
 				//closeAlert();
 				//console.log("Close alert called");
 				clearInterval(waitForReady);
 			} else if (readyCounter > 0) {
 				readyCounter--;
+				if (!gameState.connected) {
+					console.log("Waiting for connection.");
+				}
+				if (!gameState.mapReady) {
+					console.log("Waiting for map.");
+				}
+
 				console.log(readyCounter * 0.5 + "seconds");
 			} else {
-				console.log("No connection. Reloading");
+				console.log("Not ready. Reloading");
 				clearInterval(waitForReady);
 				window.location.reload();
 			}
@@ -104,11 +139,52 @@ app.init();
 //INCOMING SOCKET FUNCTIONS
 socket.on('serverMsg', function(res, err) {
 
-	switch (res.tag) {
-		case 'handshake':
+	var handleServerMsg = {
+
+		connected: function(){
 			gameState.connected = true;
 			console.log("Connected to server");
 			$('#alertBodyText').html('<p>Connected to server. Hello, Jasmine!</p>');
-			break;
-	}
+		},
+
+		playerTypeCheck: function(){
+			var storedUserFound = false;
+			var allIDs = res.userIDs;
+			if (localStorage.userID !== undefined) {
+				for (var i in allIDs) {
+					if (localStorage.userID == allIDs[i]) {
+						console.log("Stored User Found!:" + allIDs[i]);
+						storedUserFound = true;
+						break;
+					}
+				}
+			}
+		}
+	};
+
+	handleServerMsg[res.tag]();
+
+	// switch (res.tag) {
+
+	// 	case 'connected':
+	// 		gameState.connected = true;
+	// 		console.log("Connected to server");
+	// 		$('#alertBodyText').html('<p>Connected to server. Hello, Jasmine!</p>');
+	// 		break;
+
+	// 	case 'playerTypeCheck':
+	// 		var storedUserFound = false;
+	// 		var allIDs = res.userIDs;
+	// 		if (localStorage.userID !== undefined) {
+	// 			for (var i in allIDs) {
+	// 				if (localStorage.userID == allIDs[i]) {
+	// 					console.log("Stored User Found!:" + allIDs[i]);
+	// 					storedUserFound = true;
+	// 					break;
+	// 				}
+	// 			}
+	// 		}
+	// 		break;
+
+	// }
 });

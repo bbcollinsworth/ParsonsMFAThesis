@@ -4,7 +4,7 @@ module.exports = function(io,socket) {
 
 	return {
 		//emits to THIS user (i.e. socket.id)
-		client: function(tag,emitObj){
+		socket: function(tag,emitObj){
 			emitObj['tag'] = tag;
 			io.to(socket.id).emit('serverMsg', emitObj);
 			console.log('Sending ' + tag + ' to ' + socket.id);
