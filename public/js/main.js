@@ -1,5 +1,10 @@
 var app = {};
 var socket;
+
+var govHash, insHash;
+var teamHash, uniqueHash;
+var vibrate, geo, storage;
+
 var clientState = {
 	connected: false,
 	mapLoaded: false,
@@ -14,22 +19,21 @@ var clientState = {
 		setup: function(vibrateLength) {
 			try {
 				navigator.vibrate = navigator.vibrate ||
-                  navigator.webkitVibrate ||
-                  navigator.mozVibrate ||
-                  navigator.msVibrate;
+					navigator.webkitVibrate ||
+					navigator.mozVibrate ||
+					navigator.msVibrate;
 				navigator.vibrate(vibrateLength);
-				msg ("Vibrate successful!");
+				msg("Vibrate successful!");
 			} catch (err) {
 				msg(err.message);
 			}
 		}
+	},
+	localstorage: {
+		supported: false,
+		setup: localStorage
 	}
 };
-
-var govHash, insHash;
-var teamHash, uniqueHash;
-
-var vibrate, geo;
 
 
 var msg = function(text) {
@@ -50,42 +54,46 @@ app.ready = function() {
 
 var initServices = function(argument) {
 
-	var supportCheck = function(api) {
-		clientState[api].supported = api in navigator;
-		console.log("Raw var for " + api + ": " + (api in navigator));
-		if (clientState[api].supported) {
-			console.log(api + " supported.");
-			//need to return api variable
-			return clientState[api].setup;
+	var supportCheck = function(feature) {
+		try {
+			clientState[feature].supported = Modernizr[feature]; //feature in navigator;
+			console.log("Raw var for " + feature + ": " + (Modernizr[feature]));
+		} catch (err) {
+			clientState[feature] = {
+				supported: false
+			};
+			console.log(err.message);
+		}
+
+
+		if (clientState[feature].supported) {
+			var supportedMsg = feature + " supported.";
+			$('#footerText').append('<p>' + supportedMsg + '</p>');
+			console.log(supportedMsg);
+			//need to return feature variable
+			return clientState[feature].setup;
 		} else {
-			console.log(api + " not supported.");
-			return null;
+			var unsupportedMsg = feature + " not supported.";
+			$('#footerText').append('<p>' + unsupportedMsg + '</p>');
+			console.log(unsupportedMsg);
+			return function() {
+				console.log("Error: " + feature + " not supported. skipping...");
+				return;
+			};
 		}
 	};
 
-	//clientState.supports['vibrate'] = 'geolocation' in navigator;
 	vibrate = supportCheck('vibrate');
-	//console.log(supportCheck('vibrate'));
 	console.log(vibrate);
-	//navigator.vibrate(100);
-	//vib = navigator.vibrate;
 	vibrate(1000);
 
 	geo = supportCheck('geolocation');
 	geo.getCurrentPosition(function(position) {
 		console.log('Position: ' + position.coords.latitude + ', ' + position.coords.longitude);
 	});
-	// if (clientState.supports.vibrate) {
-	// 	vibrate = navigator.vibrate || navigator.mozVibrate;
-	// 	console.log("Vibrate initialized");
-	// } else {
-	// 	console.log("Vibration not supported");
-	// }
-
-	// clientState.supports['geolocation'] = 'geolocation' in navigator;
-
-	// locate = navigator.location;
 	console.log("Location Svcs initialized");
+
+	storage = supportCheck('localstorage');
 };
 
 app.init = function() {
@@ -113,8 +121,10 @@ function parseHash() {
 	teamHash = parsedHash[0];
 	uniqueHash = parsedHash[1];
 	//NEED TO DO LOCALSTORAGE CHECK
-	// localStorage.setItem("teamHash", teamHash);
-	// localStorage.setItem("uniqueID", uniqueHash);
+	if (clientState.localstorage.supported) {
+		localStorage.setItem("teamHash", teamHash);
+		localStorage.setItem("uniqueID", uniqueHash);
+	}
 }
 
 function emit(tag, emitObj) {
@@ -228,8 +238,12 @@ socket.on('serverMsg', function(res, err) {
 		},
 
 		newUserID: function() {
-			localStorage.setItem("userID", res.newID);
-			console.log("UserID stored locally as: " + localStorage.userID);
+			if (clientState.localstorage.supported) {
+				localStorage.setItem("userID", res.newID);
+				console.log("UserID stored locally as: " + localStorage.userID);
+			} else {
+				console.log("Warning: localStorage unsupported. ID not stored.");
+			}
 			msg('Hello Player ' + res.newID + '!');
 		}
 
