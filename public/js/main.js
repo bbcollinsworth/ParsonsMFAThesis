@@ -4,13 +4,32 @@ var clientState = {
 	connected: false,
 	mapLoaded: false,
 	readyCheckRunning: false,
-	ready: false
+	ready: false,
+	geolocation: {
+		supported: false,
+		setup: navigator.geolocation
+	},
+	vibrate: {
+		supported: false,
+		setup: function(vibrateLength) {
+			try {
+				navigator.vibrate = navigator.vibrate ||
+                  navigator.webkitVibrate ||
+                  navigator.mozVibrate ||
+                  navigator.msVibrate;
+				navigator.vibrate(vibrateLength);
+				msg ("Vibrate successful!");
+			} catch (err) {
+				msg(err.message);
+			}
+		}
+	}
 };
 
 var govHash, insHash;
 var teamHash, uniqueHash;
 
-var vibrate = navigator.vibrate || navigator.mozVibrate;
+var vibrate, geo;
 
 
 var msg = function(text) {
@@ -29,8 +48,49 @@ app.ready = function() {
 	emit('clientReady', {});
 };
 
+var initServices = function(argument) {
+
+	var supportCheck = function(api) {
+		clientState[api].supported = api in navigator;
+		console.log("Raw var for " + api + ": " + (api in navigator));
+		if (clientState[api].supported) {
+			console.log(api + " supported.");
+			//need to return api variable
+			return clientState[api].setup;
+		} else {
+			console.log(api + " not supported.");
+			return null;
+		}
+	};
+
+	//clientState.supports['vibrate'] = 'geolocation' in navigator;
+	vibrate = supportCheck('vibrate');
+	//console.log(supportCheck('vibrate'));
+	console.log(vibrate);
+	//navigator.vibrate(100);
+	//vib = navigator.vibrate;
+	vibrate(1000);
+
+	geo = supportCheck('geolocation');
+	geo.getCurrentPosition(function(position) {
+		console.log('Position: ' + position.coords.latitude + ', ' + position.coords.longitude);
+	});
+	// if (clientState.supports.vibrate) {
+	// 	vibrate = navigator.vibrate || navigator.mozVibrate;
+	// 	console.log("Vibrate initialized");
+	// } else {
+	// 	console.log("Vibration not supported");
+	// }
+
+	// clientState.supports['geolocation'] = 'geolocation' in navigator;
+
+	// locate = navigator.location;
+	console.log("Location Svcs initialized");
+};
+
 app.init = function() {
 	msg('Connecting...');
+	initServices();
 	parseHash(); //check URL hash for team and playerID data
 	initMap(); //initialize map
 	socket = io.connect(); //connect to socket server
@@ -52,6 +112,7 @@ function parseHash() {
 
 	teamHash = parsedHash[0];
 	uniqueHash = parsedHash[1];
+	//NEED TO DO LOCALSTORAGE CHECK
 	// localStorage.setItem("teamHash", teamHash);
 	// localStorage.setItem("uniqueID", uniqueHash);
 }
@@ -136,10 +197,10 @@ socket.on('serverMsg', function(res, err) {
 			clientState.connected = true;
 			console.log("Connected to server");
 			msg('Connected to server.');
-			vibrate(1000); // vibrate for 1sec
+			vibrate(1000); // vibrate for check
 		},
 
-		//check for new/returning player + teamHash, uniqueID
+		//1sec for new/returning player + teamHash, uniqueID
 		playerTypeCheck: function() {
 			var storedUserFound = false;
 			var allIDs = res.userIDs;

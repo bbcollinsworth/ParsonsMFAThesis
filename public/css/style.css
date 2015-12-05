@@ -13,6 +13,8 @@
 	overflow: hidden;
 }
 
+
+
 #container {
 	position: static;
 }
@@ -23,17 +25,36 @@
 }
 
 #mobileHeader {
+	/*box-shadow: 10px 0px 30px 0px rgba(0,0,0,0.3);*/
+	border-width: 0px;
+	background-color: rgba(0,0,0,0);
+}
+
+.ui-collapsible-heading {
+	text-align: left;
+	border-radius: 0px 20px 20px 0px;
+}
+
+.ui-collapsible-content {
 	box-shadow: 10px 0px 30px 0px rgba(0,0,0,0.3);
 }
 
-#alertText {
+#alertPopoutText {
+	/*display: none;*/
+}
+
+#alertBox {
 	width: 100%;
+}
+
+#alertBox .ui-collapsible-content {
+	background-color: rgba(255,255,255,0.7);
 }
 
 
 #map {
-	position: static;
-	margin: auto;
+	position: margin;
+	static: auto;
 	height: 100%;
 }
 
