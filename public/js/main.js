@@ -10,28 +10,36 @@ var clientState = {
 	mapLoaded: false,
 	readyCheckRunning: false,
 	ready: false,
-	geolocation: {
-		supported: false,
-		setup: navigator.geolocation
-	},
-	vibrate: {
-		supported: false,
-		setup: function(vibrateLength) {
-			try {
-				navigator.vibrate = navigator.vibrate ||
-					navigator.webkitVibrate ||
-					navigator.mozVibrate ||
-					navigator.msVibrate;
-				navigator.vibrate(vibrateLength);
-				msg("Vibrate successful!");
-			} catch (err) {
-				msg(err.message);
+	features: {
+		geolocation: {
+			title: 'Geolocation',
+			supported: false,
+			ready: false,
+			setup: navigator.geolocation
+		},
+		vibrate: {
+			title: 'Vibration',
+			supported: false,
+			ready: true, //no prep required
+			setup: function(vibrateLength) {
+				try {
+					navigator.vibrate = navigator.vibrate ||
+						navigator.webkitVibrate ||
+						navigator.mozVibrate ||
+						navigator.msVibrate;
+					navigator.vibrate(vibrateLength);
+					msg("Vibrate successful!");
+				} catch (err) {
+					msg(err.message);
+				}
 			}
+		},
+		localstorage: {
+			title: 'Local Storage',
+			supported: false,
+			ready: true, //no prep required
+			setup: localStorage
 		}
-	},
-	localstorage: {
-		supported: false,
-		setup: localStorage
 	}
 };
 
@@ -52,26 +60,116 @@ app.ready = function() {
 	emit('clientReady', {});
 };
 
+var svcCheckList = function() {
+
+	var list = $('<ul />', {
+		'data-role': "listview", //collapsibleset",
+		'id': "svcCheckList"
+	});
+
+
+	var alertBody = $('#alertBodyText');
+
+	//alertBody.html('');
+
+	alertBody.html(list);
+	alertBody.trigger('create');
+
+	//$('#svcCheckList').collapsibleset();
+
+	var createItem = function(featureName, supported, ready) {
+
+		var icon = "";
+		if (!supported) {
+			icon = "ui-icon-delete"
+		} else if (!ready) {
+			icon = "ui-icon-alert"
+		} else {
+			icon = "ui-icon-check"
+		};
+
+		var listItem = $('<li />', {
+			//'data-role': "collapsible",
+			'data-inset': "true",
+			'data-iconpos': "right",
+			'class': "feature-list ui-corner-all " + icon + " ui-btn-icon-right" //,
+			//'html': itemName + itemHelpText
+		});
+
+		$('#svcCheckList').append(listItem);
+
+		//alertBody.append(listItem);
+
+		var itemName = $('<h3 />', {
+			'text': featureName,
+			'class': "feature-title"
+		});
+		console.log(itemName.toString());
+		var itemHelpText = $('p />', {
+			'text': "Help text..."
+		});
+
+		listItem.append(itemName, itemHelpText);
+		//listItem.append(itemHelpText);
+
+		//return listItem;
+	};
+
+	var createList = function(featuresList) {
+
+		// var list = $('<div />', {
+		// 	'data-role': "collabsibleset",
+		// 	'id': "svcCheckList"
+		// });
+		//var list = ;
+		$.each(featuresList, function(key, featureObj) {
+			//list.append(createItem(value));
+			createItem(featureObj.title,featureObj.supported,featureObj.ready);
+		});
+
+		$('#svcCheckList').listview("refresh");
+		//$('#svcCheckList').collapsibleset("refresh");
+		// console.log("Features checklist created: ");
+		// console.log(list);
+	};
+
+	//var finalList = 
+	createList(clientState.features);
+	// createList({
+	// 	1: 'Vibration',
+	// 	2: 'Geolocation',
+	// 	3: 'Local Storage'
+	// });
+
+	// var finalList = $('<div />', {
+	// 	'data-role': "collabsibleset",
+	// 	'id': "svcCheckList",
+	// 	'html': createList({1: 'Vibration',2: 'Geolocation', 3: 'Local Storage'})
+	// });
+
+	//return finalList;
+};
+
 var initServices = function(argument) {
 
 	var supportCheck = function(feature) {
+		var thisFeature = clientState.features[feature];
 		try {
-			clientState[feature].supported = Modernizr[feature]; //feature in navigator;
+			thisFeature.supported = Modernizr[feature]; //feature in navigator;
 			console.log("Raw var for " + feature + ": " + (Modernizr[feature]));
 		} catch (err) {
-			clientState[feature] = {
+			thisFeature = {
 				supported: false
 			};
 			console.log(err.message);
 		}
 
-
-		if (clientState[feature].supported) {
+		if (thisFeature.supported) {
 			var supportedMsg = feature + " supported.";
 			$('#footerText').append('<p>' + supportedMsg + '</p>');
 			console.log(supportedMsg);
 			//need to return feature variable
-			return clientState[feature].setup;
+			return thisFeature.setup;
 		} else {
 			var unsupportedMsg = feature + " not supported.";
 			$('#footerText').append('<p>' + unsupportedMsg + '</p>');
@@ -121,7 +219,7 @@ function parseHash() {
 	teamHash = parsedHash[0];
 	uniqueHash = parsedHash[1];
 	//NEED TO DO LOCALSTORAGE CHECK
-	if (clientState.localstorage.supported) {
+	if (clientState.features.localstorage.supported) {
 		localStorage.setItem("teamHash", teamHash);
 		localStorage.setItem("uniqueID", uniqueHash);
 	}
@@ -238,13 +336,17 @@ socket.on('serverMsg', function(res, err) {
 		},
 
 		newUserID: function() {
-			if (clientState.localstorage.supported) {
+			if (clientState.features.localstorage.supported) {
 				localStorage.setItem("userID", res.newID);
 				console.log("UserID stored locally as: " + localStorage.userID);
 			} else {
 				console.log("Warning: localStorage unsupported. ID not stored.");
 			}
 			msg('Hello Player ' + res.newID + '!');
+
+			svcCheckList();
+
+			//$('#alertBodyText').append(svcCheckList());
 		}
 
 	};

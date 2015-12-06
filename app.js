@@ -14,6 +14,7 @@ var log = require('./my_modules/logWithColor.js');
 
 var emitModule = require('./my_modules/emit.js');
 var userModule = require('./my_modules/users.js');
+var gameState = require('./my_modules/gameState.js');
 //var emitTo = require('./my_modules/emit.js')(io);
 //emitTo.start(io); //pass io to emitTo module
 
@@ -38,7 +39,18 @@ server.listen(process.env.PORT || port, function() {
 });
 
 //var players = [];
-var players = {};
+// var players = {
+
+// };
+var players = gameState.players;
+
+// var playerCount = function() {
+// 		var numberOfPlayers = 0;
+// 		for (p in players) {
+// 			numberOfPlayers++;
+// 		}
+// 		return numberOfPlayers;
+// 	};
 
 var teams = {
 	'g': 'gov',
@@ -55,6 +67,7 @@ io.on('connection', function(socket) {
 		for (p in players) {
 			console.log("Existing player: " + players[p].userID);
 			existingUserIDs.push(players[p].userID);
+
 		}
 
 		console.log("ExistingIDs List length: " + existingUserIDs.length);
@@ -66,12 +79,12 @@ io.on('connection', function(socket) {
 
 	//create new instance of emit module for each socket
 	var emitTo = emitModule(io, socket);
-	var player = userModule(players, socket);
+	var player = {}; //userModule(players, socket);
 
 	log('The user ' + socket.id + ' just connected!', colors.yellow);
 	emitTo.socket('connected', {});
 
-
+	//client message handler:
 	socket.on('clientMsg', function(res, err) {
 
 		var getTeam = function(hash) {
@@ -88,23 +101,24 @@ io.on('connection', function(socket) {
 
 		var handleClientMsg = {
 
-			mapLoaded: function() {
-				log("Map ready for " + socket.id);
-			},
+			// mapLoaded: function() {
+			// 	log("Map ready for " + socket.id);
+			// },
 
 			clientReady: function() {
 				log(socket.id + "ready to play!", colors.magenta.inverse);
 				checkPlayerType();
 			},
-			
+
 			newPlayer: function() {
 				player = userModule(players, socket); //instantiate new player object
 
 				var team = getTeam(res.teamHash); //create player
 				player.create(team);
+				player.addToTeam(team);
 
-				//add player to playersObject:
-				players[player.userID] = player;
+				players[player.userID] = player; //add player to playersObject
+				log("Total # of players: " + gameState.playerCount());
 				log('Added player to database:');
 				log(players[player.userID]);
 
@@ -117,6 +131,10 @@ io.on('connection', function(socket) {
 			returningPlayer: function() {
 				log('Requesting update of player ' + players[res.userID].userID, colors.italic);
 				players[res.userID].update(socket);
+				player = players[res.userID];
+				player.addToTeam(player.team);
+				log("'Player' for socket " + socket.id + " is now:", colors.red.inverse);
+				console.log(player);
 			}
 		};
 

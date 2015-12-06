@@ -50,9 +50,9 @@ module.exports = function(users, _socket) {
 			log(user.userID + " socket updated to: " + socket.id,colors.green);
 		},
 		//adds user to team
-		addToTeam: function(teamName,isNewPlayer) {
-			socket.join(team);
-			log('User ' + user.id + ' added to ' + team,colors.green);
+		addToTeam: function(teamName) { //,isNewPlayer)
+			socket.join(teamName);
+			log('User ' + user.userID + ' added to ' + teamName,colors.orange);
 		}
 	};
 
