@@ -1,47 +1,10 @@
 var app = {};
 var socket;
 
-var govHash, insHash;
-var teamHash, uniqueHash;
-var vibrate, geo, storage;
+// var govHash, insHash;
+// var teamHash, uniqueHash;
+// var vibrate, geo, storage;
 
-var clientState = {
-	connected: false,
-	mapLoaded: false,
-	readyCheckRunning: false,
-	ready: false,
-	features: {
-		geolocation: {
-			title: 'Geolocation',
-			supported: false,
-			ready: false,
-			setup: navigator.geolocation
-		},
-		vibrate: {
-			title: 'Vibration',
-			supported: false,
-			ready: true, //no prep required
-			setup: function(vibrateLength) {
-				try {
-					navigator.vibrate = navigator.vibrate ||
-						navigator.webkitVibrate ||
-						navigator.mozVibrate ||
-						navigator.msVibrate;
-					navigator.vibrate(vibrateLength);
-					msg("Vibrate successful!");
-				} catch (err) {
-					msg(err.message);
-				}
-			}
-		},
-		localstorage: {
-			title: 'Local Storage',
-			supported: false,
-			ready: true, //no prep required
-			setup: localStorage
-		}
-	}
-};
 
 
 var msg = function(text) {
@@ -60,139 +23,131 @@ app.ready = function() {
 	emit('clientReady', {});
 };
 
-var svcCheckList = function() {
+// var svcCheckList = function() {
 
-	var list = $('<ul />', {
-		'data-role': "listview", //collapsibleset",
-		'id': "svcCheckList"
-	});
+// 	var list = $('<ul />', {
+// 		'data-role': "listview", //collapsibleset",
+// 		'id': "svcCheckList"
+// 	});
 
+// 	var alertBody = $('#alertBodyText');
 
-	var alertBody = $('#alertBodyText');
+// 	//alertBody.html('');
+// 	alertBody.html(list);
+// 	alertBody.trigger('create');
 
-	//alertBody.html('');
+// 	var createItem = function(feature) {
 
-	alertBody.html(list);
-	alertBody.trigger('create');
+// 		var icon = "";
+// 		var helpText = "";
 
-	//$('#svcCheckList').collapsibleset();
+// 		if (!feature.supported) {
+// 			icon = "ui-icon-delete";
+// 			helpText = feature.noSupportText;
+// 		} else if (!feature.ready) {
+// 			icon = "ui-icon-alert";
+// 			helpText = feature.helpText;
+// 			feature.readyTest(); //test for ready state (e.g. ping location)
+// 		} else {
+// 			icon = "ui-icon-check";
+// 			//$("ui-icon-check").css({"background-color": "yellow"});
+// 		}
 
-	var createItem = function(featureName, supported, ready) {
+// 		var listItem = $('<li />', {
+// 			//'data-role': "collapsible",
+// 			'data-inset': "false",
+// 			'data-iconpos': "right",
+// 			'class': "feature-list ui-corner-all " + icon + " ui-btn-icon-right" //,
+// 			//'html': itemName + itemHelpText
+// 		});
 
-		var icon = "";
-		if (!supported) {
-			icon = "ui-icon-delete"
-		} else if (!ready) {
-			icon = "ui-icon-alert"
-		} else {
-			icon = "ui-icon-check"
-		};
+// 		$('#svcCheckList').append(listItem);
 
-		var listItem = $('<li />', {
-			//'data-role': "collapsible",
-			'data-inset': "true",
-			'data-iconpos': "right",
-			'class': "feature-list ui-corner-all " + icon + " ui-btn-icon-right" //,
-			//'html': itemName + itemHelpText
-		});
+// 		var itemName = $('<h3 />', {
+// 			'text': feature.title, //featureName,
+// 			'class': "feature-title"
+// 		});
+// 		console.log(itemName.toString());
 
-		$('#svcCheckList').append(listItem);
+// 		var itemHelpText = $('<p />', {
+// 			'text': helpText
+// 		});
 
-		//alertBody.append(listItem);
+// 		listItem.append(itemName, itemHelpText);
+// 		//listItem.append(itemHelpText);
 
-		var itemName = $('<h3 />', {
-			'text': featureName,
-			'class': "feature-title"
-		});
-		console.log(itemName.toString());
-		var itemHelpText = $('p />', {
-			'text': "Help text..."
-		});
+// 		//return listItem;
+// 	};
 
-		listItem.append(itemName, itemHelpText);
-		//listItem.append(itemHelpText);
+// 	var createList = function(featuresList) {
 
-		//return listItem;
-	};
+// 		var allServicesReady = true;
 
-	var createList = function(featuresList) {
+// 		$.each(featuresList, function(key, featureObj) {
+// 			if (!featureObj.supported || !featureObj.ready) {
+// 				createItem(featureObj);
+// 			}
 
-		// var list = $('<div />', {
-		// 	'data-role': "collabsibleset",
-		// 	'id': "svcCheckList"
-		// });
-		//var list = ;
-		$.each(featuresList, function(key, featureObj) {
-			//list.append(createItem(value));
-			createItem(featureObj.title,featureObj.supported,featureObj.ready);
-		});
+// 			if (featureObj.supported && !featureObj.ready) {
+// 				allServicesReady = false;
+// 			}
+// 		});
 
-		$('#svcCheckList').listview("refresh");
-		//$('#svcCheckList').collapsibleset("refresh");
-		// console.log("Features checklist created: ");
-		// console.log(list);
-	};
+// 		if (allServicesReady){
+// 			//$('#svcCheckList').append("<h3>Ready!</h3>");
+// 			msg("Ready!");
+// 		}
 
-	//var finalList = 
-	createList(clientState.features);
-	// createList({
-	// 	1: 'Vibration',
-	// 	2: 'Geolocation',
-	// 	3: 'Local Storage'
-	// });
+// 		$('#svcCheckList').listview("refresh");
+// 		//$('#svcCheckList').collapsibleset("refresh");
+// 	};
 
-	// var finalList = $('<div />', {
-	// 	'data-role': "collabsibleset",
-	// 	'id': "svcCheckList",
-	// 	'html': createList({1: 'Vibration',2: 'Geolocation', 3: 'Local Storage'})
-	// });
+// 	createList(clientState.features);
 
-	//return finalList;
-};
+// };
 
-var initServices = function(argument) {
+// var initServices = function() {
 
-	var supportCheck = function(feature) {
-		var thisFeature = clientState.features[feature];
-		try {
-			thisFeature.supported = Modernizr[feature]; //feature in navigator;
-			console.log("Raw var for " + feature + ": " + (Modernizr[feature]));
-		} catch (err) {
-			thisFeature = {
-				supported: false
-			};
-			console.log(err.message);
-		}
+// 	var initialize = function(feature) {
+// 		var thisFeature = clientState.features[feature];
+// 		try {
+// 			thisFeature.supported = Modernizr[feature]; //feature in navigator;
+// 			//console.log("Raw var for " + feature + ": " + (Modernizr[feature]));
+// 		} catch (err) {
+// 			thisFeature = {
+// 				supported: false
+// 			};
+// 			console.log(err.message);
+// 		}
 
-		if (thisFeature.supported) {
-			var supportedMsg = feature + " supported.";
-			$('#footerText').append('<p>' + supportedMsg + '</p>');
-			console.log(supportedMsg);
-			//need to return feature variable
-			return thisFeature.setup;
-		} else {
-			var unsupportedMsg = feature + " not supported.";
-			$('#footerText').append('<p>' + unsupportedMsg + '</p>');
-			console.log(unsupportedMsg);
-			return function() {
-				console.log("Error: " + feature + " not supported. skipping...");
-				return;
-			};
-		}
-	};
+// 		if (thisFeature.supported) {
+// 			var supportedMsg = feature + " supported.";
+// 			$('#footerText').append('<p>' + supportedMsg + '</p>');
+// 			console.log(supportedMsg);
+// 			//need to return feature variable
+// 			return thisFeature.setup;
+// 		} else {
+// 			var unsupportedMsg = feature + " not supported.";
+// 			$('#footerText').append('<p>' + unsupportedMsg + '</p>');
+// 			console.log(unsupportedMsg);
+// 			return function() {
+// 				console.log("Error: " + feature + " not supported. skipping...");
+// 				return;
+// 			};
+// 		}
+// 	};
 
-	vibrate = supportCheck('vibrate');
-	console.log(vibrate);
-	vibrate(1000);
+// 	vibrate = initialize('vibrate');
+// 	//initialize('vibrate');
+// 	console.log(vibrate);
+// 	vibrate(1000);
 
-	geo = supportCheck('geolocation');
-	geo.getCurrentPosition(function(position) {
-		console.log('Position: ' + position.coords.latitude + ', ' + position.coords.longitude);
-	});
-	console.log("Location Svcs initialized");
+// 	geo = initialize('geolocation');
+// 	console.log("Location Svcs initialized");
 
-	storage = supportCheck('localstorage');
-};
+// 	storage = initialize('localstorage');
+// };
+
 
 app.init = function() {
 	msg('Connecting...');
@@ -205,25 +160,6 @@ app.init = function() {
 	readyCheck(); //start checking for ready state
 };
 
-function parseHash() {
-	msg('Parsing hash...');
-	var thisHash = location.hash;
-	msg('Hash is ' + thisHash);
-	var parsedHash = thisHash.split("&");
-	parsedHash[0] = parsedHash[0].slice(1, 100);
-	msg('Parsed hash is ' + parsedHash[0] + ', ' + parsedHash[1]);
-	console.log("Hash:");
-	console.log(parsedHash[0]);
-	console.log(parsedHash[1]);
-
-	teamHash = parsedHash[0];
-	uniqueHash = parsedHash[1];
-	//NEED TO DO LOCALSTORAGE CHECK
-	if (clientState.features.localstorage.supported) {
-		localStorage.setItem("teamHash", teamHash);
-		localStorage.setItem("uniqueID", uniqueHash);
-	}
-}
 
 function emit(tag, emitObj) {
 	emitObj['tag'] = tag;
@@ -231,68 +167,68 @@ function emit(tag, emitObj) {
 	console.log('Sending ' + tag + ' to server');
 }
 
-function initMap() {
-	msg("Initializing map");
-	//initializing mapbox.js / leaflet map
-	L.mapbox.accessToken = 'pk.eyJ1IjoiZnVja3lvdXJhcGkiLCJhIjoiZEdYS2ZmbyJ9.6vnDgXe3K0iWoNtZ4pKvqA';
+// function initMap() {
+// 	msg("Initializing map");
+// 	//initializing mapbox.js / leaflet map
+// 	L.mapbox.accessToken = 'pk.eyJ1IjoiZnVja3lvdXJhcGkiLCJhIjoiZEdYS2ZmbyJ9.6vnDgXe3K0iWoNtZ4pKvqA';
 
-	var map = L.mapbox.map('map', 'fuckyourapi.o7ne7nmm', {
-			zoomControl: false
-		})
-		.setView([40.734801, -73.998799], 16)
-		.on('ready', function() {
-			clientState.mapLoaded = true;
-			console.log("Map is initialized!");
-			//sendMapReady();
-		});
+// 	var map = L.mapbox.map('map', 'fuckyourapi.o7ne7nmm', {
+// 			zoomControl: false
+// 		})
+// 		.setView([40.734801, -73.998799], 16)
+// 		.on('ready', function() {
+// 			clientState.mapLoaded = true;
+// 			console.log("Map is initialized!");
+// 			//sendMapReady();
+// 		});
 
-	//to override relative positioning from leaflet style
-	$('#map').css({
-		"position": "static"
-	});
-}
+// 	//to override relative positioning from leaflet style
+// 	$('#map').css({
+// 		"position": "static"
+// 	});
+// }
 
-function readyCheck() {
-	clientState.readyCheckRunning = true;
+// function readyCheck() {
+// 	clientState.readyCheckRunning = true;
 
-	msg("Checking if ready");
-	if (clientState.connected && clientState.mapLoaded) {
-		clientState.ready = true;
-		$('#app').trigger('ready');
-		// emit('clientReady', {});
-	} else {
-		var readyCounter = 60;
-		//mobileAlert("CONNECTING...");
+// 	msg("Checking if ready");
+// 	if (clientState.connected && clientState.mapLoaded) {
+// 		clientState.ready = true;
+// 		$('#app').trigger('ready');
+// 		// emit('clientReady', {});
+// 	} else {
+// 		var readyCounter = 60;
+// 		//mobileAlert("CONNECTING...");
 
-		var waitForReady = setInterval(function() {
+// 		var waitForReady = setInterval(function() {
 
-			console.log("Waiting for ready state...");
-			if (clientState.connected && clientState.mapLoaded) {
-				clientState.ready = true;
-				$('#app').trigger('ready');
-				//emit('clientReady', {});
-				//closeAlert();
-				//console.log("Close msg called");
-				clearInterval(waitForReady);
-			} else if (readyCounter > 0) {
-				readyCounter--;
-				if (!clientState.connected) {
-					console.log("Waiting for connection.");
-				}
-				if (!clientState.mapLoaded) {
-					console.log("Waiting for map.");
-				}
+// 			console.log("Waiting for ready state...");
+// 			if (clientState.connected && clientState.mapLoaded) {
+// 				clientState.ready = true;
+// 				$('#app').trigger('ready');
+// 				//emit('clientReady', {});
+// 				//closeAlert();
+// 				//console.log("Close msg called");
+// 				clearInterval(waitForReady);
+// 			} else if (readyCounter > 0) {
+// 				readyCounter--;
+// 				if (!clientState.connected) {
+// 					console.log("Waiting for connection.");
+// 				}
+// 				if (!clientState.mapLoaded) {
+// 					console.log("Waiting for map.");
+// 				}
 
-				console.log(readyCounter * 0.5 + "seconds");
-			} else {
-				console.log("Not ready. Reloading");
-				clearInterval(waitForReady);
-				window.location.reload();
-			}
-		}, 500);
+// 				console.log(readyCounter * 0.5 + "seconds");
+// 			} else {
+// 				console.log("Not ready. Reloading");
+// 				clearInterval(waitForReady);
+// 				window.location.reload();
+// 			}
+// 		}, 500);
 
-	}
-}
+// 	}
+// }
 
 app.init();
 

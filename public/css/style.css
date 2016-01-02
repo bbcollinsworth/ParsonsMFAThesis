@@ -64,6 +64,10 @@
 	/*width: 100%;*/
 }
 
+.ui-icon-check {
+	background-color: green;
+}
+
 .feature-title {
 	border-radius: 0px;
 	width: 100%;

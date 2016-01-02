@@ -106,7 +106,7 @@ io.on('connection', function(socket) {
 			// },
 
 			clientReady: function() {
-				log(socket.id + "ready to play!", colors.magenta.inverse);
+				log(socket.id + " is fully connected!", colors.magenta.inverse);
 				checkPlayerType();
 			},
 
