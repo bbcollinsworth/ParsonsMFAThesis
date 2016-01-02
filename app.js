@@ -11,6 +11,9 @@ var geolib = require('geolib');
 
 var colors = require('colors');
 var log = require('./my_modules/logWithColor.js');
+colors.setTheme({
+	err: 'bgRed'
+});
 
 var emitModule = require('./my_modules/emit.js');
 var userModule = require('./my_modules/users.js');
@@ -101,12 +104,8 @@ io.on('connection', function(socket) {
 
 		var handleClientMsg = {
 
-			// mapLoaded: function() {
-			// 	log("Map ready for " + socket.id);
-			// },
-
-			clientReady: function() {
-				log(socket.id + " is fully connected!", colors.magenta.inverse);
+			clientInitialized: function() {
+				log(socket.id + " is initialized!", colors.yellow);
 				checkPlayerType();
 			},
 
@@ -133,12 +132,20 @@ io.on('connection', function(socket) {
 				players[res.userID].update(socket);
 				player = players[res.userID];
 				player.addToTeam(player.team);
-				log("'Player' for socket " + socket.id + " is now:", colors.red.inverse);
+				log("'Player' for socket " + socket.id + " is now:", colors.yellow.inverse);
 				console.log(player);
+			},
+
+			readyToPlay: function() {
+
 			}
 		};
 
-		handleClientMsg[res.tag]();
+		try {
+			handleClientMsg[res.tag]();
+		} catch (err) {
+			log('Error: "' + res.tag + '" is not a valid socket.on message', colors.err);
+		}
 
 	});
 

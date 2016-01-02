@@ -17,7 +17,8 @@ var clientState = {
 						console.log('Position: ' + position.coords.latitude + ', ' + position.coords.longitude);
 						clientState.features.geolocation.ready = true;
 						console.log('Geoloc test successful');
-						svcCheckList();
+						
+						startup.svcCheck();//re-run service check
 					});
 				}, 1000);
 			}
@@ -41,7 +42,7 @@ var clientState = {
 					msg(err.message);
 				}
 			},
-			readyTest: function(){
+			readyTest: function() {
 				console.log('Ready test called for vibration but no test.');
 			}
 		},
@@ -52,7 +53,7 @@ var clientState = {
 			supported: false,
 			ready: true, //no prep required
 			setup: localStorage,
-			readyTest: function(){
+			readyTest: function() {
 				console.log('Ready test called for localStorage but no test.');
 			}
 		}
