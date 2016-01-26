@@ -1,14 +1,31 @@
 var app = {};
 var socket;
 
+var player = {
+	pos: {}
+};
+
 var msg = function(text) {
 	$('#alertBodyText').html('<p>' + text + '</p>');
 };
 
 var attachEvents = function() {
-	$('#app').on('ready', function() {
+	$('#app').on('initialized', function() {
 		readyCheckRunning = false;
 		emit('clientInitialized', {});
+	});
+
+	$('#app').on('ready', function() {
+		//readyCheckRunning = false;
+		// localStorage.setItem('svcCheckComplete',true);
+		emit('readyToPlay', {});
+	});
+
+	$('#searchButton').off('click').on('click', function() {
+		msg('Ping button clicked');
+		emit('findSuspects', {
+			existingLocData: []
+		});
 	});
 };
 
@@ -42,6 +59,18 @@ app.init();
 
 //INCOMING SOCKET FUNCTIONS
 socket.on('serverMsg', function(res, err) {
+
+	var storeAndSendLocation = function(p) {
+		player.pos = {
+			lat: p.coords.latitude,
+			lng: p.coords.longitude,
+			time: Date.now()
+		};
+
+		emit('locationUpdate', {
+			locData: player.pos
+		});
+	}
 
 	var handleServerMsg = {
 
@@ -91,8 +120,74 @@ socket.on('serverMsg', function(res, err) {
 			startup.svcCheck();
 
 			//$('#alertBodyText').append(svcCheckList());
-		}
+		},
 
+		returningReadyCheck: function() {
+			if (localStorage.svcCheckComplete) {
+				$('#app').trigger('ready');
+			} else {
+				startup.svcCheck();
+			}
+		},
+
+		getLocation: function(callback) {
+			geo.getCurrentPosition(function(position) {
+				console.log('Position: ' + position.coords.latitude + ', ' + position.coords.longitude);
+
+				storeAndSendLocation(position);
+
+				if (callback !== undefined) {
+					callback();
+				}
+			});
+		},
+
+		trackLocation: function() {
+			geo.watchPosition(function(position) {
+				console.log('Latest Watched Position: ' + position.coords.latitude + ', ' + position.coords.longitude);
+
+				storeAndSendLocation(position);
+
+			});
+		},
+
+		suspectData: function() {
+			console.log('Suspect data is: ');
+			console.log(res.locData);
+
+			var suspectMarker = {
+				'marker-size': 'large',
+				'marker-symbol': 'pitch',
+				'marker-color': '#ff0000'
+			};
+
+			var agentMarker = {
+				'marker-size': 'large',
+				'marker-symbol': 'police',
+				'marker-color': '#0000ff'
+			};
+
+			$.each(res.locData, function(userID, player) {
+
+				var latestPos = player.locData[0];
+				var markerIcon = {};
+
+				switch (player.team) {
+					case 'gov':
+						markerIcon = agentMarker;
+						break;
+					case 'ins':
+					default:
+						markerIcon = suspectMarker;
+						break;
+				}
+
+				L.marker([latestPos.lat, latestPos.lng], {
+					icon: L.mapbox.marker.icon(markerIcon)
+				}).addTo(map);
+			});
+
+		}
 	};
 
 	handleServerMsg[res.tag]();

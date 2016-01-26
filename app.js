@@ -84,6 +84,18 @@ io.on('connection', function(socket) {
 	var emitTo = emitModule(io, socket);
 	var player = {}; //userModule(players, socket);
 
+	var tracking;
+
+	var startTracking = function() {
+		player.trackActive = true;
+		log('Started tracking ' + player.userID,colors.green);
+		emitTo.socket('getLocation', {});
+
+		tracking = setInterval(function() {
+			emitTo.socket('getLocation', {});
+		}, 10000);
+	};
+
 	log('The user ' + socket.id + ' just connected!', colors.yellow);
 	emitTo.socket('connected', {});
 
@@ -125,6 +137,7 @@ io.on('connection', function(socket) {
 				emitTo.socket('newUserID', {
 					newID: player.userID
 				});
+
 			},
 
 			returningPlayer: function() {
@@ -134,18 +147,79 @@ io.on('connection', function(socket) {
 				player.addToTeam(player.team);
 				log("'Player' for socket " + socket.id + " is now:", colors.yellow.inverse);
 				console.log(player);
+
+				player.connected = true;
+
+				emitTo.socket('returningReadyCheck',{});
 			},
 
 			readyToPlay: function() {
+				//player.startTracking();
+				player.connected = true;
+				startTracking();
+			},
 
+			locationUpdate: function() {
+				player.locationData.unshift(res.locData);
+				log('New location data for ' + player.userID + ":");
+				console.log(player.locationData);
+			},
+
+			findSuspects: function() {
+				newLocData = {}; //getInsLocData();
+				for (p in players) {
+					newLocData[players[p].userID] = {
+						team: players[p].team,
+						locData: players[p].getLocationData()
+					};
+				}
+				// Object.keys(players).forEach(function(p){
+				// 	newLocData[p.userID] = {
+				// 		team: p.team,
+				// 		locData: p.locationData
+				// 	};
+				// });
+				log('Data to be sent to ' + socket.id + ":");
+				console.log(newLocData);
+				emitTo.socket('suspectData', {
+					locData: newLocData
+				});
 			}
 		};
 
+		//handleClientMsg[res.tag]();
 		try {
 			handleClientMsg[res.tag]();
 		} catch (err) {
-			log('Error: "' + res.tag + '" is not a valid socket.on message', colors.err);
+			log('Error: "' + res.tag + '" is not a valid socket.on message because:', colors.err);
+			log(err, colors.err);
 		}
+
+	});
+
+	// when a client disconnects
+	socket.on('disconnect', function() {
+		log('User ' + socket.id + ' just disconnected.', colors.orange);
+
+		//var userToRemove = getUser(socket.id);
+		//removePlayerFromTeam(userToRemove);
+		//userToRemove.socketID = '';
+		//player.socketID = '';
+
+		//if (userToRemove.team = 'ins'){
+		if (player.trackActive) {
+			clearInterval(tracking);
+		}
+
+		try {
+		player.removeFromTeam(player.team);
+		player.disconnect();
+	} catch (err) {
+		log(err, colors.err);
+	}
+
+		console.log('current players: ' + gameState.playerCount());
+		console.log('current connected users: ' + io.sockets.sockets.length);
 
 	});
 

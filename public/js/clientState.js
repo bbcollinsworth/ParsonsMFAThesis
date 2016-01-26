@@ -17,8 +17,30 @@ var clientState = {
 						console.log('Position: ' + position.coords.latitude + ', ' + position.coords.longitude);
 						clientState.features.geolocation.ready = true;
 						console.log('Geoloc test successful');
-						
-						startup.svcCheck();//re-run service check
+
+						startup.svcCheck(); //re-run service check
+					}, function(error) {
+						switch (error.code) {
+							case 1:
+								// 1 === error.PERMISSION_DENIED
+								console.log('User does not want to share Geolocation data.');
+								break;
+
+							case 2:
+								// 2 === error.POSITION_UNAVAILABLE
+								console.log('Position of the device could not be determined.');
+								break;
+
+							case 3:
+								// 3 === error.TIMEOUT
+								console.log('Position Retrieval TIMEOUT.');
+								break;
+
+							default:
+								// 0 means UNKNOWN_ERROR
+								console.log('Unknown Error');
+								break;
+						}
 					});
 				}, 1000);
 			}
