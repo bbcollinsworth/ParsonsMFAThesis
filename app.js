@@ -41,19 +41,12 @@ server.listen(process.env.PORT || port, function() {
 	log(serverUpString, colors.cyan.inverse);
 });
 
-//var players = [];
-// var players = {
-
-// };
 var players = gameState.players;
 
-// var playerCount = function() {
-// 		var numberOfPlayers = 0;
-// 		for (p in players) {
-// 			numberOfPlayers++;
-// 		}
-// 		return numberOfPlayers;
-// 	};
+gameState.setupHubs();
+var hubs = gameState.hubs; //this should alter data in gamestate when altered
+log("Starting hubs are: ", colors.yellow.inverse);
+console.log(hubs);
 
 var teams = {
 	'g': 'gov',
@@ -88,7 +81,7 @@ io.on('connection', function(socket) {
 
 	var startTracking = function() {
 		player.trackActive = true;
-		log('Started tracking ' + player.userID,colors.green);
+		log('Started tracking ' + player.userID, colors.green);
 		emitTo.socket('getLocation', {});
 
 		tracking = setInterval(function() {
@@ -150,13 +143,25 @@ io.on('connection', function(socket) {
 
 				player.connected = true;
 
-				emitTo.socket('returningReadyCheck',{});
+				emitTo.socket('returningReadyCheck', {});
 			},
 
 			readyToPlay: function() {
 				//player.startTracking();
 				player.connected = true;
 				startTracking();
+
+				switch (player.team) {
+					case 'gov':
+						emitTo.socket('hubStartData', {
+							hubs: hubs
+						});
+						break;
+					case 'int':
+						break;
+					default:
+						break;
+				}
 			},
 
 			locationUpdate: function() {
@@ -164,6 +169,13 @@ io.on('connection', function(socket) {
 				log('New location data for ' + player.userID + ":");
 				console.log(player.locationData);
 			},
+
+			//SEE 'READYTOPLAY' ABOVE FOR WHERE THIS WAS MOVED...
+			// getHubs: function() {
+			// 	emitTo.socket('hubStartData', {
+			// 		hubs: hubs
+			// 	});
+			// },
 
 			findSuspects: function() {
 				newLocData = {}; //getInsLocData();
@@ -212,11 +224,11 @@ io.on('connection', function(socket) {
 		}
 
 		try {
-		player.removeFromTeam(player.team);
-		player.disconnect();
-	} catch (err) {
-		log(err, colors.err);
-	}
+			player.removeFromTeam(player.team);
+			player.disconnect();
+		} catch (err) {
+			log(err, colors.err);
+		}
 
 		console.log('current players: ' + gameState.playerCount());
 		console.log('current connected users: ' + io.sockets.sockets.length);

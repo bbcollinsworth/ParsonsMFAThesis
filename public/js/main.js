@@ -70,7 +70,13 @@ socket.on('serverMsg', function(res, err) {
 		emit('locationUpdate', {
 			locData: player.pos
 		});
-	}
+	};
+
+	var renderHubs = function(hubData){
+		$.each(hubData, function(i, hub) {
+			L.circle([hub.lat, hub.lng], hub.hackRange).addTo(map);
+		});
+	};
 
 	var handleServerMsg = {
 
@@ -149,6 +155,10 @@ socket.on('serverMsg', function(res, err) {
 				storeAndSendLocation(position);
 
 			});
+		},
+
+		hubStartData: function(){
+			renderHubs(res.hubs);
 		},
 
 		suspectData: function() {
