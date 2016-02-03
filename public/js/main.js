@@ -5,6 +5,8 @@ var player = {
 	pos: {}
 };
 
+var hubs = [];
+
 var msg = function(text) {
 	$('#alertBodyText').html('<p>' + text + '</p>');
 };
@@ -60,7 +62,7 @@ app.init();
 //INCOMING SOCKET FUNCTIONS
 socket.on('serverMsg', function(res, err) {
 
-	var storeAndSendLocation = function(p) {
+	var storeAndSendLocation = function(p, callback) {
 		player.pos = {
 			lat: p.coords.latitude,
 			lng: p.coords.longitude,
@@ -70,13 +72,42 @@ socket.on('serverMsg', function(res, err) {
 		emit('locationUpdate', {
 			locData: player.pos
 		});
+
+		if (callback !== undefined) {
+			callback();
+		}
 	};
 
-	var renderHubs = function(hubData){
-		$.each(hubData, function(i, hub) {
-			L.circle([hub.lat, hub.lng], hub.hackRange).addTo(map);
-		});
+	var centerOnPlayer = function() {
+		map.panTo([player.pos.lat, player.pos.lng]);
 	};
+
+	// var renderHubs = function(hubData) {
+	// 	hubs = hubData;
+
+	// 	var circleOptions = {
+	// 		stroke: false
+	// 	};
+
+	// 	var circleMarkerOptions = {
+	// 		draggable: true,
+	// 		weight: 3
+	// 	};
+
+	// 	$.each(hubs, function(i, hub) {
+	// 		hub['area'] = L.circle([hub.lat, hub.lng], hub.hackRange, circleOptions);
+	// 		// hub.marker.options = circleOptions;
+	// 		hub.area.addTo(map);
+	// 		hub['marker'] = L.circleMarker([hub.lat, hub.lng], circleMarkerOptions);
+	// 		hub.marker.setRadius(10);
+	// 		hub.marker.addTo(map);
+
+	// 	});
+
+	// 	// $.each(hubData, function(i, hub) {
+	// 	// 	L.circle([hub.lat, hub.lng], hub.hackRange).addTo(map);
+	// 	// });
+	// };
 
 	var handleServerMsg = {
 
@@ -136,15 +167,19 @@ socket.on('serverMsg', function(res, err) {
 			}
 		},
 
-		getLocation: function(callback) {
+		getLocation: function() {
 			geo.getCurrentPosition(function(position) {
 				console.log('Position: ' + position.coords.latitude + ', ' + position.coords.longitude);
 
-				storeAndSendLocation(position);
-
-				if (callback !== undefined) {
-					callback();
+				if (res.firstPing) {
+					storeAndSendLocation(position, centerOnPlayer);
+				} else {
+					storeAndSendLocation(position);
 				}
+
+				// if (callback !== undefined) {
+				// 	callback();
+				// }
 			});
 		},
 
@@ -157,45 +192,47 @@ socket.on('serverMsg', function(res, err) {
 			});
 		},
 
-		hubStartData: function(){
-			renderHubs(res.hubs);
+		hubStartData: function() {
+			gov.renderHubs(res.hubs);
 		},
 
 		suspectData: function() {
 			console.log('Suspect data is: ');
 			console.log(res.locData);
 
-			var suspectMarker = {
-				'marker-size': 'large',
-				'marker-symbol': 'pitch',
-				'marker-color': '#ff0000'
-			};
+			gov.renderPlayers(res.locData);
 
-			var agentMarker = {
-				'marker-size': 'large',
-				'marker-symbol': 'police',
-				'marker-color': '#0000ff'
-			};
+			// var suspectMarker = {
+			// 	'marker-size': 'large',
+			// 	'marker-symbol': 'pitch',
+			// 	'marker-color': '#ff0000'
+			// };
 
-			$.each(res.locData, function(userID, player) {
+			// var agentMarker = {
+			// 	'marker-size': 'large',
+			// 	'marker-symbol': 'police',
+			// 	'marker-color': '#0000ff'
+			// };
 
-				var latestPos = player.locData[0];
-				var markerIcon = {};
+			// $.each(res.locData, function(userID, player) {
 
-				switch (player.team) {
-					case 'gov':
-						markerIcon = agentMarker;
-						break;
-					case 'ins':
-					default:
-						markerIcon = suspectMarker;
-						break;
-				}
+			// 	var latestPos = player.locData[0];
+			// 	var markerIcon = {};
 
-				L.marker([latestPos.lat, latestPos.lng], {
-					icon: L.mapbox.marker.icon(markerIcon)
-				}).addTo(map);
-			});
+			// 	switch (player.team) {
+			// 		case 'gov':
+			// 			markerIcon = agentMarker;
+			// 			break;
+			// 		case 'ins':
+			// 		default:
+			// 			markerIcon = suspectMarker;
+			// 			break;
+			// 	}
+
+			// 	L.marker([latestPos.lat, latestPos.lng], {
+			// 		icon: L.mapbox.marker.icon(markerIcon)
+			// 	}).addTo(map);
+			// });
 
 		}
 	};

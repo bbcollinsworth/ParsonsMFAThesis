@@ -82,7 +82,9 @@ io.on('connection', function(socket) {
 	var startTracking = function() {
 		player.trackActive = true;
 		log('Started tracking ' + player.userID, colors.green);
-		emitTo.socket('getLocation', {});
+		emitTo.socket('getLocation', {
+			firstPing: true
+		});
 
 		tracking = setInterval(function() {
 			emitTo.socket('getLocation', {});
