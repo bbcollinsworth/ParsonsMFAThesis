@@ -82,33 +82,6 @@ socket.on('serverMsg', function(res, err) {
 		map.panTo([player.pos.lat, player.pos.lng]);
 	};
 
-	// var renderHubs = function(hubData) {
-	// 	hubs = hubData;
-
-	// 	var circleOptions = {
-	// 		stroke: false
-	// 	};
-
-	// 	var circleMarkerOptions = {
-	// 		draggable: true,
-	// 		weight: 3
-	// 	};
-
-	// 	$.each(hubs, function(i, hub) {
-	// 		hub['area'] = L.circle([hub.lat, hub.lng], hub.hackRange, circleOptions);
-	// 		// hub.marker.options = circleOptions;
-	// 		hub.area.addTo(map);
-	// 		hub['marker'] = L.circleMarker([hub.lat, hub.lng], circleMarkerOptions);
-	// 		hub.marker.setRadius(10);
-	// 		hub.marker.addTo(map);
-
-	// 	});
-
-	// 	// $.each(hubData, function(i, hub) {
-	// 	// 	L.circle([hub.lat, hub.lng], hub.hackRange).addTo(map);
-	// 	// });
-	// };
-
 	var handleServerMsg = {
 
 		connected: function() {
@@ -155,8 +128,6 @@ socket.on('serverMsg', function(res, err) {
 			msg('Hello Player ' + res.newID + '!');
 
 			startup.svcCheck();
-
-			//$('#alertBodyText').append(svcCheckList());
 		},
 
 		returningReadyCheck: function() {
@@ -177,9 +148,6 @@ socket.on('serverMsg', function(res, err) {
 					storeAndSendLocation(position);
 				}
 
-				// if (callback !== undefined) {
-				// 	callback();
-				// }
 			});
 		},
 
@@ -201,38 +169,6 @@ socket.on('serverMsg', function(res, err) {
 			console.log(res.locData);
 
 			gov.renderPlayers(res.locData);
-
-			// var suspectMarker = {
-			// 	'marker-size': 'large',
-			// 	'marker-symbol': 'pitch',
-			// 	'marker-color': '#ff0000'
-			// };
-
-			// var agentMarker = {
-			// 	'marker-size': 'large',
-			// 	'marker-symbol': 'police',
-			// 	'marker-color': '#0000ff'
-			// };
-
-			// $.each(res.locData, function(userID, player) {
-
-			// 	var latestPos = player.locData[0];
-			// 	var markerIcon = {};
-
-			// 	switch (player.team) {
-			// 		case 'gov':
-			// 			markerIcon = agentMarker;
-			// 			break;
-			// 		case 'ins':
-			// 		default:
-			// 			markerIcon = suspectMarker;
-			// 			break;
-			// 	}
-
-			// 	L.marker([latestPos.lat, latestPos.lng], {
-			// 		icon: L.mapbox.marker.icon(markerIcon)
-			// 	}).addTo(map);
-			// });
 
 		}
 	};

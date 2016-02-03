@@ -15,22 +15,30 @@ var gov = {
 	renderHubs: function(hubData) {
 		hubs = hubData;
 
-		var circleOptions = {
-			stroke: false
-		};
+		// var circleOptions = {
+		// 	stroke: false
+		// };
 
-		var circleMarkerOptions = {
-			draggable: true,
-			weight: 3
-		};
+		// var circleMarkerOptions = {
+		// 	draggable: true,
+		// 	weight: 3
+		// };
 
-		$.each(hubs, function(i, hub) {
-			hub['area'] = L.circle([hub.lat, hub.lng], hub.hackRange, circleOptions);
-			// hub.marker.options = circleOptions;
-			hub.area.addTo(map);
-			hub['marker'] = L.circleMarker([hub.lat, hub.lng], circleMarkerOptions);
-			hub.marker.setRadius(10);
-			hub.marker.addTo(map);
+		$.each(hubs, function(index, h) {
+			var renderedHub = viz.hub(h);
+
+			h['area'] = renderedHub.area;
+			h.area.addTo(map);
+			h['marker'] = renderedHub.marker;
+			h.marker.addTo(map);
+
+
+			// hub['area'] = L.circle([hub.lat, hub.lng], hub.hackRange, circleOptions);
+			// // hub.marker.options = circleOptions;
+			// hub.area.addTo(map);
+			// hub['marker'] = L.circleMarker([hub.lat, hub.lng], circleMarkerOptions);
+			// hub.marker.setRadius(10);
+			// hub.marker.addTo(map);
 
 		});
 	},
