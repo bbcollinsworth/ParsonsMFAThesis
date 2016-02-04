@@ -155,9 +155,13 @@ io.on('connection', function(socket) {
 
 				switch (player.team) {
 					case 'gov':
-						emitTo.socket('hubStartData', {
+						// emitTo.socket('hubStartData', {
+						// 	hubs: hubs
+						// });
+emitTo.socket('govStartData', {
 							hubs: hubs
 						});
+
 						break;
 					case 'int':
 						break;

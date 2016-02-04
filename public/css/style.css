@@ -99,6 +99,11 @@
 }
 
 
+/*-------------------- ANIMATIONS --------------------*/
+@keyframes blink{
+	to{color:red;}
+}
+
 
 /*-------------------- MEDIA QUERIES --------------------*/
 @media only screen and (max-width: 750px){

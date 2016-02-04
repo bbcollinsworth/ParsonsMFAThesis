@@ -34,6 +34,8 @@ var startup = {
 			})
 			.setView([40.734801, -73.998799], 16)
 			.on('ready', function() {
+
+				window.featureLayer = L.geoJson().addTo(map);
 				clientState.mapLoaded = true;
 				console.log("Map is initialized!");
 				//sendMapReady();

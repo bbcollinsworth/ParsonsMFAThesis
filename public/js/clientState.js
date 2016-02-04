@@ -3,6 +3,11 @@ var clientState = {
 	mapLoaded: false,
 	readyCheckRunning: false,
 	ready: false,
+	playerPos: {
+		lat: 0,
+		lng: 0
+	},
+	allPlayers: {},
 	features: {
 		geolocation: {
 			title: 'Geolocation',

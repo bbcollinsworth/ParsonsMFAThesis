@@ -56,8 +56,10 @@ function emit(tag, emitObj) {
 	console.log('Sending ' + tag + ' to server');
 }
 
+// window.onload = function() {
+ 	app.init();
+// };
 
-app.init();
 
 //INCOMING SOCKET FUNCTIONS
 socket.on('serverMsg', function(res, err) {
@@ -164,6 +166,12 @@ socket.on('serverMsg', function(res, err) {
 			gov.renderHubs(res.hubs);
 		},
 
+		govStartData: function() {
+			gov.renderHubs(res.hubs);
+			gov.renderUI();
+			attachEvents();
+		},
+
 		suspectData: function() {
 			console.log('Suspect data is: ');
 			console.log(res.locData);
@@ -177,3 +185,4 @@ socket.on('serverMsg', function(res, err) {
 
 
 });
+
