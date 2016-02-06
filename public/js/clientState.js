@@ -7,7 +7,12 @@ var clientState = {
 		lat: 0,
 		lng: 0
 	},
-	allPlayers: {},
+	allPlayers: {
+		localCount: {
+			'agent': 0,
+			'suspect': 0
+		}
+	},
 	features: {
 		geolocation: {
 			title: 'Geolocation',

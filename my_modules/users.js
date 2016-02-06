@@ -21,6 +21,16 @@ module.exports = function(users, _socket) {
 	var user = {
 		//stores properties of new user
 		create: function(team) {
+
+			var setTypeFromTeam = function(teamName) {
+				switch (teamName) {
+					case 'gov':
+						return 'agent';
+					case 'ins':
+					default:
+						return 'suspect';
+				}
+			};
 			//will this work?
 			user['socketID'] = socket.id;
 			user['index'] = users.length;
@@ -28,6 +38,7 @@ module.exports = function(users, _socket) {
 			user['team'] = team;
 			var teamNumber = getTeamSize(team) + 1;
 			user['numberOnTeam'] = teamNumber;
+			user['type'] = setTypeFromTeam(user.team);
 			user['userID'] = team + teamNumber.toString();
 			user['connected'] = false;
 			user['trackActive'] = false;
@@ -76,10 +87,10 @@ module.exports = function(users, _socket) {
 
 			return locArray;
 		},
-		disconnect: function(){
+		disconnect: function() {
 			user.socketID = '';
 			user.connected = false;
-			log(user.userID + ' has gone dark',colors.orange);
+			log(user.userID + ' has gone dark', colors.orange);
 		}
 		//,
 		// startTracking: function() {

@@ -158,7 +158,7 @@ io.on('connection', function(socket) {
 						// emitTo.socket('hubStartData', {
 						// 	hubs: hubs
 						// });
-emitTo.socket('govStartData', {
+						emitTo.socket('govStartData', {
 							hubs: hubs
 						});
 
@@ -186,8 +186,11 @@ emitTo.socket('govStartData', {
 			findSuspects: function() {
 				newLocData = {}; //getInsLocData();
 				for (p in players) {
+
+					//var setType = 
 					newLocData[players[p].userID] = {
 						team: players[p].team,
+						type: players[p].type,
 						locData: players[p].getLocationData()
 					};
 				}

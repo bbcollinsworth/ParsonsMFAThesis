@@ -19,35 +19,32 @@ var viz = {
 			'stroke': false
 		},
 		marker: {
-			'draggable': true,
 			'weight': 3
 		},
-		// flash: {
-		// 	flashColor: 'red',
-		// 	start: setInterval(function(){
+		//flashInterval: {},
 
-		// 		this.area.color = c;
-		// 		if (c == 'red'){
-		// 			c = 'blue';
-		// 		} else {
-		// 			c = 'red';
-		// 		}
-		// 	},500);
+		flash: {
+			flasher: {},
+			start: function(intervalInSeconds) {
+				var c = '#ff0000';
+				var interval = intervalInSeconds * 1000;
+				this.flash.flasher = setInterval(function() {
 
+					hub.area.setStyle({
+						fillColor: c
+					});
+					//hub.area.options.fillColor = c;
+					if (c == '#ff0000') {
+						c = '#0033ff';
+					} else {
+						c = '#ff0000';
+					}
+				}, interval);
 
-		// }
-		flash: function() {
-			var c = 'red';
-			setInterval(function() {
-
-				this.area.options.fillColor = c;
-				if (c == 'red') {
-					c = 'blue';
-				} else {
-					c = 'red';
-				}
-			}, 500);
-
+			},
+			stop: function() {
+				clearInterval(this.flash.flasher);
+			}
 		}
 		// {
 		// 	'animation': "blink 1s steps(2, start) infinite"
@@ -56,24 +53,16 @@ var viz = {
 
 	},
 
-	flashHub: function(hub) {
-		var c = '#ff0000';
-		setInterval(function() {
 
-			hub.area.options.fillColor = c;
-			// if (c == '#ff0000') {
-			// 	c = '#0033ff';
-			// } else {
-			// 	c = '#ff0000';
-			// }
-		}, 500);
+	marker: function(type, pos, isDraggable) {
 
-	},
-
-	marker: function(type, pos) {
+		if (isDraggable === undefined) {
+			isDraggable = false;
+		}
 
 		var m = L.marker([pos.lat, pos.lng], {
-			icon: L.mapbox.marker.icon(viz.markerOptions[type])
+			icon: L.mapbox.marker.icon(viz.markerOptions[type]),
+			draggable: isDraggable
 		});
 
 		return m;
@@ -81,20 +70,61 @@ var viz = {
 	},
 
 	hub: function(hData) {
-
-		var renderedArea = L.circle([hData.lat, hData.lng], hData.hackRange, viz.hubOptions['area']);
-
-		var renderedMarker = L.circleMarker([hData.lat, hData.lng], viz.hubOptions['marker']);
-		renderedMarker.setRadius(10);
-
 		var h = {
-			area: renderedArea,
-			marker: renderedMarker,
-			flash: viz.hubOptions.flash
+			area: L.circle([hData.lat, hData.lng], hData.hackRange, viz.hubOptions['area']),
+			marker: L.circleMarker([hData.lat, hData.lng], viz.hubOptions['marker']), //this.renderMarker(this.markerRadius),
+			markerRadius: 10,
+			flash: function(interval) {
+				//gov.flashHub(this,interv);
+				if (interval === undefined) {
+					interval = 1000;
+				}
+
+				var c = '#ff0000';
+
+				h.stopFlash();
+				h['flasher'] = setInterval(function() {
+
+					h.area.setStyle({
+						fillColor: c
+					});
+					//hub.area.options.fillColor = c;
+					if (c == '#ff0000') {
+						c = '#0033ff';
+					} else {
+						c = '#ff0000';
+					}
+				}, interval);
+			},
+			stopFlash: function() {
+				if (h.flasher) {
+					clearInterval(h.flasher);
+				}
+				//gov.stopFlash(this);
+			}
+			//flasher: {},
 		};
+
+		h.marker.setRadius(h.markerRadius);
 
 		return h;
 	},
+
+	// hub: function(hData) {
+
+	// 	var renderedArea = L.circle([hData.lat, hData.lng], hData.hackRange, viz.hubOptions['area']);
+
+	// 	var renderedMarker = L.circleMarker([hData.lat, hData.lng], viz.hubOptions['marker']);
+	// 	renderedMarker.setRadius(10);
+
+	// 	var h = {
+	// 		area: renderedArea,
+	// 		marker: renderedMarker,
+	// 		flash: viz.hubOptions.flash
+	// 	};
+
+	// 	return h;
+	// },
 
 	searchButton: function() {
 		// <div class="ui-btn" id="searchButton" data-icon="eye">

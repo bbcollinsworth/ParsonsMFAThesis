@@ -13,11 +13,18 @@ var hubs = [{
 	name: '15th Street near 5th Ave',
 	lat: 40.736523,
 	lng: -73.992729
-
+}, {
+	name: 'Washington Ave and Lincoln Pl',
+	lat: 40.672643,
+	lng: -73.962675
+}, {
+	name: 'McNair Park',
+	lat: 40.670774,
+	lng: - 73.961985
 }];
 
 var hubStats = {
-	hackRange: 75, //in meters
+	hackRange: 50, //in meters
 	hackTimeInMinutes: 5,
 	getHackTime: function() {
 		return hubStats.hackTimeInMinutes * 60000;
@@ -37,7 +44,7 @@ var state = {
 			//state.hubs.forEach(function(hub){
 			var hub = state.hubs[i];
 
-			hub['id'] = +i+1;
+			hub['id'] = +i + 1;
 			hub['health'] = 100.0;
 			hub['hackRange'] = hubStats.hackRange;
 			hub['hackTime'] = hubStats.getHackTime();
