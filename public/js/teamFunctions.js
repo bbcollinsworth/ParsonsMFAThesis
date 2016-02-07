@@ -15,7 +15,8 @@ var gov = {
 
 	renderUI: function() {
 		var pingButton = viz.searchButton();
-		$('#container').append(pingButton);
+		//$('#container').append(pingButton);
+		$('#mobileFooter').prepend(pingButton);
 
 	},
 
@@ -83,9 +84,11 @@ var gov = {
 					marker: viz.marker(player.type, player.locData[0])
 				};
 				console.log(players);
+
 				players[userID].marker.addTo(map);
 				updateLocalCounts(player.type);
 				players[userID].localID = player.type + " " + players.localCount[player.type].toString();
+				players[userID].marker.addPopup(players[userID].localID,{classname: players[userID].type + "Popup"},true);
 				//players[userID]['marker'] = viz.marker(player.type, [0,0]);
 				console.log("New player stored locally as " + players[userID].localID);
 				// console.log(players);

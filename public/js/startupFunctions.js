@@ -96,6 +96,8 @@ var startup = {
 
 	initServices: function() {
 
+		$('#footerText').html('');
+		
 		var initialize = function(feature) {
 			var thisFeature = clientState.features[feature];
 			try {

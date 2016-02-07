@@ -25,17 +25,42 @@ var viz = {
 			draggable: isDraggable
 		});
 
-		m['refresh'] = function(posObj,options){
-			m.setLatLng([posObj.lat,posObj.lng]);
-			if (options !== undefined){
+		m['refresh'] = function(posObj, options) {
+			m.setLatLng([posObj.lat, posObj.lng]);
+			if (options !== undefined) {
 				//m.update();
 			}
 			console.log("Marker refreshed to: " + posObj.lat + ", " + posObj.lng);
 		}
 
+		m['addPopup'] = function(pHTML, pOptions, shouldOpen) {
+			if (pOptions !== undefined) {
+				m.bindPopup(pHTML, pOptions);
+			} else {
+				m.bindPopup(pHTML);
+			}
+
+			if (shouldOpen) {
+				m.openPopup();
+			}
+		}
+
+		m['updatePopup'] = function(pHTML){
+			m.setPopupContent(pHTML);
+		}
+
 		return m;
 
 	},
+
+	popupOptions: {
+
+	},
+
+	// addPopup: function(){
+	// 	var = L.popup()
+	//    .setContent('<p>Hello world!<br />This is a nice popup.</p>');
+	// },
 
 	hubOptions: {
 		area: {
@@ -45,10 +70,6 @@ var viz = {
 			'weight': 3
 		}
 
-	},
-
-	popup: function(){
-		//var p = L.popup 
 	},
 
 	hub: function(hData) {
