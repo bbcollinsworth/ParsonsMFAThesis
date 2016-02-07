@@ -25,17 +25,21 @@ var attachEvents = function() {
 
 	$('#searchButton').off('click').on('click', function() {
 		msg('Ping button clicked');
+
+		var pingCircle = document.getElementById('pingCircle');
+		pingCircle.classList.add('run');
+
+		$('#pingCircle').on('animationend webkitAnimationEnd', function(){
+			pingCircle.classList.remove('run');
+		});
+
+		//$('#pingCircle').addClass("run");
+
 		emit('findSuspects', {
 			existingLocData: []
 		});
 	});
 };
-
-//alt ready function -- NOT CURRENTLY IN USE
-// app.ready = function() {
-// 	readyCheckRunning = false;
-// 	emit('clientInitialized', {});
-// };
 
 app.init = function() {
 	msg('Connecting...');
@@ -47,6 +51,7 @@ app.init = function() {
 	//msg("Initializing socket");
 	attachEvents(); //attach event listeners
 	startup.readyCheck(); //start checking for server and map loading
+
 };
 
 

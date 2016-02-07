@@ -23,14 +23,9 @@
 	margin: auto;
 	padding: 0px;
 	text-align: center;
+	overflow: hidden;
 }
 
-/*#container .ui-btn {
-	top: 50vh;
-	margin: auto;
-	width: 30%;
-	min-width: 100px;
-}*/
 
 #mobileHeader, #mobileFooter {
 	width: inherit;
@@ -98,10 +93,45 @@
 	/*position: static;*/
 }
 
+#pingContainer {
+
+}
+
+#searchPingImg {
+	width: 100%;
+	height: 100vh;
+	margin: auto;
+	position: fixed;
+	top: 0;
+	left: 0;
+}
+
+#pingCircle {
+	fill: rgba(255,255,255,1.0);
+	cx: 50%;
+	cy: 50%;
+	r: 0;
+}
+
+.pCircle.run {
+	animation: ping ease 1s 1;
+}
+
 
 /*-------------------- ANIMATIONS --------------------*/
 @keyframes blink{
 	to{color:red;}
+}
+
+@keyframes ping{
+	0% {
+		fill: rgba(255,255,255,1.0);
+		r: 0;
+	}
+	100% {
+		fill: rgba(255,255,255,0.0);
+		r: 800;
+	}
 }
 
 

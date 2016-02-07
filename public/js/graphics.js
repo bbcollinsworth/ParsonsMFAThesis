@@ -14,46 +14,6 @@ var viz = {
 		}
 	},
 
-	hubOptions: {
-		area: {
-			'stroke': false
-		},
-		marker: {
-			'weight': 3
-		},
-		//flashInterval: {},
-
-		flash: {
-			flasher: {},
-			start: function(intervalInSeconds) {
-				var c = '#ff0000';
-				var interval = intervalInSeconds * 1000;
-				this.flash.flasher = setInterval(function() {
-
-					hub.area.setStyle({
-						fillColor: c
-					});
-					//hub.area.options.fillColor = c;
-					if (c == '#ff0000') {
-						c = '#0033ff';
-					} else {
-						c = '#ff0000';
-					}
-				}, interval);
-
-			},
-			stop: function() {
-				clearInterval(this.flash.flasher);
-			}
-		}
-		// {
-		// 	'animation': "blink 1s steps(2, start) infinite"
-		// }
-
-
-	},
-
-
 	marker: function(type, pos, isDraggable) {
 
 		if (isDraggable === undefined) {
@@ -65,8 +25,30 @@ var viz = {
 			draggable: isDraggable
 		});
 
+		m['refresh'] = function(posObj,options){
+			m.setLatLng([posObj.lat,posObj.lng]);
+			if (options !== undefined){
+				//m.update();
+			}
+			console.log("Marker refreshed to: " + posObj.lat + ", " + posObj.lng);
+		}
+
 		return m;
 
+	},
+
+	hubOptions: {
+		area: {
+			'stroke': false
+		},
+		marker: {
+			'weight': 3
+		}
+
+	},
+
+	popup: function(){
+		//var p = L.popup 
 	},
 
 	hub: function(hData) {
@@ -88,7 +70,7 @@ var viz = {
 					h.area.setStyle({
 						fillColor: c
 					});
-					//hub.area.options.fillColor = c;
+
 					if (c == '#ff0000') {
 						c = '#0033ff';
 					} else {
@@ -100,9 +82,7 @@ var viz = {
 				if (h.flasher) {
 					clearInterval(h.flasher);
 				}
-				//gov.stopFlash(this);
 			}
-			//flasher: {},
 		};
 
 		h.marker.setRadius(h.markerRadius);
@@ -110,36 +90,13 @@ var viz = {
 		return h;
 	},
 
-	// hub: function(hData) {
-
-	// 	var renderedArea = L.circle([hData.lat, hData.lng], hData.hackRange, viz.hubOptions['area']);
-
-	// 	var renderedMarker = L.circleMarker([hData.lat, hData.lng], viz.hubOptions['marker']);
-	// 	renderedMarker.setRadius(10);
-
-	// 	var h = {
-	// 		area: renderedArea,
-	// 		marker: renderedMarker,
-	// 		flash: viz.hubOptions.flash
-	// 	};
-
-	// 	return h;
-	// },
-
 	searchButton: function() {
-		// <div class="ui-btn" id="searchButton" data-icon="eye">
-		//       <div class="ui-btn ui-corner-all ui-icon-eye ui-btn-icon-notext">Eye Icon</div>
-		//     </div>
+
 		var eyeIcon = $("<div />", {
 			'class': "ui-btn ui-corner-all ui-icon-eye ui-btn-icon-notext"
 
 		});
 
-		// var content = {
-		// 	'class': "ui-btn",
-		// 	'id': "searchButton",
-		// 	'data-icon': "eye"
-		// };
 		var button = $("<div />", {
 			'class': "ui-btn",
 			'id': "searchButton",

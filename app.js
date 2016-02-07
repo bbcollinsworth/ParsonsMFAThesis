@@ -194,12 +194,7 @@ io.on('connection', function(socket) {
 						locData: players[p].getLocationData()
 					};
 				}
-				// Object.keys(players).forEach(function(p){
-				// 	newLocData[p.userID] = {
-				// 		team: p.team,
-				// 		locData: p.locationData
-				// 	};
-				// });
+
 				log('Data to be sent to ' + socket.id + ":");
 				console.log(newLocData);
 				emitTo.socket('suspectData', {
@@ -222,18 +217,12 @@ io.on('connection', function(socket) {
 	socket.on('disconnect', function() {
 		log('User ' + socket.id + ' just disconnected.', colors.orange);
 
-		//var userToRemove = getUser(socket.id);
-		//removePlayerFromTeam(userToRemove);
-		//userToRemove.socketID = '';
-		//player.socketID = '';
-
-		//if (userToRemove.team = 'ins'){
 		if (player.trackActive) {
 			clearInterval(tracking);
 		}
 
 		try {
-			player.removeFromTeam(player.team);
+			//player.removeFromTeam(player.team);
 			player.disconnect();
 		} catch (err) {
 			log(err, colors.err);
