@@ -85,8 +85,8 @@
 	pointer-events: all;
 	/*top: 50vh;*/
 	position: absolute;
-    top: -75px;
-    left: calc(50% - 30px);
+	top: -75px;
+	left: calc(50% - 30px);
 	margin: auto;
 	width: 30px;
 	height: 40px;
@@ -118,6 +118,16 @@
 
 .pCircle.run {
 	animation: ping ease 1s 1;
+}
+
+.playerPopup {
+	text-align: center;
+}
+
+.playerPopup .leaflet-popup-content {
+	text-align: center;
+	padding: 10px 10px 5px 10px;
+	line-height: 1.5em;
 }
 
 

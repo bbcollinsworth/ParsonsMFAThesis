@@ -7,11 +7,18 @@ var clientState = {
 		lat: 0,
 		lng: 0
 	},
+	localID: '',
 	allPlayers: {
 		localCount: {
 			'agent': 0,
 			'suspect': 0
-		}
+		}//,
+		// updatePos = function(posData){
+		// 	this.latestPos = posData;
+		// 	if ('marker' in this){
+
+		// 	}
+		// }
 	},
 	features: {
 		geolocation: {

@@ -4,6 +4,35 @@ var vibrate, geo, storage;
 
 var startup = {
 
+	setup: function() {
+
+		//custom first-letter capitalize function
+		String.prototype.firstCap = function() {
+			return this.charAt(0).toUpperCase() + this.slice(1);
+		};
+
+		String.prototype.addBreak = function() {
+			return this + "<br />";
+		};
+
+		window.convertTimestamp = function(t) {
+			// FROM http://stackoverflow.com/questions/847185/convert-a-unix-timestamp-to-time-in-javascript
+			var date = new Date(t); //*1000);
+			// hours part from the timestamp
+			var hours = date.getHours();
+			hours = (hours % 12 === 0) ? 12 : hours % 12;
+			// minutes part from the timestamp
+			var minutes = "0" + date.getMinutes();
+			// seconds part from the timestamp
+			var seconds = "0" + date.getSeconds();
+			// will display time in 10:30:23 format
+			var formattedTime = hours + ':' + minutes.substr(-2); // + ':' + seconds.substr(-2);
+			return formattedTime;
+
+		};
+
+	},
+
 	parseHash: function() {
 		msg('Parsing hash...');
 		var thisHash = location.hash;
@@ -30,8 +59,8 @@ var startup = {
 		L.mapbox.accessToken = 'pk.eyJ1IjoiZnVja3lvdXJhcGkiLCJhIjoiZEdYS2ZmbyJ9.6vnDgXe3K0iWoNtZ4pKvqA';
 
 		window.map = L.mapbox.map('map', 'fuckyourapi.o7ne7nmm', {
-				zoomControl: false
-			})
+			zoomControl: false
+		})
 			.setView([40.734801, -73.998799], 16)
 			.on('ready', function() {
 
@@ -96,8 +125,12 @@ var startup = {
 
 	initServices: function() {
 
+		window.supported = function(feature) {
+			return clientState.features[feature].supported;
+		};
+
 		$('#footerText').html('');
-		
+
 		var initialize = function(feature) {
 			var thisFeature = clientState.features[feature];
 			try {
@@ -136,6 +169,22 @@ var startup = {
 		console.log("Location Svcs initialized");
 
 		storage = initialize('localstorage');
+	},
+
+	storedUserCheck: function(allIDs) {
+		var userFound = false;
+		//check for stored id matching existing player:
+		if (localStorage.userID !== undefined) {
+			for (var i in allIDs) {
+				if (localStorage.userID == allIDs[i]) {
+					console.log("Stored User Found!:" + allIDs[i]);
+					userFound = true;
+					break;
+				}
+			}
+		}
+
+		return userFound;
 	},
 
 	svcCheck: function() {

@@ -11,6 +11,11 @@ var viz = {
 			'marker-size': 'large',
 			'marker-symbol': 'police',
 			'marker-color': '#0000ff'
+		},
+		self: {
+			'marker-size': 'large',
+			//'marker-symbol': 'police',
+			'marker-color': '#ffff00'
 		}
 	},
 
@@ -30,24 +35,81 @@ var viz = {
 			if (options !== undefined) {
 				//m.update();
 			}
+			
 			console.log("Marker refreshed to: " + posObj.lat + ", " + posObj.lng);
 		}
 
-		m['addPopup'] = function(pHTML, pOptions, shouldOpen) {
-			if (pOptions !== undefined) {
+		// m['setText'] = function(title,textObj){
+
+		// }
+
+		m['makePopupHTML'] = function() {
+			var newHTML = "";
+
+			if ('title' in m) {
+				newHTML += m.title.firstCap().bold().addBreak();
+			}
+
+			if ('text' in m) {
+				for (line in m.text) {
+					newHTML += m.text[line].addBreak();
+				}
+			}
+
+			return newHTML;
+		};
+
+		m['initPopup'] = function(data) {
+			for (key in data) {
+				m[key] = data[key];
+			}
+		};
+
+		//m['addPopup'] = function(pHTML, pOptions, shouldOpen) {
+		m['addPopup'] = function(shouldOpen) {
+
+			var pHTML = m.makePopupHTML(); //"";
+
+			// if ('title' in m) {
+			// 	pHTML += m.title.firstCap().bold().addBreak();
+			// }
+
+			// if ('text' in m) {
+			// 	for (line in m.text) {
+			// 		pHTML += m.text[line].addBreak();
+			// 	}
+			// }
+
+			console.log("popup HTML is: " + pHTML);
+
+			if ('popupClass' in m) {
+				var pOptions = {
+					className: m.popupClass
+				};
 				m.bindPopup(pHTML, pOptions);
 			} else {
 				m.bindPopup(pHTML);
 			}
 
+
+			// if (pOptions !== undefined) {
+			// 	m.bindPopup(pHTML, pOptions);
+			// } else {
+			// 	m.bindPopup(pHTML);
+			// }
+
 			if (shouldOpen) {
 				m.openPopup();
 			}
-		}
+		};
 
-		m['updatePopup'] = function(pHTML){
+		m['updatePopup'] = function(data) {
+			for (key in data) {
+				m[key] = data[key];
+			}
+			var pHTML = m.makePopupHTML();
 			m.setPopupContent(pHTML);
-		}
+		};
 
 		return m;
 

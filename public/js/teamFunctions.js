@@ -53,13 +53,16 @@ var gov = {
 			}, 3000);
 		}, 10000);
 
-
 	},
 
 	renderPlayers: function(pData) {
 		$.each(pData, function(userID, player) {
 
 			console.log("Player ID: " + userID);
+
+			//ADD CHECK FOR OWN PLAYER
+			//if (userID = ownplayer's id)
+			// player.type = "self"
 
 			var players = clientState.allPlayers;
 			console.log(players);
@@ -81,6 +84,7 @@ var gov = {
 				players[userID] = {
 					team: player.team,
 					type: player.type,
+					latestPos: player.locData[0],
 					marker: viz.marker(player.type, player.locData[0])
 				};
 				console.log(players);
@@ -88,13 +92,28 @@ var gov = {
 				players[userID].marker.addTo(map);
 				updateLocalCounts(player.type);
 				players[userID].localID = player.type + " " + players.localCount[player.type].toString();
-				players[userID].marker.addPopup(players[userID].localID,{classname: players[userID].type + "Popup"},true);
+
+				var popupData = {
+					'title': players[userID].localID,
+					'text': {
+						ln1: "(As of " + convertTimestamp(players[userID].latestPos.time) + ")"
+					},
+					'popupClass': "playerPopup " + players[userID].type + "Popup"
+				};
+
+				players[userID].marker.initPopup(popupData);
+				players[userID].marker.addPopup(true);
 				//players[userID]['marker'] = viz.marker(player.type, [0,0]);
 				console.log("New player stored locally as " + players[userID].localID);
 				// console.log(players);
 			} else {
 
 				players[userID].latestPos = player.locData[0];
+				players[userID].marker.updatePopup({
+					'text': {
+						ln1: "(As of " + convertTimestamp(players[userID].latestPos.time) + ")"
+					}
+				});
 				players[userID].marker.refresh(players[userID].latestPos);
 			} //players[userID]['marker'] = viz.marker(player.type, players[userID].latestPos);
 			// players[userID].marker.addTo(map);

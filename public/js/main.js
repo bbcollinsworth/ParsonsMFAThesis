@@ -2,6 +2,7 @@ var app = {};
 var socket;
 
 var player = {
+	localID: '',
 	pos: {}
 };
 
@@ -43,6 +44,7 @@ var attachEvents = function() {
 
 app.init = function() {
 	msg('Connecting...');
+	startup.setup();
 	startup.initServices();
 	startup.parseHash(); //check URL hash for team and playerID data
 	startup.initMap(); //initialize map
@@ -100,20 +102,10 @@ socket.on('serverMsg', function(res, err) {
 
 		//1sec for new/returning player + teamHash, uniqueID
 		playerTypeCheck: function() {
-			var storedUserFound = false;
-			var allIDs = res.userIDs;
-			//check for stored id matching existing player:
-			if (localStorage.userID !== undefined) {
-				for (var i in allIDs) {
-					if (localStorage.userID == allIDs[i]) {
-						console.log("Stored User Found!:" + allIDs[i]);
-						storedUserFound = true;
-						break;
-					}
-				}
-			}
+			var storedUserFound = startup.storedUserCheck(res.userIDs);
 
 			if (storedUserFound) { //send returning player
+				clientState.localID = localStorage.userID;
 				emit('returningPlayer', {
 					userID: localStorage.userID
 				});
@@ -126,8 +118,9 @@ socket.on('serverMsg', function(res, err) {
 		},
 
 		newUserID: function() {
-			if (clientState.features.localstorage.supported) {
+			if (supported('localstorage')) {
 				localStorage.setItem("userID", res.newID);
+				clientState.localID = localStorage.userID;
 				console.log("UserID stored locally as: " + localStorage.userID);
 			} else {
 				console.log("Warning: localStorage unsupported. ID not stored.");
