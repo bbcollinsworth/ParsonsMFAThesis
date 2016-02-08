@@ -58,6 +58,19 @@ var teams = {
 /*––––––––––– SOCKET.IO starts here –––––––––––––––*/
 io.on('connection', function(socket) {
 
+	//create new instance of emit module for each socket
+	var emitTo = emitModule(io, socket);
+	var player = {}; //userModule(players, socket);
+
+	var tracking;
+
+	log('The user ' + socket.id + ' just connected!', colors.yellow);
+	emitTo.socket('connected', {});
+
+	//=================================
+	//SESSION/PLAYER-SCOPED FUNCTIONS:
+	//=================================
+
 	var checkPlayerType = function() {
 		var existingUserIDs = [];
 		for (p in players) {
@@ -73,11 +86,17 @@ io.on('connection', function(socket) {
 		console.log("Checking if new player...");
 	};
 
-	//create new instance of emit module for each socket
-	var emitTo = emitModule(io, socket);
-	var player = {}; //userModule(players, socket);
-
-	var tracking;
+	var getTeam = function(hash) {
+		log("teamhash is: " + hash);
+		var t;
+		if (teams[hash] !== undefined) {
+			t = teams[hash];
+		} else {
+			t = teams['default'];
+		}
+		log('Team is: ' + t);
+		return t;
+	};
 
 	var startTracking = function() {
 		player.trackActive = true;
@@ -91,23 +110,13 @@ io.on('connection', function(socket) {
 		}, 10000);
 	};
 
-	log('The user ' + socket.id + ' just connected!', colors.yellow);
-	emitTo.socket('connected', {});
+	// log('The user ' + socket.id + ' just connected!', colors.yellow);
+	// emitTo.socket('connected', {});
 
-	//client message handler:
+	//=================================
+	//CLIENT MESSAGE HANDLER:
+	//=================================
 	socket.on('clientMsg', function(res, err) {
-
-		var getTeam = function(hash) {
-			log("teamhash is: " + hash);
-			var t;
-			if (teams[hash] !== undefined) {
-				t = teams[hash];
-			} else {
-				t = teams['default'];
-			}
-			log('Team is: ' + t);
-			return t;
-		};
 
 		var handleClientMsg = {
 
@@ -172,8 +181,8 @@ io.on('connection', function(socket) {
 
 			locationUpdate: function() {
 				player.locationData.unshift(res.locData);
-				log('New location data for ' + player.userID + ":");
-				console.log(player.locationData);
+				log('Latest location data for ' + player.userID + ":");
+				console.log(player.locationData[0]);
 			},
 
 			//SEE 'READYTOPLAY' ABOVE FOR WHERE THIS WAS MOVED...

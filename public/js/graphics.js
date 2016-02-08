@@ -19,6 +19,7 @@ var viz = {
 		}
 	},
 
+	//CREATE CUSTOM MARKER WITH ADD'L PROPERTIES + FUNCTIONS
 	marker: function(type, pos, isDraggable) {
 
 		if (isDraggable === undefined) {
@@ -35,27 +36,20 @@ var viz = {
 			if (options !== undefined) {
 				//m.update();
 			}
-			
+
 			console.log("Marker refreshed to: " + posObj.lat + ", " + posObj.lng);
 		}
 
-		// m['setText'] = function(title,textObj){
-
-		// }
-
 		m['makePopupHTML'] = function() {
 			var newHTML = "";
-
 			if ('title' in m) {
 				newHTML += m.title.firstCap().bold().addBreak();
 			}
-
 			if ('text' in m) {
 				for (line in m.text) {
 					newHTML += m.text[line].addBreak();
 				}
 			}
-
 			return newHTML;
 		};
 
@@ -65,22 +59,10 @@ var viz = {
 			}
 		};
 
-		//m['addPopup'] = function(pHTML, pOptions, shouldOpen) {
 		m['addPopup'] = function(shouldOpen) {
 
-			var pHTML = m.makePopupHTML(); //"";
-
-			// if ('title' in m) {
-			// 	pHTML += m.title.firstCap().bold().addBreak();
-			// }
-
-			// if ('text' in m) {
-			// 	for (line in m.text) {
-			// 		pHTML += m.text[line].addBreak();
-			// 	}
-			// }
-
-			console.log("popup HTML is: " + pHTML);
+			var pHTML = m.makePopupHTML();
+			//console.log("popup HTML is: " + pHTML);
 
 			if ('popupClass' in m) {
 				var pOptions = {
@@ -90,13 +72,6 @@ var viz = {
 			} else {
 				m.bindPopup(pHTML);
 			}
-
-
-			// if (pOptions !== undefined) {
-			// 	m.bindPopup(pHTML, pOptions);
-			// } else {
-			// 	m.bindPopup(pHTML);
-			// }
 
 			if (shouldOpen) {
 				m.openPopup();
@@ -110,20 +85,68 @@ var viz = {
 			var pHTML = m.makePopupHTML();
 			m.setPopupContent(pHTML);
 		};
-
 		return m;
-
 	},
 
 	popupOptions: {
 
 	},
 
-	// addPopup: function(){
-	// 	var = L.popup()
-	//    .setContent('<p>Hello world!<br />This is a nice popup.</p>');
-	// },
+	captureSetup: {
+		radius: 40,
+		options: {
+			'className': "captureCircle",
+			'fillColor': '#ff0000',
+			'fillOpacity': '0.5',
+			'stroke': false
+		}
+	},
 
+	drawCaptureCircle: function(pos) {
+		var p = [pos.lat, pos.lng];
+		var c = L.circleMarker(p, viz.captureSetup.options);
+		c.setRadius(viz.captureSetup.radius);
+
+		var screenOffset = map.latLngToContainerPoint(p);
+		// screenOffset.x += viz.captureSetup.radius;
+		// screenOffset.y += viz.captureSetup.radius;
+		var rad = viz.captureSetup.radius;
+		var α = 0,
+			π = Math.PI,
+			t = 30;
+
+		//FUNCTION FOR PIE-TIMER
+		c['draw'] = function() {
+			α++;
+			//α %= 360;
+			var r = (α * π / 180),
+				x = Math.sin(r) * rad,
+				y = Math.cos(r) * -1 * rad,
+				mid = (α > 180) ? 1 : 0,
+				anim = 'M 0 0 v -'+ rad +' A' +rad+' '+ rad +' 1 ' + mid + ' 1 ' + x + ' ' + y + ' z';
+
+			var circles = document.getElementsByClassName('captureCircle');
+			//circles[0].setAttribute('d', anim);
+			var newCSS = {
+				'transform': 'translate('+screenOffset.x+ ','+screenOffset.y+')',
+				'd': anim
+			};
+			$.each(newCSS,function(key,value){
+				//WOULD NEED TO BE CHANGED TO DEAL WITH INDEX / ARRAY ISSUE OF CLASS
+				circles[0].setAttribute(key, value);
+			});
+			
+			if (α < 360) {
+				setTimeout(c.draw, t); // Redraw
+			} 
+		};
+
+		c.addTo(map);
+		c.draw();
+		return c;
+	},
+
+	// ====== HUB VISUALIZATION SETUP ==============//
 	hubOptions: {
 		area: {
 			'stroke': false

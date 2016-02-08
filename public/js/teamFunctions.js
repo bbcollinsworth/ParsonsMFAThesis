@@ -56,7 +56,7 @@ var gov = {
 	},
 
 	renderPlayers: function(pData) {
-		$.each(pData, function(userID, player) {
+		$.each(pData, function(userID, playerData) {
 
 			console.log("Player ID: " + userID);
 
@@ -67,56 +67,54 @@ var gov = {
 			var players = clientState.allPlayers;
 			console.log(players);
 
-			var updateLocalCounts = function(type) {
-				var typeCount = 0;
-				for (id in players) {
-					if (type in players[id]) {
-						//if (players[id].type == type) {
-						typeCount++;
-					}
-				}
-				players.localCount[type] = typeCount;
-				// players.localCount[type]++;
-				console.log("Now locally tracking " + players.localCount.agent + " agents and " + players.localCount.suspect + " suspects.");
-			}
+			// var updateLocalCounts = function(type) {
+			// 	var typeCount = 0;
+			// 	for (id in players) {
+			// 		if (type in players[id]) {
+			// 			//if (players[id].type == type) {
+			// 			typeCount++;
+			// 		}
+			// 	}
+			// 	players.localCount[type] = typeCount;
+			// 	console.log("Now locally tracking " + players.localCount.agent + " agents and " + players.localCount.suspect + " suspects.");
+			// }
 
 			if (!(userID in players)) {
-				players[userID] = {
-					team: player.team,
-					type: player.type,
-					latestPos: player.locData[0],
-					marker: viz.marker(player.type, player.locData[0])
-				};
-				console.log(players);
 
-				players[userID].marker.addTo(map);
-				updateLocalCounts(player.type);
-				players[userID].localID = player.type + " " + players.localCount[player.type].toString();
-
-				var popupData = {
-					'title': players[userID].localID,
-					'text': {
-						ln1: "(As of " + convertTimestamp(players[userID].latestPos.time) + ")"
-					},
-					'popupClass': "playerPopup " + players[userID].type + "Popup"
-				};
-
-				players[userID].marker.initPopup(popupData);
-				players[userID].marker.addPopup(true);
-				//players[userID]['marker'] = viz.marker(player.type, [0,0]);
-				console.log("New player stored locally as " + players[userID].localID);
+				players[userID] = clientState.addPlayer(playerData);
+				// players[userID] = {
+				// 	team: player.team,
+				// 	type: player.type,
+				// 	latestPos: player.locData[0],
+				// 	marker: viz.marker(player.type, player.locData[0])
+				// };
 				// console.log(players);
-			} else {
 
-				players[userID].latestPos = player.locData[0];
+				// players[userID].marker.addTo(map);
+				// updateLocalCounts(player.type);
+				// players[userID].localID = player.type + " " + players.localCount[player.type].toString();
+
+				// var popupData = {
+				// 	'title': players[userID].localID,
+				// 	'text': {
+				// 		ln1: "(As of " + convertTimestamp(players[userID].latestPos.time) + ")"
+				// 	},
+				// 	'popupClass': "playerPopup " + players[userID].type + "Popup"
+				// };
+
+				// players[userID].marker.initPopup(popupData);
+				// players[userID].marker.addPopup(true);
+				// players[userID]['captureCircle'] = viz.drawCaptureCircle(players[userID].latestPos);
+				// console.log("New player stored locally as " + players[userID].localID);
+			} else {
+				players[userID].latestPos = playerData.locData[0];
 				players[userID].marker.updatePopup({
 					'text': {
 						ln1: "(As of " + convertTimestamp(players[userID].latestPos.time) + ")"
 					}
 				});
 				players[userID].marker.refresh(players[userID].latestPos);
-			} //players[userID]['marker'] = viz.marker(player.type, players[userID].latestPos);
-			// players[userID].marker.addTo(map);
+			}
 
 		});
 	}

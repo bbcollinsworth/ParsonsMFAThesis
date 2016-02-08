@@ -11,14 +11,48 @@ var clientState = {
 	allPlayers: {
 		localCount: {
 			'agent': 0,
-			'suspect': 0
-		}//,
-		// updatePos = function(posData){
-		// 	this.latestPos = posData;
-		// 	if ('marker' in this){
+			'suspect': 0,
+			'update': function(type) {
+				var typeCount = 0;
+				for (id in clientState.allPlayers) {
+					if (type in clientState.allPlayers[id]) {
+						typeCount++;
+					}
+				}
+				this[type] = typeCount;
+				//clientState.allPlayers.localCount[type] = typeCount;
+				console.log("Now locally tracking " + this.agent + " agents and " + this.suspect + " suspects.");
+			}
+		}
+	},
+	addPlayer: function(player) {
+		newPlayer = {
+			team: player.team,
+			type: player.type,
+			latestPos: player.locData[0],
+			marker: viz.marker(player.type, player.locData[0]).addTo(map)
+		};
+		console.log(clientState.allPlayers);
 
-		// 	}
-		// }
+		//newPlayer.marker.addTo(map);
+		clientState.allPlayers.localCount.update(player.type);
+		//updateLocalCounts(player.type);
+		newPlayer.localID = player.type + " " + clientState.allPlayers.localCount[player.type].toString();
+
+		var popupData = {
+			'title': newPlayer.localID,
+			'text': {
+				ln1: "(As of " + convertTimestamp(newPlayer.latestPos.time) + ")"
+			},
+			'popupClass': "playerPopup " + newPlayer.type + "Popup"
+		};
+
+		newPlayer.marker.initPopup(popupData);
+		newPlayer.marker.addPopup(true);
+		newPlayer['captureCircle'] = viz.drawCaptureCircle(newPlayer.latestPos);
+		console.log("New player stored locally as " + newPlayer.localID);
+
+		return newPlayer;
 	},
 	features: {
 		geolocation: {
