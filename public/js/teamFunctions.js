@@ -10,7 +10,7 @@ var gov = {
 		'marker-size': 'large',
 		'marker-symbol': 'police',
 		'marker-color': '#0000ff',
-		'draggable': true
+		'fill-opacity': 0.5
 	},
 
 	renderUI: function() {
@@ -35,26 +35,50 @@ var gov = {
 			h.marker.addTo(map);
 		});
 
-		//hubs[hubs.length - 1].startFlash(500);
-		var testHub = hubs[hubs.length - 1];
-		var testHub2 = hubs[hubs.length - 2];
-		//gov.flashHub(testHub,500);
-		testHub.flash(500);
-		testHub2.flash(1500);
+		// var testHub = hubs[hubs.length - 1];
+		// var testHub2 = hubs[hubs.length - 2];
 
-		setTimeout(function() {
-			testHub.flash(250);
-			//gov.flashHub(testHub,250);
+		// testHub.flash(500);
+		// testHub2.flash(1500);
 
-			setTimeout(function() {
-				testHub.stopFlash();
-				testHub2.flash(250);
-				//gov.clearFlash(testHub);
-			}, 3000);
-		}, 10000);
+		// setTimeout(function() {
+		// 	testHub.flash(250);
+
+		// 	setTimeout(function() {
+		// 		testHub.stopFlash();
+		// 		testHub2.flash(250);
+		// 	}, 3000);
+		// }, 10000);
 
 	},
+	suspectRangeCheck: function() {
+		var otherPlayers = clientState.allPlayers;
 
+		for (id in otherPlayers) {
+
+			// var dist = 1000;
+			// switch (otherPlayers[id].team) {
+			// 	case 'ins':
+			// 		dist = player.distanceTo(otherPlayers.latestPos);
+			// 		break;
+			// 	default:
+			// 		break;
+			// }
+			if (otherPlayers[id].team == 'ins') {
+
+
+				var dist = player.distanceTo(otherPlayers[id].latestPos);
+				console.log("Distance to " + otherPlayers[id].localID + " is " + dist + "m");
+
+				if (dist <= gov.captureRange) {
+					otherPlayers[id].attachCaptureEvents();
+
+				} else if (otherPlayers[id].captureEventsAttached) {
+					otherPlayers[id].clearCaptureEvents();
+				}
+			}
+		}
+	},
 	renderPlayers: function(pData) {
 		$.each(pData, function(userID, playerData) {
 
@@ -67,46 +91,11 @@ var gov = {
 			var players = clientState.allPlayers;
 			console.log(players);
 
-			// var updateLocalCounts = function(type) {
-			// 	var typeCount = 0;
-			// 	for (id in players) {
-			// 		if (type in players[id]) {
-			// 			//if (players[id].type == type) {
-			// 			typeCount++;
-			// 		}
-			// 	}
-			// 	players.localCount[type] = typeCount;
-			// 	console.log("Now locally tracking " + players.localCount.agent + " agents and " + players.localCount.suspect + " suspects.");
-			// }
-
 			if (!(userID in players)) {
-
 				players[userID] = clientState.addPlayer(playerData);
-				// players[userID] = {
-				// 	team: player.team,
-				// 	type: player.type,
-				// 	latestPos: player.locData[0],
-				// 	marker: viz.marker(player.type, player.locData[0])
-				// };
-				// console.log(players);
 
-				// players[userID].marker.addTo(map);
-				// updateLocalCounts(player.type);
-				// players[userID].localID = player.type + " " + players.localCount[player.type].toString();
-
-				// var popupData = {
-				// 	'title': players[userID].localID,
-				// 	'text': {
-				// 		ln1: "(As of " + convertTimestamp(players[userID].latestPos.time) + ")"
-				// 	},
-				// 	'popupClass': "playerPopup " + players[userID].type + "Popup"
-				// };
-
-				// players[userID].marker.initPopup(popupData);
-				// players[userID].marker.addPopup(true);
-				// players[userID]['captureCircle'] = viz.drawCaptureCircle(players[userID].latestPos);
-				// console.log("New player stored locally as " + players[userID].localID);
 			} else {
+
 				players[userID].latestPos = playerData.locData[0];
 				players[userID].marker.updatePopup({
 					'text': {
@@ -116,6 +105,17 @@ var gov = {
 				players[userID].marker.refresh(players[userID].latestPos);
 			}
 
+			if (players[userID].team == 'ins') {
+				// var dist = checkDistanceTo(players[userID].latestPos);
+				// console.log("Distance to " + userID + " is " + dist + "m");
+			}
+
 		});
+
+		gov.suspectRangeCheck();
+		//if (callback !== undefined) {
+			//callback();
+		//}
 	}
+	
 };

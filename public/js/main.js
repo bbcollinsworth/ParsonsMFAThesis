@@ -3,7 +3,11 @@ var socket;
 
 var player = {
 	localID: '',
-	pos: {}
+	pos: {},
+	distanceTo: function(otherPos) {
+		var d = L.latLng(player.pos.lat, player.pos.lng).distanceTo([otherPos.lat,otherPos.lng]);
+		return d;
+	}
 };
 
 var hubs = [];
@@ -27,18 +31,26 @@ var attachEvents = function() {
 	$('#searchButton').off('click').on('click', function() {
 		msg('Ping button clicked');
 
+		var pingFunction = function() {
+			emit('findSuspects', {
+				existingLocData: []
+			});
+		};
+
+		storeAndSendLocation(pingFunction);
+
+		//getMyPosition(sendPosition);
+
 		var pingCircle = document.getElementById('pingCircle');
 		pingCircle.classList.add('run');
 
-		$('#pingCircle').on('animationend webkitAnimationEnd', function(){
+		$('#pingCircle').on('animationend webkitAnimationEnd', function() {
 			pingCircle.classList.remove('run');
 		});
 
 		//$('#pingCircle').addClass("run");
 
-		emit('findSuspects', {
-			existingLocData: []
-		});
+
 	});
 };
 
@@ -64,17 +76,44 @@ function emit(tag, emitObj) {
 }
 
 // window.onload = function() {
- 	app.init();
+app.init();
 // };
 
 
-//INCOMING SOCKET FUNCTIONS
-socket.on('serverMsg', function(res, err) {
+var centerOnPlayer = function() {
+	map.panTo([player.pos.lat, player.pos.lng]);
+};
 
-	var storeAndSendLocation = function(p, callback) {
+// var sendPosition = function() {
+// 	emit('locationUpdate', {
+// 		locData: player.pos
+// 	});
+// };
+
+// var getMyPosition = function(callback) {
+// 	geo.getCurrentPosition(function(position) {
+// 		console.log('Position: ' + position.coords.latitude + ', ' + position.coords.longitude);
+
+// 		player.pos = {
+// 			lat: position.coords.latitude,
+// 			lng: position.coords.longitude,
+// 			time: Date.now()
+// 		};
+
+// 		if (callback !== undefined) {
+// 			callback();
+// 		}
+// 	});
+
+// };
+
+var storeAndSendLocation = function(callback) {
+	geo.getCurrentPosition(function(position) {
+		console.log('Position: ' + position.coords.latitude + ', ' + position.coords.longitude);
+
 		player.pos = {
-			lat: p.coords.latitude,
-			lng: p.coords.longitude,
+			lat: position.coords.latitude,
+			lng: position.coords.longitude,
 			time: Date.now()
 		};
 
@@ -85,11 +124,12 @@ socket.on('serverMsg', function(res, err) {
 		if (callback !== undefined) {
 			callback();
 		}
-	};
 
-	var centerOnPlayer = function() {
-		map.panTo([player.pos.lat, player.pos.lng]);
-	};
+	});
+};
+
+//INCOMING SOCKET FUNCTIONS
+socket.on('serverMsg', function(res, err) {
 
 	var handleServerMsg = {
 
@@ -139,16 +179,21 @@ socket.on('serverMsg', function(res, err) {
 		},
 
 		getLocation: function() {
-			geo.getCurrentPosition(function(position) {
-				console.log('Position: ' + position.coords.latitude + ', ' + position.coords.longitude);
 
-				if (res.firstPing) {
-					storeAndSendLocation(position, centerOnPlayer);
-				} else {
-					storeAndSendLocation(position);
-				}
+			// getMyPosition(sendPosition);
 
-			});
+			// if (res.firstPing) {
+			// 	setTimeout(function() {
+			// 		centerOnPlayer();
+			// 	}, 750);
+			// }
+
+			if (res.firstPing) {
+				storeAndSendLocation(centerOnPlayer);
+			} else {
+				storeAndSendLocation();
+			}
+
 		},
 
 		trackLocation: function() {
@@ -174,7 +219,7 @@ socket.on('serverMsg', function(res, err) {
 			console.log('Suspect data is: ');
 			console.log(res.locData);
 
-			gov.renderPlayers(res.locData);
+			gov.renderPlayers(res.locData,gov.suspectRangeCheck);
 
 		}
 	};
@@ -183,4 +228,3 @@ socket.on('serverMsg', function(res, err) {
 
 
 });
-

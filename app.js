@@ -195,13 +195,16 @@ io.on('connection', function(socket) {
 			findSuspects: function() {
 				newLocData = {}; //getInsLocData();
 				for (p in players) {
+					var locArray = players[p].getLocationData();
 
-					//var setType = 
-					newLocData[players[p].userID] = {
-						team: players[p].team,
-						type: players[p].type,
-						locData: players[p].getLocationData()
-					};
+					if (locArray.length > 0) {
+						//var setType = 
+						newLocData[players[p].userID] = {
+							team: players[p].team,
+							type: players[p].type,
+							locData: locArray
+						};
+					}
 				}
 
 				log('Data to be sent to ' + socket.id + ":");

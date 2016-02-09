@@ -1,22 +1,31 @@
 var viz = {
 
 	markerOptions: {
+		'suspect': {
+			zIndexOffset: 1000,
+			opacity: 0.8 //,
+		},
+		'agent': {
+			opacity: 0.5 //,
+		}
+	},
+
+	markerIconOptions: {
 		suspect: {
 			'marker-size': 'large',
 			'marker-symbol': 'pitch',
 			'marker-color': '#ff0000'
 		},
-
 		agent: {
 			'marker-size': 'large',
 			'marker-symbol': 'police',
 			'marker-color': '#0000ff'
-		},
-		self: {
-			'marker-size': 'large',
-			//'marker-symbol': 'police',
-			'marker-color': '#ffff00'
-		}
+		} //,
+		// self: {
+		// 	'marker-size': 'large',
+		// 	//'marker-symbol': 'police',
+		// 	'marker-color': '#ffff00'
+		// }
 	},
 
 	//CREATE CUSTOM MARKER WITH ADD'L PROPERTIES + FUNCTIONS
@@ -27,8 +36,10 @@ var viz = {
 		}
 
 		var m = L.marker([pos.lat, pos.lng], {
-			icon: L.mapbox.marker.icon(viz.markerOptions[type]),
-			draggable: isDraggable
+			icon: L.mapbox.marker.icon(viz.markerIconOptions[type]),
+			draggable: isDraggable,
+			opacity: viz.markerOptions[type].opacity,
+			zIndexOffset: viz.markerOptions[type].zIndexOffset || 0
 		});
 
 		m['refresh'] = function(posObj, options) {
@@ -38,7 +49,7 @@ var viz = {
 			}
 
 			console.log("Marker refreshed to: " + posObj.lat + ", " + posObj.lng);
-		}
+		};
 
 		m['makePopupHTML'] = function() {
 			var newHTML = "";
@@ -85,11 +96,8 @@ var viz = {
 			var pHTML = m.makePopupHTML();
 			m.setPopupContent(pHTML);
 		};
+
 		return m;
-	},
-
-	popupOptions: {
-
 	},
 
 	captureSetup: {
@@ -123,22 +131,21 @@ var viz = {
 				x = Math.sin(r) * rad,
 				y = Math.cos(r) * -1 * rad,
 				mid = (α > 180) ? 1 : 0,
-				anim = 'M 0 0 v -'+ rad +' A' +rad+' '+ rad +' 1 ' + mid + ' 1 ' + x + ' ' + y + ' z';
+				anim = 'M 0 0 v -' + rad + ' A' + rad + ' ' + rad + ' 1 ' + mid + ' 1 ' + x + ' ' + y + ' z';
 
 			var circles = document.getElementsByClassName('captureCircle');
-			//circles[0].setAttribute('d', anim);
 			var newCSS = {
-				'transform': 'translate('+screenOffset.x+ ','+screenOffset.y+')',
+				'transform': 'translate(' + screenOffset.x + ',' + screenOffset.y + ')',
 				'd': anim
 			};
-			$.each(newCSS,function(key,value){
+			$.each(newCSS, function(key, value) {
 				//WOULD NEED TO BE CHANGED TO DEAL WITH INDEX / ARRAY ISSUE OF CLASS
 				circles[0].setAttribute(key, value);
 			});
-			
+
 			if (α < 360) {
 				setTimeout(c.draw, t); // Redraw
-			} 
+			}
 		};
 
 		c.addTo(map);

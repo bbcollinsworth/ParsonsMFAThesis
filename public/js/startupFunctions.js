@@ -2,6 +2,7 @@ var govHash, insHash;
 var teamHash, uniqueHash;
 var vibrate, geo, storage;
 
+
 var startup = {
 
 	setup: function() {
@@ -278,4 +279,4 @@ var startup = {
 		createList(clientState.features);
 
 	}
-}
+};
