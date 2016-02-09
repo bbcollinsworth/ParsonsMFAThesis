@@ -42,60 +42,130 @@ var viz = {
 			zIndexOffset: viz.markerOptions[type].zIndexOffset || 0
 		});
 
-		m['refresh'] = function(posObj, options) {
-			m.setLatLng([posObj.lat, posObj.lng]);
-			if (options !== undefined) {
-				//m.update();
-			}
 
-			console.log("Marker refreshed to: " + posObj.lat + ", " + posObj.lng);
-		};
+		var extension = {
 
-		m['makePopupHTML'] = function() {
-			var newHTML = "";
-			if ('title' in m) {
-				newHTML += m.title.firstCap().bold().addBreak();
-			}
-			if ('text' in m) {
-				for (line in m.text) {
-					newHTML += m.text[line].addBreak();
+			refresh: function(posObj, options) {
+				m.setLatLng([posObj.lat, posObj.lng]);
+				if (options !== undefined) {
+					//m.update();
 				}
+
+				console.log("Marker refreshed to: " + posObj.lat + ", " + posObj.lng);
+			},
+			
+			makePopupHTML: function() {
+				var newHTML = "";
+				if ('title' in m) {
+					newHTML += m.title.firstCap().bold().addBreak();
+				}
+				if ('text' in m) {
+					for (line in m.text) {
+						newHTML += m.text[line].addBreak();
+					}
+				}
+				return newHTML;
+			},
+
+			initPopup: function(data) {
+				for (key in data) {
+					m[key] = data[key];
+				}
+			},
+
+			addPopup: function(shouldOpen) {
+
+				var pHTML = m.makePopupHTML();
+				//console.log("popup HTML is: " + pHTML);
+
+				if ('popupClass' in m) {
+					var pOptions = {
+						className: m.popupClass
+					};
+					m.bindPopup(pHTML, pOptions);
+				} else {
+					m.bindPopup(pHTML);
+				}
+
+				if (shouldOpen) {
+					m.openPopup();
+				}
+			},
+
+			updatePopup: function(data) {
+				for (key in data) {
+					m[key] = data[key];
+				}
+				var pHTML = m.makePopupHTML();
+				m.setPopupContent(pHTML);
 			}
-			return newHTML;
-		};
+		}
 
-		m['initPopup'] = function(data) {
-			for (key in data) {
-				m[key] = data[key];
-			}
-		};
+		$.extend(true, m, extension);
 
-		m['addPopup'] = function(shouldOpen) {
+		// m['refresh'] = function(posObj, options) {
+		// 	m.setLatLng([posObj.lat, posObj.lng]);
+		// 	if (options !== undefined) {
+		// 		//m.update();
+		// 	}
 
-			var pHTML = m.makePopupHTML();
-			//console.log("popup HTML is: " + pHTML);
+		// 	console.log("Marker refreshed to: " + posObj.lat + ", " + posObj.lng);
+		// };
 
-			if ('popupClass' in m) {
-				var pOptions = {
-					className: m.popupClass
-				};
-				m.bindPopup(pHTML, pOptions);
-			} else {
-				m.bindPopup(pHTML);
-			}
+		// m['refresh'] = function(posObj, options) {
+		// 	m.setLatLng([posObj.lat, posObj.lng]);
+		// 	if (options !== undefined) {
+		// 		//m.update();
+		// 	}
 
-			if (shouldOpen) {
-				m.openPopup();
-			}
-		};
+		// 	console.log("Marker refreshed to: " + posObj.lat + ", " + posObj.lng);
+		// };
 
-		m['updatePopup'] = function(data) {
-			for (key in data) {
-				m[key] = data[key];
-			}
-			var pHTML = m.makePopupHTML();
-			m.setPopupContent(pHTML);
-		};
+		// m['makePopupHTML'] = function() {
+		// 	var newHTML = "";
+		// 	if ('title' in m) {
+		// 		newHTML += m.title.firstCap().bold().addBreak();
+		// 	}
+		// 	if ('text' in m) {
+		// 		for (line in m.text) {
+		// 			newHTML += m.text[line].addBreak();
+		// 		}
+		// 	}
+		// 	return newHTML;
+		// };
+
+		// m['initPopup'] = function(data) {
+		// 	for (key in data) {
+		// 		m[key] = data[key];
+		// 	}
+		// };
+
+		// m['addPopup'] = function(shouldOpen) {
+
+		// 	var pHTML = m.makePopupHTML();
+		// 	//console.log("popup HTML is: " + pHTML);
+
+		// 	if ('popupClass' in m) {
+		// 		var pOptions = {
+		// 			className: m.popupClass
+		// 		};
+		// 		m.bindPopup(pHTML, pOptions);
+		// 	} else {
+		// 		m.bindPopup(pHTML);
+		// 	}
+
+		// 	if (shouldOpen) {
+		// 		m.openPopup();
+		// 	}
+		// };
+
+		// m['updatePopup'] = function(data) {
+		// 	for (key in data) {
+		// 		m[key] = data[key];
+		// 	}
+		// 	var pHTML = m.makePopupHTML();
+		// 	m.setPopupContent(pHTML);
+		// };
 
 		return m;
 	},

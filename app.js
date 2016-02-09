@@ -158,15 +158,11 @@ io.on('connection', function(socket) {
 			},
 
 			readyToPlay: function() {
-				//player.startTracking();
 				player.connected = true;
 				startTracking();
 
 				switch (player.team) {
 					case 'gov':
-						// emitTo.socket('hubStartData', {
-						// 	hubs: hubs
-						// });
 						emitTo.socket('govStartData', {
 							hubs: hubs
 						});
@@ -184,13 +180,6 @@ io.on('connection', function(socket) {
 				log('Latest location data for ' + player.userID + ":");
 				console.log(player.locationData[0]);
 			},
-
-			//SEE 'READYTOPLAY' ABOVE FOR WHERE THIS WAS MOVED...
-			// getHubs: function() {
-			// 	emitTo.socket('hubStartData', {
-			// 		hubs: hubs
-			// 	});
-			// },
 
 			findSuspects: function() {
 				newLocData = {}; //getInsLocData();

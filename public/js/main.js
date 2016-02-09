@@ -39,18 +39,13 @@ var attachEvents = function() {
 
 		storeAndSendLocation(pingFunction);
 
-		//getMyPosition(sendPosition);
-
 		var pingCircle = document.getElementById('pingCircle');
 		pingCircle.classList.add('run');
 
 		$('#pingCircle').on('animationend webkitAnimationEnd', function() {
 			pingCircle.classList.remove('run');
 		});
-
 		//$('#pingCircle').addClass("run");
-
-
 	});
 };
 
@@ -61,11 +56,8 @@ app.init = function() {
 	startup.parseHash(); //check URL hash for team and playerID data
 	startup.initMap(); //initialize map
 	startup.connectToServer(); //connect to socket server
-	//socket = io.connect(); //alt connect to socket server
-	//msg("Initializing socket");
 	attachEvents(); //attach event listeners
 	startup.readyCheck(); //start checking for server and map loading
-
 };
 
 
@@ -79,33 +71,9 @@ function emit(tag, emitObj) {
 app.init();
 // };
 
-
 var centerOnPlayer = function() {
 	map.panTo([player.pos.lat, player.pos.lng]);
 };
-
-// var sendPosition = function() {
-// 	emit('locationUpdate', {
-// 		locData: player.pos
-// 	});
-// };
-
-// var getMyPosition = function(callback) {
-// 	geo.getCurrentPosition(function(position) {
-// 		console.log('Position: ' + position.coords.latitude + ', ' + position.coords.longitude);
-
-// 		player.pos = {
-// 			lat: position.coords.latitude,
-// 			lng: position.coords.longitude,
-// 			time: Date.now()
-// 		};
-
-// 		if (callback !== undefined) {
-// 			callback();
-// 		}
-// 	});
-
-// };
 
 var storeAndSendLocation = function(callback) {
 	geo.getCurrentPosition(function(position) {
@@ -124,7 +92,6 @@ var storeAndSendLocation = function(callback) {
 		if (callback !== undefined) {
 			callback();
 		}
-
 	});
 };
 
@@ -180,20 +147,11 @@ socket.on('serverMsg', function(res, err) {
 
 		getLocation: function() {
 
-			// getMyPosition(sendPosition);
-
-			// if (res.firstPing) {
-			// 	setTimeout(function() {
-			// 		centerOnPlayer();
-			// 	}, 750);
-			// }
-
 			if (res.firstPing) {
 				storeAndSendLocation(centerOnPlayer);
 			} else {
 				storeAndSendLocation();
 			}
-
 		},
 
 		trackLocation: function() {
@@ -201,12 +159,7 @@ socket.on('serverMsg', function(res, err) {
 				console.log('Latest Watched Position: ' + position.coords.latitude + ', ' + position.coords.longitude);
 
 				storeAndSendLocation(position);
-
 			});
-		},
-
-		hubStartData: function() {
-			gov.renderHubs(res.hubs);
 		},
 
 		govStartData: function() {
@@ -220,7 +173,6 @@ socket.on('serverMsg', function(res, err) {
 			console.log(res.locData);
 
 			gov.renderPlayers(res.locData,gov.suspectRangeCheck);
-
 		}
 	};
 
