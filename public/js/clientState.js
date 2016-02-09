@@ -25,6 +25,21 @@ var clientState = {
 			}
 		}
 	},
+	markerEvents: {
+		ins: {
+			attachCaptureEvents: function() {
+				console.log("Attaching Capture Events to " + this.localID);
+				this['captureCircle'] = viz.drawCaptureCircle(this.latestPos);
+
+				this.marker.addOneTimeEventListener('mouseDown', viz.markerOptions.mouseDownEvent);
+			},
+
+			removeCaptureEvents: function() {
+
+			}
+		}
+	},
+
 	addPlayer: function(player) {
 		newPlayer = {
 			team: player.team,
@@ -33,7 +48,7 @@ var clientState = {
 			mouseDownEvent: function(e) {
 				e.preventDefault();
 				console.log("Starting capture on " + newPlayer.localID);
-				newPlayer['captureCircle'] = viz.drawCaptureCircle(newPlayer.latestPos);
+				//newPlayer['captureCircle'] = viz.drawCaptureCircle(newPlayer.latestPos);
 
 			} //,
 			//marker: viz.marker(player.type, player.locData[0]).addTo(map),
@@ -61,17 +76,21 @@ var clientState = {
 
 		if (newPlayer.team == 'ins') {
 
-			newPlayer['attachCaptureEvents'] = function() {
-				console.log(newPlayer.localID + " in range. Attaching Capture Events");
-				newPlayer.marker.addOneTimeEventListener('mouseDown', newPlayer.mouseDownEvent);
-			};
+			$.extend(true, newPlayer, clientState.markerEvents.ins);
+			// newPlayer['attachCaptureEvents'] = function() {
+			// 	newPlayer['captureCircle'] = viz.drawCaptureCircle(newPlayer.latestPos);
+			// 	console.log(newPlayer.localID + " in range. Attaching Capture Events");
+			// 	newPlayer.marker.addOneTimeEventListener('mouseDown', newPlayer.mouseDownEvent);
+			// };
 
-			newPlayer['removeCaptureEvents'] = function() {
+			// newPlayer['removeCaptureEvents'] = function() {
 
-			};
+			// };
 		}
 
 		console.log("New player stored locally as " + newPlayer.localID);
+
+		
 
 		return newPlayer;
 	},
