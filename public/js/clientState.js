@@ -29,10 +29,16 @@ var clientState = {
 		newPlayer = {
 			team: player.team,
 			type: player.type,
-			latestPos: player.locData[0]//,
+			latestPos: player.locData[0],
+			mouseDownEvent: function(e) {
+				e.preventDefault();
+				console.log("Starting capture on " + newPlayer.localID);
+				newPlayer['captureCircle'] = viz.drawCaptureCircle(newPlayer.latestPos);
+
+			} //,
 			//marker: viz.marker(player.type, player.locData[0]).addTo(map),
 		};
-		
+
 		newPlayer.marker = viz.marker(player.type, newPlayer.latestPos).addTo(map);
 		console.log(clientState.allPlayers);
 
@@ -52,13 +58,12 @@ var clientState = {
 		newPlayer.marker.initPopup(popupData);
 		newPlayer.marker.addPopup(true);
 
+
 		if (newPlayer.team == 'ins') {
+
 			newPlayer['attachCaptureEvents'] = function() {
 				console.log(newPlayer.localID + " in range. Attaching Capture Events");
-				newPlayer.marker.on('mouseDown', function() {
-					console.log("Starting capture on " + newPlayer.localID);
-				});
-				newPlayer['captureCircle'] = viz.drawCaptureCircle(newPlayer.latestPos);
+				newPlayer.marker.addOneTimeEventListener('mouseDown', newPlayer.mouseDownEvent);
 			};
 
 			newPlayer['removeCaptureEvents'] = function() {

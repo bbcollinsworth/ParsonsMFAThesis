@@ -1,5 +1,7 @@
 var gov = {
 
+	captureRange: 15,
+
 	suspectMarker: {
 		'marker-size': 'large',
 		'marker-symbol': 'pitch',
@@ -56,16 +58,7 @@ var gov = {
 
 		for (id in otherPlayers) {
 
-			// var dist = 1000;
-			// switch (otherPlayers[id].team) {
-			// 	case 'ins':
-			// 		dist = player.distanceTo(otherPlayers.latestPos);
-			// 		break;
-			// 	default:
-			// 		break;
-			// }
 			if (otherPlayers[id].team == 'ins') {
-
 
 				var dist = player.distanceTo(otherPlayers[id].latestPos);
 				console.log("Distance to " + otherPlayers[id].localID + " is " + dist + "m");
@@ -103,11 +96,6 @@ var gov = {
 					}
 				});
 				players[userID].marker.refresh(players[userID].latestPos);
-			}
-
-			if (players[userID].team == 'ins') {
-				// var dist = checkDistanceTo(players[userID].latestPos);
-				// console.log("Distance to " + userID + " is " + dist + "m");
 			}
 
 		});
