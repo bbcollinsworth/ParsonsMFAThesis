@@ -7,6 +7,11 @@ var viz = {
 		},
 		'agent': {
 			opacity: 0.5 //,
+		},
+		mouseDownEvent: function(e) {
+			e.preventDefault();
+			console.log("Starting capture!");
+			//newPlayer['captureCircle'] = viz.drawCaptureCircle(newPlayer.latestPos);
 		}
 	},
 
@@ -53,7 +58,7 @@ var viz = {
 
 				console.log("Marker refreshed to: " + posObj.lat + ", " + posObj.lng);
 			},
-			
+
 			makePopupHTML: function() {
 				var newHTML = "";
 				if ('title' in m) {
@@ -98,74 +103,21 @@ var viz = {
 				}
 				var pHTML = m.makePopupHTML();
 				m.setPopupContent(pHTML);
+			},
+
+			attachCaptureEvents: function() {
+				console.log("Attaching Capture Events to " + m.title);
+				newPlayer['captureCircle'] = viz.drawCaptureCircle(newPlayer.latestPos);
+
+				m.addOneTimeEventListener('mouseDown', viz.markerOptions.mouseDownEvent);
+			},
+
+			removeCaptureEvents: function() {
+
 			}
 		}
 
 		$.extend(true, m, extension);
-
-		// m['refresh'] = function(posObj, options) {
-		// 	m.setLatLng([posObj.lat, posObj.lng]);
-		// 	if (options !== undefined) {
-		// 		//m.update();
-		// 	}
-
-		// 	console.log("Marker refreshed to: " + posObj.lat + ", " + posObj.lng);
-		// };
-
-		// m['refresh'] = function(posObj, options) {
-		// 	m.setLatLng([posObj.lat, posObj.lng]);
-		// 	if (options !== undefined) {
-		// 		//m.update();
-		// 	}
-
-		// 	console.log("Marker refreshed to: " + posObj.lat + ", " + posObj.lng);
-		// };
-
-		// m['makePopupHTML'] = function() {
-		// 	var newHTML = "";
-		// 	if ('title' in m) {
-		// 		newHTML += m.title.firstCap().bold().addBreak();
-		// 	}
-		// 	if ('text' in m) {
-		// 		for (line in m.text) {
-		// 			newHTML += m.text[line].addBreak();
-		// 		}
-		// 	}
-		// 	return newHTML;
-		// };
-
-		// m['initPopup'] = function(data) {
-		// 	for (key in data) {
-		// 		m[key] = data[key];
-		// 	}
-		// };
-
-		// m['addPopup'] = function(shouldOpen) {
-
-		// 	var pHTML = m.makePopupHTML();
-		// 	//console.log("popup HTML is: " + pHTML);
-
-		// 	if ('popupClass' in m) {
-		// 		var pOptions = {
-		// 			className: m.popupClass
-		// 		};
-		// 		m.bindPopup(pHTML, pOptions);
-		// 	} else {
-		// 		m.bindPopup(pHTML);
-		// 	}
-
-		// 	if (shouldOpen) {
-		// 		m.openPopup();
-		// 	}
-		// };
-
-		// m['updatePopup'] = function(data) {
-		// 	for (key in data) {
-		// 		m[key] = data[key];
-		// 	}
-		// 	var pHTML = m.makePopupHTML();
-		// 	m.setPopupContent(pHTML);
-		// };
 
 		return m;
 	},

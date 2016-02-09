@@ -1,6 +1,6 @@
 var gov = {
 
-	captureRange: 15,
+	captureRange: 20,
 
 	suspectMarker: {
 		'marker-size': 'large',
@@ -37,21 +37,6 @@ var gov = {
 			h.marker.addTo(map);
 		});
 
-		// var testHub = hubs[hubs.length - 1];
-		// var testHub2 = hubs[hubs.length - 2];
-
-		// testHub.flash(500);
-		// testHub2.flash(1500);
-
-		// setTimeout(function() {
-		// 	testHub.flash(250);
-
-		// 	setTimeout(function() {
-		// 		testHub.stopFlash();
-		// 		testHub2.flash(250);
-		// 	}, 3000);
-		// }, 10000);
-
 	},
 	suspectRangeCheck: function() {
 		var otherPlayers = clientState.allPlayers;
@@ -64,9 +49,11 @@ var gov = {
 				console.log("Distance to " + otherPlayers[id].localID + " is " + dist + "m");
 
 				if (dist <= gov.captureRange) {
+					//otherPlayers[id].marker.attachCaptureEvents();
 					otherPlayers[id].attachCaptureEvents();
 
 				} else if (otherPlayers[id].captureEventsAttached) {
+					//otherPlayers[id].marker.clearCaptureEvents();
 					otherPlayers[id].clearCaptureEvents();
 				}
 			}
