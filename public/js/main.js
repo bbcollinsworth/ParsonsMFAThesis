@@ -5,7 +5,7 @@ var player = {
 	localID: '',
 	pos: {},
 	distanceTo: function(otherPos) {
-		var d = L.latLng(player.pos.lat, player.pos.lng).distanceTo([otherPos.lat,otherPos.lng]);
+		var d = L.latLng(player.pos.lat, player.pos.lng).distanceTo([otherPos.lat, otherPos.lng]);
 		return d;
 	}
 };
@@ -47,25 +47,30 @@ var attachEvents = function() {
 		// });
 
 		//gov.ui.pingCircle.setLatLng(map.getCenter());
-		gov.ui.pingCircle.reCenter();
-		gov.ui.pingCircle.animateBurst();
-		//gov.ui.pingCircle.domElement.classList.add('run');
+		if (!gov.ui.pingCircle.animRunning){
+			gov.ui.pingCircle.animRunning = true;
+			gov.ui.pingCircle.reCenter();
+			gov.ui.pingCircle.animateBurst();
+			//gov.ui.pingCircle.domElement.classList.add('run');
 
-		//var tempPingCircle = document.getElementById('pingCircle');
-		
-		var tempPingCircle = document.getElementsByClassName('onMapPingCircle');
-		console.log(tempPingCircle[0]);
-		tempPingCircle[0].classList.add('run');
-		//gov.ui.pingCircle.setRadius(800);
+			//var tempPingCircle = document.getElementById('pingCircle');
 
-		$('.onMapPingCircle').on('animationend webkitAnimationEnd', function() {
-		
-		// $('#pingCircle').on('animationend webkitAnimationEnd', function() {
-		 	//gov.ui.pingCircle.clearBurst();
-		 	tempPingCircle[0].classList.remove('run');
-		 	//gov.ui.pingCircle.setRadius(0);
-		 	console.log("Animation removed");
-		});
+			var tempPingCircle = document.getElementsByClassName('onMapPingCircle');
+			console.log(tempPingCircle[0]);
+			tempPingCircle[0].classList.add('run');
+			//gov.ui.pingCircle.setRadius(800);
+
+			$('.onMapPingCircle').on('animationend webkitAnimationEnd', function() {
+
+				// $('#pingCircle').on('animationend webkitAnimationEnd', function() {
+				//gov.ui.pingCircle.clearBurst();
+				gov.ui.pingCircle.animRunning = false;
+				tempPingCircle[0].classList.remove('run');
+				//gov.ui.pingCircle.setRadius(0);
+
+				console.log("Animation removed");
+			});
+		}
 		//$('#pingCircle').addClass("run");
 	});
 };
@@ -193,7 +198,7 @@ socket.on('serverMsg', function(res, err) {
 			console.log('Suspect data is: ');
 			console.log(res.locData);
 
-			gov.renderPlayers(res.locData,gov.suspectRangeCheck);
+			gov.renderPlayers(res.locData, gov.suspectRangeCheck);
 		}
 	};
 

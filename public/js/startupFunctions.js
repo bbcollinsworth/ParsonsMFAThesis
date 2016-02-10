@@ -267,6 +267,8 @@ var startup = {
 					localStorage.setItem('svcCheckComplete', true);
 				}
 
+				$('#footerText').html('');
+
 				$('#app').trigger('ready');
 
 			}

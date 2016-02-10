@@ -51,7 +51,7 @@ var viz = {
 		options: {
 			'className': "onMapPingCircle",
 			'fillColor': '#ffffff',
-			'fillOpacity': '1.0',
+			'fillOpacity': '0.0',
 			'stroke': false
 		}
 	},
@@ -72,6 +72,8 @@ var viz = {
 		//}
 		pC['burstAnim'] = {};
 
+		pC['animRunning'] = false;
+
 		pC['animateBurst'] = function(){
 			var finalRad = 800;
 			var startRad = 0;
@@ -80,17 +82,18 @@ var viz = {
 			var frameRate = timeInMillis/divisor;
 			var radInterval = finalRad/divisor;
 			var counter = 0.0;
-			pC.options.fillOpacity = '1.0';
+			pC.setStyle({'fillOpacity': '1.0'});
 
-			burstAnim = setInterval(function(){
+			pC.burstAnim = setInterval(function(){
 				counter += frameRate;
 				startRad += radInterval;
 				pC.setRadius(startRad);
 
-				if (startRad >= finalRad){
+				if (!pC.animRunning){
+				//if (startRad >= finalRad){
 					pC.setRadius(0);
-					pC.options.fillOpacity = '0.0';
-				 	clearInterval(burstAnim);
+					pC.setStyle({'fillOpacity': '0.0'});
+				 	clearInterval(pC.burstAnim);
 				}
 			},16);
 			
