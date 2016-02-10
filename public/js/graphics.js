@@ -25,12 +25,7 @@ var viz = {
 			'marker-size': 'large',
 			'marker-symbol': 'police',
 			'marker-color': '#0000ff'
-		} //,
-		// self: {
-		// 	'marker-size': 'large',
-		// 	//'marker-symbol': 'police',
-		// 	'marker-color': '#ffff00'
-		// }
+		}
 	},
 
 	//CREATE CUSTOM MARKER WITH ADD'L PROPERTIES + FUNCTIONS
@@ -46,7 +41,6 @@ var viz = {
 			opacity: viz.markerOptions[type].opacity,
 			zIndexOffset: viz.markerOptions[type].zIndexOffset || 0
 		});
-
 
 		var extension = {
 
@@ -103,27 +97,49 @@ var viz = {
 				}
 				var pHTML = m.makePopupHTML();
 				m.setPopupContent(pHTML);
-			},
-
-			attachCaptureEvents: function() {
-				console.log("Attaching Capture Events to " + m.title);
-				newPlayer['captureCircle'] = viz.drawCaptureCircle(newPlayer.latestPos);
-
-				m.addOneTimeEventListener('mouseDown', viz.markerOptions.mouseDownEvent);
-			},
-
-			removeCaptureEvents: function() {
-
 			}
-		}
+		};
 
 		$.extend(true, m, extension);
 
 		return m;
 	},
 
+	pingSetup: {
+		radius: 50,
+		options: {
+			'className': "onMapPingCircle",
+			'fillColor': '#ffffff',
+			'fillOpacity': '1.0',
+			'stroke': false
+		}
+	},
+
+	addPingCircle: function() {
+		//var p = L.unproject([window.width * 0.5, window.height * 0.5]);
+		//var c = L.circleMarker(map.getCenter(), viz.pingSetup.options);
+
+		var pC = L.circleMarker(map.getCenter(), viz.pingSetup.options);
+
+		pC.setRadius(viz.pingSetup.radius);
+
+		pC['reCenter'] = function() {
+			pC.setLatLng(map.getCenter());
+		};
+		//c['animate'] = function(){
+
+		//}
+
+		pC.addTo(map);
+
+		var thisCircle = document.getElementsByClassName('onMapPingCircle');
+		pC['domElement'] = thisCircle[0];
+		//thisCircle[0].id = "#pingCircle";
+		return pC;
+	},
+
 	captureSetup: {
-		radius: 40,
+		radius: 80,
 		options: {
 			'className': "captureCircle",
 			'fillColor': '#ff0000',
@@ -246,3 +262,5 @@ var viz = {
 
 
 };
+
+console.log("Viz loaded");

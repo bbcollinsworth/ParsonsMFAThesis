@@ -100,9 +100,7 @@ var startup = {
 				if (clientState.connected && clientState.mapLoaded) {
 					clientState.ready = true;
 					$('#app').trigger('initialized');
-					//emit('clientReady', {});
-					//closeAlert();
-					//console.log("Close msg called");
+					
 					clearInterval(waitForReady);
 				} else if (readyCounter > 0) {
 					readyCounter--;
@@ -280,3 +278,5 @@ var startup = {
 
 	}
 };
+
+console.log("StartupFunctions loaded");

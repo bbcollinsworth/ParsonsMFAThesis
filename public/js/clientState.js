@@ -90,7 +90,7 @@ var clientState = {
 
 		console.log("New player stored locally as " + newPlayer.localID);
 
-		
+
 
 		return newPlayer;
 	},
@@ -172,3 +172,5 @@ var clientState = {
 		}
 	}
 };
+
+console.log("ClientState loaded");

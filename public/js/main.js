@@ -39,11 +39,30 @@ var attachEvents = function() {
 
 		storeAndSendLocation(pingFunction);
 
-		var pingCircle = document.getElementById('pingCircle');
-		pingCircle.classList.add('run');
+		// var pingCircle = document.getElementByClassName('onMapPingCircle');
+		// pingCircle[0].classList.add('run');
 
-		$('#pingCircle').on('animationend webkitAnimationEnd', function() {
-			pingCircle.classList.remove('run');
+		// $('#pingCircle').on('animationend webkitAnimationEnd', function() {
+		// 	pingCircle.classList.remove('run');
+		// });
+
+		//gov.ui.pingCircle.setLatLng(map.getCenter());
+		gov.ui.pingCircle.reCenter();
+		//gov.ui.pingCircle.domElement.classList.add('run');
+
+		//var tempPingCircle = document.getElementById('pingCircle');
+		
+		var tempPingCircle = document.getElementsByClassName('onMapPingCircle');
+		console.log(tempPingCircle[0]);
+		tempPingCircle[0].classList.add('run');
+		gov.ui.pingCircle.setRadius(800);
+
+		$('.onMapPingCircle').on('animationend webkitAnimationEnd', function() {
+		
+		// $('#pingCircle').on('animationend webkitAnimationEnd', function() {
+		 	tempPingCircle[0].classList.remove('run');
+		 	gov.ui.pingCircle.setRadius(50);
+		 	console.log("Animation removed");
 		});
 		//$('#pingCircle').addClass("run");
 	});
@@ -65,7 +84,7 @@ function emit(tag, emitObj) {
 	emitObj['tag'] = tag;
 	socket.emit('clientMsg', emitObj);
 	console.log('Sending ' + tag + ' to server');
-}
+};
 
 // window.onload = function() {
 app.init();

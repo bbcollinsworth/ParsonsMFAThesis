@@ -1,5 +1,7 @@
 var gov = {
 
+	ui: {},
+
 	captureRange: 20,
 
 	suspectMarker: {
@@ -19,6 +21,16 @@ var gov = {
 		var pingButton = viz.searchButton();
 		//$('#container').append(pingButton);
 		$('#mobileFooter').prepend(pingButton);
+
+		// $('#pingCircle').css({
+		// 	'transform': 'translate(' + window.width * 0.5 + ',' + window.height*0.5 + ')',
+		// 	'cx': window.width * 0.5,
+		// 	'cy': window.height * 0.5
+		// });
+
+		gov.ui['pingCircle'] = viz.addPingCircle();
+
+		//var pingCircle = ;
 
 	},
 
@@ -89,8 +101,10 @@ var gov = {
 
 		gov.suspectRangeCheck();
 		//if (callback !== undefined) {
-			//callback();
+		//callback();
 		//}
 	}
-	
+
 };
+
+console.log("Team functions loaded");

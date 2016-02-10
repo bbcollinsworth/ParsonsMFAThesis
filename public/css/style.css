@@ -101,23 +101,49 @@
 }
 
 #searchPingImg {
-	width: 100%;
+	width: inherit;
 	height: 100vh;
-	margin: auto;
-	position: fixed;
-	top: 0;
-	left: 0;
+	top: 0px;
+	margin: inherit;
+	position: inherit;
+	left: inherit;
+
+	//width: 100%;
+	//height: 100vh;
+	//margin: auto;
+	//position: fixed;
+	//top: 0;
+	//left: 0;
 }
 
 #pingCircle {
 	fill: rgba(255,255,255,1.0);
-	cx: 50%;
-	cy: 50%;
+/*	cx: 50%;
+	cy: 50%;*/
 	r: 0;
 }
 
+.onMapPingCircle {
+	//transition-duration: 1s;
+	transition: r 1s;
+}
+
+.onMapPingCircle.run {
+	//animation: ping ease 1s 1;
+
+	-webkit-animation: ping ease 1s 1; /* Safari 4+ */
+	-moz-animation:    ping ease 1s 1; /* Fx 5+ */
+	-o-animation:      ping ease 1s 1; /* Opera 12+ */
+	animation:         ping ease 1s 1;
+}
+
 .pCircle.run {
-	animation: ping ease 1s 1;
+	//animation: ping ease 1s 1;
+
+	-webkit-animation: ping ease 1s 1; /* Safari 4+ */
+	-moz-animation:    ping ease 1s 1; /* Fx 5+ */
+	-o-animation:      ping ease 1s 1; /* Opera 12+ */
+	animation:         ping ease 1s 1;
 }
 
 .captureCircle {
@@ -136,11 +162,8 @@
 
 
 /*-------------------- ANIMATIONS --------------------*/
-@keyframes blink{
-	to{color:red;}
-}
 
-@keyframes ping{
+@-webkit-keyframes ping {
 	0% {
 		fill: rgba(255,255,255,1.0);
 		r: 0;
@@ -149,6 +172,40 @@
 		fill: rgba(255,255,255,0.0);
 		r: 800;
 	}
+}
+@-moz-keyframes ping {
+	0% {
+		fill: rgba(255,255,255,1.0);
+		r: 0;
+	}
+	100% {
+		fill: rgba(255,255,255,0.0);
+		r: 800;
+	}
+}
+@-o-keyframes ping {
+	0% {
+		fill: rgba(255,255,255,1.0);
+		r: 0;
+	}
+	100% {
+		fill: rgba(255,255,255,0.0);
+		r: 800;
+	}
+}
+@keyframes ping {
+	0% {
+		fill: rgba(255,255,255,1.0);
+		r: 0;
+	}
+	100% {
+		fill: rgba(255,255,255,0.0);
+		r: 800;
+	}
+}
+
+@keyframes blink{
+	to{color:red;}
 }
 
 
