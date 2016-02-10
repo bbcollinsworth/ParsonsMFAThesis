@@ -7,6 +7,7 @@ var startup = {
 
 	setup: function() {
 
+		initLeafletExtensions();
 		//custom first-letter capitalize function
 		String.prototype.firstCap = function() {
 			return this.charAt(0).toUpperCase() + this.slice(1);

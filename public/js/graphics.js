@@ -35,72 +35,73 @@ var viz = {
 			isDraggable = false;
 		}
 
-		var m = L.marker([pos.lat, pos.lng], {
+		var m = L.playerMarker([pos.lat, pos.lng], {
+		//var m = L.marker([pos.lat, pos.lng], {
 			icon: L.mapbox.marker.icon(viz.markerIconOptions[type]),
 			draggable: isDraggable,
 			opacity: viz.markerOptions[type].opacity,
 			zIndexOffset: viz.markerOptions[type].zIndexOffset || 0
 		});
 
-		var extension = {
+		// var extension = {
 
-			refresh: function(posObj, options) {
-				m.setLatLng([posObj.lat, posObj.lng]);
-				if (options !== undefined) {
-					//m.update();
-				}
+		// 	refresh: function(posObj, options) {
+		// 		m.setLatLng([posObj.lat, posObj.lng]);
+		// 		if (options !== undefined) {
+		// 			//m.update();
+		// 		}
 
-				console.log("Marker refreshed to: " + posObj.lat + ", " + posObj.lng);
-			},
+		// 		console.log("Marker refreshed to: " + posObj.lat + ", " + posObj.lng);
+		// 	},
 
-			makePopupHTML: function() {
-				var newHTML = "";
-				if ('title' in m) {
-					newHTML += m.title.firstCap().bold().addBreak();
-				}
-				if ('text' in m) {
-					for (line in m.text) {
-						newHTML += m.text[line].addBreak();
-					}
-				}
-				return newHTML;
-			},
+		// 	makePopupHTML: function() {
+		// 		var newHTML = "";
+		// 		if ('title' in m) {
+		// 			newHTML += m.title.firstCap().bold().addBreak();
+		// 		}
+		// 		if ('text' in m) {
+		// 			for (line in m.text) {
+		// 				newHTML += m.text[line].addBreak();
+		// 			}
+		// 		}
+		// 		return newHTML;
+		// 	},
 
-			initPopup: function(data) {
-				for (key in data) {
-					m[key] = data[key];
-				}
-			},
+		// 	initPopup: function(data) {
+		// 		for (key in data) {
+		// 			m[key] = data[key];
+		// 		}
+		// 	},
 
-			addPopup: function(shouldOpen) {
+		// 	addPopup: function(shouldOpen) {
 
-				var pHTML = m.makePopupHTML();
-				//console.log("popup HTML is: " + pHTML);
+		// 		var pHTML = m.makePopupHTML();
+		// 		//console.log("popup HTML is: " + pHTML);
 
-				if ('popupClass' in m) {
-					var pOptions = {
-						className: m.popupClass
-					};
-					m.bindPopup(pHTML, pOptions);
-				} else {
-					m.bindPopup(pHTML);
-				}
+		// 		if ('popupClass' in m) {
+		// 			var pOptions = {
+		// 				className: m.popupClass
+		// 			};
+		// 			m.bindPopup(pHTML, pOptions);
+		// 		} else {
+		// 			m.bindPopup(pHTML);
+		// 		}
 
-				if (shouldOpen) {
-					m.openPopup();
-				}
-			},
+		// 		if (shouldOpen) {
+		// 			m.openPopup();
+		// 		}
+		// 	},
 
-			updatePopup: function(data) {
-				for (key in data) {
-					m[key] = data[key];
-				}
-				var pHTML = m.makePopupHTML();
-				m.setPopupContent(pHTML);
-			}
-		};
+		// 	updatePopup: function(data) {
+		// 		for (key in data) {
+		// 			m[key] = data[key];
+		// 		}
+		// 		var pHTML = m.makePopupHTML();
+		// 		m.setPopupContent(pHTML);
+		// 	}
+		// };
 
-		$.extend(true, m, extension);
+		// $.extend(true, m, extension);
 
 		return m;
 	},
