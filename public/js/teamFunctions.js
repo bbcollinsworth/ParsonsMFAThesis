@@ -29,6 +29,7 @@ var gov = {
 		// });
 
 		gov.ui['pingCircle'] = viz.addPingCircle();
+		//$('.onMapPingCircle').css('color': rgba)
 
 		//var pingCircle = ;
 

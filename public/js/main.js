@@ -48,6 +48,7 @@ var attachEvents = function() {
 
 		//gov.ui.pingCircle.setLatLng(map.getCenter());
 		gov.ui.pingCircle.reCenter();
+		gov.ui.pingCircle.animateBurst();
 		//gov.ui.pingCircle.domElement.classList.add('run');
 
 		//var tempPingCircle = document.getElementById('pingCircle');
@@ -55,13 +56,14 @@ var attachEvents = function() {
 		var tempPingCircle = document.getElementsByClassName('onMapPingCircle');
 		console.log(tempPingCircle[0]);
 		tempPingCircle[0].classList.add('run');
-		gov.ui.pingCircle.setRadius(800);
+		//gov.ui.pingCircle.setRadius(800);
 
 		$('.onMapPingCircle').on('animationend webkitAnimationEnd', function() {
 		
 		// $('#pingCircle').on('animationend webkitAnimationEnd', function() {
+		 	//gov.ui.pingCircle.clearBurst();
 		 	tempPingCircle[0].classList.remove('run');
-		 	gov.ui.pingCircle.setRadius(50);
+		 	//gov.ui.pingCircle.setRadius(0);
 		 	console.log("Animation removed");
 		});
 		//$('#pingCircle').addClass("run");

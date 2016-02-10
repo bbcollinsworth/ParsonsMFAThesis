@@ -43,71 +43,11 @@ var viz = {
 			zIndexOffset: viz.markerOptions[type].zIndexOffset || 0
 		});
 
-		// var extension = {
-
-		// 	refresh: function(posObj, options) {
-		// 		m.setLatLng([posObj.lat, posObj.lng]);
-		// 		if (options !== undefined) {
-		// 			//m.update();
-		// 		}
-
-		// 		console.log("Marker refreshed to: " + posObj.lat + ", " + posObj.lng);
-		// 	},
-
-		// 	makePopupHTML: function() {
-		// 		var newHTML = "";
-		// 		if ('title' in m) {
-		// 			newHTML += m.title.firstCap().bold().addBreak();
-		// 		}
-		// 		if ('text' in m) {
-		// 			for (line in m.text) {
-		// 				newHTML += m.text[line].addBreak();
-		// 			}
-		// 		}
-		// 		return newHTML;
-		// 	},
-
-		// 	initPopup: function(data) {
-		// 		for (key in data) {
-		// 			m[key] = data[key];
-		// 		}
-		// 	},
-
-		// 	addPopup: function(shouldOpen) {
-
-		// 		var pHTML = m.makePopupHTML();
-		// 		//console.log("popup HTML is: " + pHTML);
-
-		// 		if ('popupClass' in m) {
-		// 			var pOptions = {
-		// 				className: m.popupClass
-		// 			};
-		// 			m.bindPopup(pHTML, pOptions);
-		// 		} else {
-		// 			m.bindPopup(pHTML);
-		// 		}
-
-		// 		if (shouldOpen) {
-		// 			m.openPopup();
-		// 		}
-		// 	},
-
-		// 	updatePopup: function(data) {
-		// 		for (key in data) {
-		// 			m[key] = data[key];
-		// 		}
-		// 		var pHTML = m.makePopupHTML();
-		// 		m.setPopupContent(pHTML);
-		// 	}
-		// };
-
-		// $.extend(true, m, extension);
-
 		return m;
 	},
 
 	pingSetup: {
-		radius: 50,
+		radius: 0,
 		options: {
 			'className': "onMapPingCircle",
 			'fillColor': '#ffffff',
@@ -130,6 +70,36 @@ var viz = {
 		//c['animate'] = function(){
 
 		//}
+		pC['burstAnim'] = {};
+
+		pC['animateBurst'] = function(){
+			var finalRad = 800;
+			var startRad = 0;
+			var timeInMillis = 1000;
+			var divisor = 60;
+			var frameRate = timeInMillis/divisor;
+			var radInterval = finalRad/divisor;
+			var counter = 0.0;
+			pC.options.fillOpacity = '1.0';
+
+			burstAnim = setInterval(function(){
+				counter += frameRate;
+				startRad += radInterval;
+				pC.setRadius(startRad);
+
+				if (startRad >= finalRad){
+					pC.setRadius(0);
+					pC.options.fillOpacity = '0.0';
+				 	clearInterval(burstAnim);
+				}
+			},16);
+			
+		};
+
+		pC['clearBurst'] = function(){
+			clearInterval(pC.burstAnim);
+			pC.setRadius(0);
+		};
 
 		pC.addTo(map);
 
