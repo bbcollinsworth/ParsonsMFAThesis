@@ -36,7 +36,7 @@ var viz = {
 		}
 
 		var m = L.playerMarker([pos.lat, pos.lng], {
-		//var m = L.marker([pos.lat, pos.lng], {
+			//var m = L.marker([pos.lat, pos.lng], {
 			icon: L.mapbox.marker.icon(viz.markerIconOptions[type]),
 			draggable: isDraggable,
 			opacity: viz.markerOptions[type].opacity,
@@ -47,11 +47,12 @@ var viz = {
 	},
 
 	pingSetup: {
-		radius: 0,
+		//radius: 0,
 		options: {
+			'radius': '0',
 			'className': "onMapPingCircle",
 			'fillColor': '#ffffff',
-			'fillOpacity': '0.0',
+			'fillOpacity': '',
 			'stroke': false
 		}
 	},
@@ -62,7 +63,7 @@ var viz = {
 
 		var pC = L.circleMarker(map.getCenter(), viz.pingSetup.options);
 
-		pC.setRadius(viz.pingSetup.radius);
+		//pC.setRadius(viz.pingSetup.radius);
 
 		pC['reCenter'] = function() {
 			pC.setLatLng(map.getCenter());
@@ -74,32 +75,67 @@ var viz = {
 
 		pC['animRunning'] = false;
 
-		pC['animateBurst'] = function(){
+		pC['animateBurst'] = function() {
 			var finalRad = 800;
 			var startRad = 0;
 			var timeInMillis = 1000;
 			var divisor = 60;
-			var frameRate = timeInMillis/divisor;
-			var radInterval = finalRad/divisor;
+			var frameRate = timeInMillis / divisor;
+			var radInterval = finalRad / divisor;
 			var counter = 0.0;
-			pC.setStyle({'fillOpacity': '1.0'});
+			pC.setStyle({
+				'radius': 0 //,
+				//'fillOpacity': '1.0'
+			});
 
-			pC.burstAnim = setInterval(function(){
+			// pC.burstAnim = function() {
+			// 	counter += frameRate;
+			// 	startRad += radInterval;
+			// 	//pC.setRadius(startRad);
+			// 	pC.setStyle({
+			// 		'radius': startRad //,
+			// 		//'fillOpacity': '0.0'}
+			// 	});
+
+			// 	if (pC.animRunning) {
+
+			// 		setInterval(pC.burstAnim, 16);
+			// 	} else {
+			// 		//if (startRad >= finalRad){
+			// 		pC.setRadius(0);
+			// 		pC.setStyle({
+			// 			'radius': 0 //,
+			// 			//'fillOpacity': '0.0'
+			// 		});
+			// 	}
+			// };
+
+			// pC.burstAnim();
+
+
+			pC.burstAnim = setInterval(function() {
 				counter += frameRate;
 				startRad += radInterval;
-				pC.setRadius(startRad);
+				//pC.setRadius(startRad);
+				pC.setStyle({
+					'radius': startRad //,
+					//'fillOpacity': '0.0'}
+				});
 
-				if (!pC.animRunning){
-				//if (startRad >= finalRad){
+				if (!pC.animRunning) {
+					//if (startRad >= finalRad){
 					pC.setRadius(0);
-					pC.setStyle({'fillOpacity': '0.0'});
-				 	clearInterval(pC.burstAnim);
+					pC.setStyle({
+						'radius': 0 //,
+						//'fillOpacity': '0.0'
+					});
+					clearInterval(pC.burstAnim);
 				}
-			},16);
-			
+			}, 16);
+
 		};
 
-		pC['clearBurst'] = function(){
+		pC['clearBurst'] = function() {
 			clearInterval(pC.burstAnim);
 			pC.setRadius(0);
 		};
