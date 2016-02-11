@@ -49,97 +49,17 @@ var viz = {
 	pingSetup: {
 		//radius: 0,
 		options: {
-			'radius': '0',
+			//'radius': '',
 			'className': "onMapPingCircle",
 			'fillColor': '#ffffff',
-			'fillOpacity': '',
+			'fillOpacity': '1.0',
 			'stroke': false
 		}
 	},
 
 	addPingCircle: function() {
-		//var p = L.unproject([window.width * 0.5, window.height * 0.5]);
-		//var c = L.circleMarker(map.getCenter(), viz.pingSetup.options);
 
-		var pC = L.circleMarker(map.getCenter(), viz.pingSetup.options);
-
-		//pC.setRadius(viz.pingSetup.radius);
-
-		pC['reCenter'] = function() {
-			pC.setLatLng(map.getCenter());
-		};
-		//c['animate'] = function(){
-
-		//}
-		pC['burstAnim'] = {};
-
-		pC['animRunning'] = false;
-
-		pC['animateBurst'] = function() {
-			var finalRad = 800;
-			var startRad = 0;
-			var timeInMillis = 1000;
-			var divisor = 60;
-			var frameRate = timeInMillis / divisor;
-			var radInterval = finalRad / divisor;
-			var counter = 0.0;
-			pC.setStyle({
-				'radius': 0 //,
-				//'fillOpacity': '1.0'
-			});
-
-			// pC.burstAnim = function() {
-			// 	counter += frameRate;
-			// 	startRad += radInterval;
-			// 	//pC.setRadius(startRad);
-			// 	pC.setStyle({
-			// 		'radius': startRad //,
-			// 		//'fillOpacity': '0.0'}
-			// 	});
-
-			// 	if (pC.animRunning) {
-
-			// 		setInterval(pC.burstAnim, 16);
-			// 	} else {
-			// 		//if (startRad >= finalRad){
-			// 		pC.setRadius(0);
-			// 		pC.setStyle({
-			// 			'radius': 0 //,
-			// 			//'fillOpacity': '0.0'
-			// 		});
-			// 	}
-			// };
-
-			// pC.burstAnim();
-
-
-			pC.burstAnim = setInterval(function() {
-				counter += frameRate;
-				startRad += radInterval;
-				//pC.setRadius(startRad);
-				pC.setStyle({
-					'radius': startRad //,
-					//'fillOpacity': '0.0'}
-				});
-
-				if (!pC.animRunning) {
-					//if (startRad >= finalRad){
-					pC.setRadius(0);
-					pC.setStyle({
-						'radius': 0 //,
-						//'fillOpacity': '0.0'
-					});
-					clearInterval(pC.burstAnim);
-				}
-			}, 16);
-
-		};
-
-		pC['clearBurst'] = function() {
-			clearInterval(pC.burstAnim);
-			pC.setRadius(0);
-		};
-
+		var pC = L.pingCircle(map.getCenter(), viz.pingSetup.options);
 		pC.addTo(map);
 
 		var thisCircle = document.getElementsByClassName('onMapPingCircle');
@@ -151,11 +71,23 @@ var viz = {
 	captureSetup: {
 		radius: 80,
 		options: {
+			'radius': 80,
 			'className': "captureCircle",
 			'fillColor': '#ff0000',
-			'fillOpacity': '0.5',
-			'stroke': false
+			'fillOpacity': '0.1',
+			'weight': 10,
+			'color': '#ff0000',
+			'opacity': '0.9',
+			'dashArray': '10,30',
+			'lineCap': 'square',
+			'lineJoin': 'square'
 		}
+	},
+
+	addCaptureCircle: function(pos) {
+		var c = L.captureCircle([pos.lat,pos.lng], viz.captureSetup.options);
+		c.addTo(map);
+		return c;
 	},
 
 	drawCaptureCircle: function(pos) {

@@ -39,39 +39,26 @@ var attachEvents = function() {
 
 		storeAndSendLocation(pingFunction);
 
-		// var pingCircle = document.getElementByClassName('onMapPingCircle');
-		// pingCircle[0].classList.add('run');
-
-		// $('#pingCircle').on('animationend webkitAnimationEnd', function() {
-		// 	pingCircle.classList.remove('run');
-		// });
-
-		//gov.ui.pingCircle.setLatLng(map.getCenter());
 		if (!gov.ui.pingCircle.animRunning){
-			gov.ui.pingCircle.animRunning = true;
+			console.log("calling animation");
 			gov.ui.pingCircle.reCenter();
+
+			gov.ui.pingCircle.animRunning = true;
+			
 			gov.ui.pingCircle.animateBurst();
-			//gov.ui.pingCircle.domElement.classList.add('run');
-
-			//var tempPingCircle = document.getElementById('pingCircle');
-
+			
 			var tempPingCircle = document.getElementsByClassName('onMapPingCircle');
-			console.log(tempPingCircle[0]);
 			tempPingCircle[0].classList.add('run');
-			//gov.ui.pingCircle.setRadius(800);
+			//console.log(tempPingCircle[0]);
 
 			$('.onMapPingCircle').on('animationend webkitAnimationEnd', function() {
 
-				// $('#pingCircle').on('animationend webkitAnimationEnd', function() {
-				//gov.ui.pingCircle.clearBurst();
-				gov.ui.pingCircle.animRunning = false;
 				tempPingCircle[0].classList.remove('run');
-				//gov.ui.pingCircle.setRadius(0);
+				gov.ui.pingCircle.animRunning = false;
 
 				console.log("Animation removed");
 			});
 		}
-		//$('#pingCircle').addClass("run");
 	});
 };
 

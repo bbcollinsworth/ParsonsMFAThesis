@@ -29,7 +29,8 @@ var clientState = {
 		ins: {
 			attachCaptureEvents: function() {
 				console.log("Attaching Capture Events to " + this.localID);
-				this['captureCircle'] = viz.drawCaptureCircle(this.latestPos);
+				this['captureCircle'] = viz.addCaptureCircle(this.latestPos);
+				this['captureCircle'].startAnim();
 
 				this.marker.addOneTimeEventListener('mouseDown', viz.markerOptions.mouseDownEvent);
 			},
@@ -55,6 +56,8 @@ var clientState = {
 		};
 
 		newPlayer.marker = viz.marker(player.type, newPlayer.latestPos).addTo(map);
+		
+		//newPlayer.marker = viz.marker(player.type, newPlayer.latestPos).addTo(map);
 		console.log(clientState.allPlayers);
 
 		//newPlayer.marker.addTo(map);
