@@ -8,6 +8,15 @@ var initLeafletExtensions = function() {
 
 	var playerMarkerExt = {
 
+		//inCaptureRange: false,
+
+		// startCapture: function(){
+			// if (this.inCaptureRange){
+			// 	this['captureCircle'] = viz.addCaptureCircle(this.latestPos);
+			// 	this['captureCircle'].startAnim();
+			// }
+		// },
+
 		refresh: function(posObj, options) {
 			this.setLatLng([posObj.lat, posObj.lng]);
 			if (options !== undefined) {
@@ -60,7 +69,11 @@ var initLeafletExtensions = function() {
 			}
 			var pHTML = this.makePopupHTML();
 			this.setPopupContent(pHTML);
-		}
+		}//,
+
+		// startCaptureEvent: function(){
+		// 		//if ()
+		// 	}
 	};
 
 	L.PlayerMarker = L.Marker.extend(playerMarkerExt);

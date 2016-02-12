@@ -51,6 +51,7 @@ var gov = {
 		});
 
 	},
+
 	suspectRangeCheck: function() {
 		var otherPlayers = clientState.allPlayers;
 
@@ -62,16 +63,29 @@ var gov = {
 				console.log("Distance to " + otherPlayers[id].localID + " is " + dist + "m");
 
 				if (dist <= gov.captureRange) {
+					otherPlayers[id].inCaptureRange = true;
 					//otherPlayers[id].marker.attachCaptureEvents();
 					otherPlayers[id].attachCaptureEvents();
 
-				} else if (otherPlayers[id].captureEventsAttached) {
+				} else if (otherPlayers[id].inCaptureRange) {
+
+					//} else if (otherPlayers[id].captureEventsAttached) {
+					otherPlayers[id].inCaptureRange = false;
 					//otherPlayers[id].marker.clearCaptureEvents();
 					otherPlayers[id].clearCaptureEvents();
 				}
 			}
 		}
 	},
+
+	startCaptureFn: function() {
+
+	},
+
+	stopCaptureFn: function() {
+
+	},
+
 	renderPlayers: function(pData) {
 		$.each(pData, function(userID, playerData) {
 
