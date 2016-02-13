@@ -11,16 +11,15 @@ var initLeafletExtensions = function() {
 		//inCaptureRange: false,
 
 		// startCapture: function(){
-			// if (this.inCaptureRange){
-			// 	this['captureCircle'] = viz.addCaptureCircle(this.latestPos);
-			// 	this['captureCircle'].startAnim();
-			// }
+		// if (this.inCaptureRange){
+		// 	this['captureCircle'] = viz.addCaptureCircle(this.latestPos);
+		// 	this['captureCircle'].startAnim();
+		// }
 		// },
 
 		refresh: function(posObj, options) {
 			this.setLatLng([posObj.lat, posObj.lng]);
-			if (options !== undefined) {
-			}
+			if (options !== undefined) {}
 
 			console.log("Marker refreshed to: " + posObj.lat + ", " + posObj.lng);
 		},
@@ -69,7 +68,36 @@ var initLeafletExtensions = function() {
 			}
 			var pHTML = this.makePopupHTML();
 			this.setPopupContent(pHTML);
-		}//,
+		},
+
+		_initInteraction: function() {
+
+			if (!this.options.clickable) {
+				return;
+			}
+
+			// TODO refactor into something shared with Map/Path/etc. to DRY it up
+
+			//IMPORTANT: ADDED MOUSEUP EVENT HERE 
+			var icon = this._icon,
+				events = ['dblclick', 'mousedown', 'mouseover', 'mouseout', 'contextmenu', 'mouseup'];
+
+			L.DomUtil.addClass(icon, 'leaflet-clickable');
+			L.DomEvent.on(icon, 'click', this._onMouseClick, this);
+			L.DomEvent.on(icon, 'keypress', this._onKeyPress, this);
+
+			for (var i = 0; i < events.length; i++) {
+				L.DomEvent.on(icon, events[i], this._fireMouseEvent, this);
+			}
+
+			if (L.Handler.MarkerDrag) {
+				this.dragging = new L.Handler.MarkerDrag(this);
+
+				if (this.options.draggable) {
+					this.dragging.enable();
+				}
+			}
+		},
 
 		// startCaptureEvent: function(){
 		// 		//if ()
@@ -119,7 +147,7 @@ var initLeafletExtensions = function() {
 					'radius': startRad
 				});
 
-				console.log("radius changed");
+				//console.log("radius changed");
 
 				if (!pC.animRunning) {
 					pC.setStyle({
@@ -152,43 +180,53 @@ var initLeafletExtensions = function() {
 
 	var captureCircleExt = {
 		'animRunning': false,
+		'startRadius': 500,
+		'finalRadius': 20,
+		'currentRadius': 0, //+this.startRadius,
 
-		startAnim: function(){
-			this.animRunning = true;
-
-			var finalRad = 20;
-			var startRad = 700;
+		startAnim: function() {
+			var cc = this;
+			cc.animRunning = true;
+			cc.currentRadius = cc.startRadius;
+			console.log("Current radius: " + cc.currentRadius);
+			//var finalRad = 20;
+			//var startRad = 700;
 			var timeInMillis = 5000;
-			var divisor = 60*5;
+			var divisor = 60 * 5;
 			var frameRate = Math.floor(timeInMillis / divisor);
-			var radInterval = (startRad-finalRad) / divisor;
+			var radInterval = (cc.startRadius - cc.finalRadius) / divisor;
 			var counter = 0.0;
-			this.setStyle({
-				'radius': startRad
+			cc.setStyle({
+				'radius': cc.currentRadius
 			});
 
-			var cc = this;
+			// var cc = this;
 
-			this.burstAnim = setInterval(function() {
+			cc['burstAnim'] = setInterval(function() {
 				counter += frameRate;
-				startRad -= radInterval;
+				cc.currentRadius -= radInterval;
+				//console.log("Current radius: " + cc.currentRadius);
 				cc.setStyle({
-					'radius': startRad
+					'radius': cc.currentRadius
 				});
+				//console.log("radius changed");
 
-				console.log("radius changed");
-
-				if (!cc.animRunning || startRad <= 20) {
+				if (!cc.animRunning) { // || startRad <= 20) {
 					//if (startRad >= finalRad){
 					//this.setRadius(0);
+					clearInterval(cc.burstAnim);
+				} else if (cc.currentRadius <= cc.finalRadius) {
 					cc.setStyle({
-						'radius': finalRad
+						'radius': cc.finalRadius
 					});
+					cc.animRunning = false;
+					//gov.sendLockout();
 					clearInterval(cc.burstAnim);
 				}
+				//}
 			}, 16);
 		},
-		clearAnim: function(){
+		clearAnim: function() {
 
 		}
 	};

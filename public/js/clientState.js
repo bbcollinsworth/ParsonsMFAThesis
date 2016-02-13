@@ -31,19 +31,35 @@ var clientState = {
 			startCapture: function(e) {
 				//e.preventDefault();
 				//if (this.inCaptureRange) {
-					console.log("Starting capture on " + newPlayer.localID);
+				console.log("Starting capture on " + newPlayer.localID);
+
+				if (!('captureCircle' in newPlayer)) {
 					newPlayer['captureCircle'] = viz.addCaptureCircle(newPlayer.latestPos);
-					newPlayer['captureCircle'].startAnim();
+					newPlayer['captureCircle'].addTo(map);
+
+					//newPlayer.captureCircle.remove();
+					// add something to remove the old one
+				}
+				// newPlayer['captureCircle'] = viz.addCaptureCircle(newPlayer.latestPos);
+				// newPlayer['captureCircle'].addTo(map);
+				newPlayer['captureCircle'].startAnim();
+				newPlayer.marker.on('mouseup', this.stopCapture); //viz.markerOptions.mouseDownEvent);
+
 				//}
 			},
-			enableCaptureEvents: function(){
-				//need to make capture function part of leaflet extension
-				//by setting it equal to gov.? or just adding it
+			stopCapture: function(e) {
+				console.log("Mouse up - capture pausing");
+				newPlayer.captureCircle.animRunning = false;
 			},
 			attachCaptureEvents: function() {
 				console.log("Attaching Capture Events to " + this.localID);
-				
-				this.marker.addOneTimeEventListener('mousedown', this.startCapture);//viz.markerOptions.mouseDownEvent);
+
+				this.marker.on('mousedown', this.startCapture); //viz.markerOptions.mouseDownEvent);
+				this.marker.on('mouseup', function(e) {
+					//e.preventDefault();
+					console.log("Mouse up - capture pausing");
+					newPlayer.captureCircle.animRunning = false;
+				}); //viz.markerOptions.mouseDownEvent);
 				// this['captureCircle'] = viz.addCaptureCircle(this.latestPos);
 				// this['captureCircle'].startAnim();
 			},
@@ -58,7 +74,7 @@ var clientState = {
 		newPlayer = {
 			team: player.team,
 			type: player.type,
-			latestPos: player.locData[0]//,
+			latestPos: player.locData[0] //,
 			// mouseDownEvent: function(e) {
 			// 	e.preventDefault();
 			// 	console.log("Starting capture on " + newPlayer.localID);

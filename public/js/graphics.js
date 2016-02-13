@@ -1,18 +1,26 @@
 var viz = {
 
+	headerStyles: {
+		'urgent': 'urgent-alert',
+		'normal': 'normal-alert'
+	},
+
 	markerOptions: {
 		'suspect': {
 			zIndexOffset: 1000,
-			opacity: 0.8 //,
+			opacity: 0.8//,
+			// startCaptureEvent: function(){
+			// 	//if ()
+			// }
 		},
 		'agent': {
 			opacity: 0.5 //,
-		},
-		mouseDownEvent: function(e) {
-			e.preventDefault();
-			console.log("Starting capture!");
-			//newPlayer['captureCircle'] = viz.drawCaptureCircle(newPlayer.latestPos);
-		}
+		}//,
+		// mouseDownEvent: function(e) {
+		// 	e.preventDefault();
+		// 	console.log("Starting capture!");
+		// 	//newPlayer['captureCircle'] = viz.drawCaptureCircle(newPlayer.latestPos);
+		// }
 	},
 
 	markerIconOptions: {
@@ -42,6 +50,8 @@ var viz = {
 			opacity: viz.markerOptions[type].opacity,
 			zIndexOffset: viz.markerOptions[type].zIndexOffset || 0
 		});
+		// .on('mouseDownEvent',gov.startCaptureFn)
+		// .on('mouseUpEvent',gov.stopCaptureFn);
 
 		return m;
 	},
@@ -86,7 +96,9 @@ var viz = {
 
 	addCaptureCircle: function(pos) {
 		var c = L.captureCircle([pos.lat,pos.lng], viz.captureSetup.options);
-		c.addTo(map);
+		// c.startRadius = +window.height*0.7;
+		// console.log('start radius set to: ' + c.startRadius);
+		//c.addTo(map);
 		return c;
 	},
 

@@ -1,4 +1,8 @@
+
+
 #app {
+	font-family: 'Open Sans',sans-serif;
+	font-weight: 300;
 	margin: auto;
 	/*height: 100%;*/
 	min-height: ;
@@ -51,8 +55,16 @@
 }
 
 #alertBox .ui-collapsible-content {
+	font-family: 'Open Sans',sans-serif;
+	font-weight: 300;
 	background-color: rgba(255,255,255,0.7);
 	box-shadow: 10px 0px 30px 0px rgba(0,0,0,0.3);
+	text-shadow: none;
+}
+
+#alertBox .ui-collapsible-content.urgent-alert {
+	color: white;
+	background-color: rgba(255,0,0,0.7);
 }
 
 #svcChecklist .ui-collapsible-heading {

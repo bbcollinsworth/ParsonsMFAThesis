@@ -66,6 +66,12 @@ var gov = {
 					otherPlayers[id].inCaptureRange = true;
 					//otherPlayers[id].marker.attachCaptureEvents();
 					otherPlayers[id].attachCaptureEvents();
+					msg("Suspect in capture range! Click and hold on suspect marker to lock out device.",'urgent'
+						// {
+						// 	'color': 'white',
+						// 	'background-color': 'rgba(255,255,0,0.7)'
+						// }
+						);
 
 				} else if (otherPlayers[id].inCaptureRange) {
 

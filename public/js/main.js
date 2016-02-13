@@ -12,8 +12,20 @@ var player = {
 
 var hubs = [];
 
-var msg = function(text) {
+var msg = function(text, styling) {
 	$('#alertBodyText').html('<p>' + text + '</p>');
+
+	if (styling in viz.headerStyles){
+		console.log("adding header styling! " + styling);
+		$('#alertBox .ui-collapsible-content').addClass(viz.headerStyles[styling]);
+	} //else {
+		//$('#alertBox .ui-collapsible-content').addClass(viz.headerStyles['normal']);
+	
+	//}
+
+	// if (stylingOptions !== undefined) {
+	// 	$('#alertBox .u').css(stylingOptions);
+	// }
 };
 
 var attachEvents = function() {
@@ -39,14 +51,14 @@ var attachEvents = function() {
 
 		storeAndSendLocation(pingFunction);
 
-		if (!gov.ui.pingCircle.animRunning){
+		if (!gov.ui.pingCircle.animRunning) {
 			console.log("calling animation");
 			gov.ui.pingCircle.reCenter();
 
 			gov.ui.pingCircle.animRunning = true;
-			
+
 			gov.ui.pingCircle.animateBurst();
-			
+
 			var tempPingCircle = document.getElementsByClassName('onMapPingCircle');
 			tempPingCircle[0].classList.add('run');
 			//console.log(tempPingCircle[0]);
