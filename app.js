@@ -168,9 +168,11 @@ io.on('connection', function(socket) {
 						});
 
 						break;
-					case 'int':
-						break;
+					case 'ins':
 					default:
+						emitTo.socket('insStartData', {
+							hubs: hubs
+						});
 						break;
 				}
 			},

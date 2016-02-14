@@ -35,6 +35,7 @@ var clientState = {
 
 				if (!('captureCircle' in newPlayer)) {
 					newPlayer['captureCircle'] = viz.addCaptureCircle(newPlayer.latestPos);
+					newPlayer['captureCircle'].parentPlayerRef = newPlayer;
 					newPlayer['captureCircle'].addTo(map);
 
 					//newPlayer.captureCircle.remove();

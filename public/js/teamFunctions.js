@@ -1,3 +1,13 @@
+var ins = {
+	ui: {},
+
+	renderUI: function() {
+		app.scanButton = viz.createScanButton();
+		app.scanButton.addTo(map);
+	}
+};
+
+
 var gov = {
 
 	ui: {},
@@ -19,20 +29,9 @@ var gov = {
 
 	renderUI: function() {
 		var pingButton = viz.searchButton();
-		//$('#container').append(pingButton);
 		$('#mobileFooter').prepend(pingButton);
 
-		// $('#pingCircle').css({
-		// 	'transform': 'translate(' + window.width * 0.5 + ',' + window.height*0.5 + ')',
-		// 	'cx': window.width * 0.5,
-		// 	'cy': window.height * 0.5
-		// });
-
 		gov.ui['pingCircle'] = viz.addPingCircle();
-		//$('.onMapPingCircle').css('color': rgba)
-
-		//var pingCircle = ;
-
 	},
 
 	renderHubs: function(hubData) {
@@ -84,6 +83,14 @@ var gov = {
 		}
 	},
 
+	captureComplete: function(capturedPlayerRef){
+		console.log("Sending captureComplete for: ");
+		console.log(capturedPlayerRef);
+		emit("capturedPlayer",{
+			//playerID
+		});
+	},
+
 	startCaptureFn: function() {
 
 	},
@@ -121,9 +128,6 @@ var gov = {
 		});
 
 		gov.suspectRangeCheck();
-		//if (callback !== undefined) {
-		//callback();
-		//}
 	}
 
 };

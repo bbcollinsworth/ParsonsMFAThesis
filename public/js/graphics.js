@@ -78,6 +78,32 @@ var viz = {
 		return pC;
 	},
 
+	scanSetup: {
+		//radius: 0,
+		options: {
+			'radius': '40',
+			'className': "scanCircle",
+			'fillColor': '#ffffff',
+			'fillOpacity': '0.8',
+			'stroke': false//,
+			//'draggable': true
+		}
+	},
+
+	createScanButton: function(){
+		var s = L.scanCircle(map.getCenter(),viz.scanSetup.options);
+		s.makeDraggable();
+
+		map.on('move moveend',function(){
+			console.log("Move fired");
+			s.setLatLng(map.getCenter());
+			s.redraw();
+			s.bringToFront();
+		});
+
+		return s;
+	},
+
 	captureSetup: {
 		radius: 80,
 		options: {

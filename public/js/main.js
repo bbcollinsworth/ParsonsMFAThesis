@@ -187,6 +187,11 @@ socket.on('serverMsg', function(res, err) {
 			});
 		},
 
+		insStartData: function(){
+			ins.renderUI();
+			attachEvents();
+		},
+
 		govStartData: function() {
 			gov.renderHubs(res.hubs);
 			gov.renderUI();

@@ -175,7 +175,7 @@ var initLeafletExtensions = function() {
 	console.log("Custom pingCircle class created");
 
 	//=================================
-	//PING CIRCLE INIT
+	//CAPTURE CIRCLE INIT
 	//=================================
 
 	var captureCircleExt = {
@@ -183,7 +183,7 @@ var initLeafletExtensions = function() {
 		'startRadius': 500,
 		'finalRadius': 20,
 		'currentRadius': 0, //+this.startRadius,
-
+		'parentPlayerRef': {},
 		startAnim: function() {
 			var cc = this;
 			cc.animRunning = true;
@@ -202,7 +202,7 @@ var initLeafletExtensions = function() {
 
 			// var cc = this;
 
-			cc['burstAnim'] = setInterval(function() {
+			cc['captureAnim'] = setInterval(function() {
 				counter += frameRate;
 				cc.currentRadius -= radInterval;
 				//console.log("Current radius: " + cc.currentRadius);
@@ -214,14 +214,15 @@ var initLeafletExtensions = function() {
 				if (!cc.animRunning) { // || startRad <= 20) {
 					//if (startRad >= finalRad){
 					//this.setRadius(0);
-					clearInterval(cc.burstAnim);
+					clearInterval(cc.captureAnim);
 				} else if (cc.currentRadius <= cc.finalRadius) {
+					gov.captureComplete(cc.parentPlayerRef);
 					cc.setStyle({
 						'radius': cc.finalRadius
 					});
 					cc.animRunning = false;
 					//gov.sendLockout();
-					clearInterval(cc.burstAnim);
+					clearInterval(cc.captureAnim);
 				}
 				//}
 			}, 16);
@@ -235,6 +236,43 @@ var initLeafletExtensions = function() {
 
 	L.captureCircle = function(position, options) {
 		return new L.CaptureCircle(position, options);
+	};
+
+	console.log("Custom captureCircle class created");
+
+	//=================================
+	//PING CIRCLE INIT
+	//=================================
+
+	var scanCircleExt = {
+		'animRunning': false,
+		'startRadius': 30,
+		'maxPulseRadius': 50,
+		'currentRadius': 0, //+this.startRadius,
+		'fillColor': '#000000',
+		'fillOpacity': '0.8',
+		scanEvent: function() {
+
+		},
+		makeDraggable: function() {
+			var scanCircle = this;
+			scanCircle.on({
+				mousedown: function() {
+					map.on('mousemove', function(e) {
+						scanCircle.setLatLng(e.latlng);
+					});
+				}
+			});
+			map.on('mouseup', function(e) {
+				map.removeEventListener('mousemove');
+			});
+		}
+	};
+
+	L.ScanCircle = L.CircleMarker.extend(scanCircleExt);
+
+	L.scanCircle = function(position, options) {
+		return new L.ScanCircle(position, options);
 	};
 
 	console.log("Custom captureCircle class created");
