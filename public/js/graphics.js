@@ -233,7 +233,7 @@ var viz = {
 		}
 	},
 
-	makeTransform: function(r,t) {
+	makeTransform: function(r, t) {
 		var transformString = "translate(" + t + ") rotate(" + r + ")";
 
 		return {
@@ -247,19 +247,64 @@ var viz = {
 
 	scanPointer: {
 		transform: {
-			translation: "-50%,-50%",
-			rotation: "0"
+			translate: "-50%,-50%",
+			rotate: "0"
 		},
+		updateTransform: function(transformObj) {
+
+			for (operation in this.transform) {
+				if (operation in transformObj) {
+					this.transform[operation] = transformObj[operation];
+				}
+			}
+
+			var transformString = "translate(" + this.transform.translate + ") rotate(" + this.transform.rotate + ")";
+
+			var cssUpdate = {
+				// 'webkitTransform': transformString,
+				// 'MozTransform': transformString,
+				// 'msTransform': transformString,
+				// 'OTransform': transformString,
+				'transform': transformString
+			};
+
+			if ('domID' in this) {
+				console.log("Updating css for " + this.domID);
+				console.log(cssUpdate);
+				//var el = document.getElementById(this.domID);
+				//el.setAttribute('transform',transformString);
+				$('#'+this.domID).css(cssUpdate);
+			} else {
+				console.log("Error: no domID to update CSS");
+			}
+		},
+
 		rotate: function(degrees, time) {
-			if (domID in this) {
-				$(domID).css(viz.makeTransform(degrees));
-				if (time !== undefined){
-					$(domID).css({'trasition-duration': time + "s"});
+			this.updateTransform({
+				'rotate': degrees + "deg"
+			});
+
+			if ('domID' in this) {
+				//this isn't resetting the stored rotation
+				//$(domID).css(viz.makeTransform(degrees));
+				if (time !== undefined) {
+					$(this.domID).css({
+						'trasition-duration': time + "s"
+					});
 				}
 			}
 
 		},
-		create: function(id) {
+
+		init: function(id) {
+			this['domID'] = id;
+
+			return this;
+		},
+
+		addTo: function(domID) {
+
+			var spinnerObj = this;
 
 			// var options = {
 			// 	spinnerWidth: '20px',
@@ -268,7 +313,7 @@ var viz = {
 
 			var spinner = $("<div />", {
 				'class': 'scanSpinner',
-				'id': id,
+				'id': spinnerObj.domID,
 				'css': {
 					'width': viz.scanSetup.pointer.width,
 					'height': viz.scanSetup.pointer.height
@@ -285,38 +330,44 @@ var viz = {
 
 			spinner.append(pointer);
 
-			return spinner;
+			this['domElement'] = spinner;
+
+			console.log("New spinner element is: " + this.domElement);
+
+			$(domID).append(spinner);
+
+			//return spinner;
 		}
 	},
 
-	scanPointer: function(id) {
+	// scanPointer: function(id) {
 
-		// var options = {
-		// 	spinnerWidth: '20px',
-		// 	spinnerHeight: '60px'
-		// }
+	// 	// var options = {
+	// 	// 	spinnerWidth: '20px',
+	// 	// 	spinnerHeight: '60px'
+	// 	// }
 
-		var spinner = $("<div />", {
-			'class': 'scanSpinner',
-			'id': id,
-			'css': {
-				'width': viz.scanSetup.pointer.width,
-				'height': viz.scanSetup.pointer.height
-			}
+	// 	var spinner = $("<div />", {
+	// 		'class': 'scanSpinner',
+	// 		'id': id,
+	// 		'css': {
+	// 			'width': viz.scanSetup.pointer.width,
+	// 			'height': viz.scanSetup.pointer.height
+	// 		}
 
-		});
+	// 	});
 
-		var pointer = $("<div />", {
-			'class': 'scanPointer',
-			'css': {
-				'width': viz.scanSetup.pointer.width
-			}
-		});
+	// 	var pointer = $("<div />", {
+	// 		'class': 'scanPointer',
+	// 		'css': {
+	// 			'width': viz.scanSetup.pointer.width
+	// 		}
+	// 	});
 
-		spinner.append(pointer);
+	// 	spinner.append(pointer);
 
-		return spinner;
-	},
+	// 	return spinner;
+	// },
 
 	scanButton: function() {
 

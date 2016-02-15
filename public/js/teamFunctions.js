@@ -5,8 +5,18 @@ var ins = {
 		var scanButton = viz.scanButton();
 		$('#container').append(scanButton);
 
-		var pointer = viz.scanPointer('spinner1');
-		$('#container').append(pointer);
+		//var pointer = viz.scanPointer('spinner1');
+		var pointer = viz.scanPointer.init('spinner1');
+		pointer.addTo('#container');
+
+
+		//$('#container').append(pointer);
+		var r = 0;
+		setInterval(function(){
+			r += 30;
+			pointer.rotate(r);
+			//$('#spinner1').rotate(30);
+		},1000);
 
 		// app.scanButton = viz.createScanButton();
 		// app.scanButton.addTo(map);
