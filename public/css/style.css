@@ -56,7 +56,7 @@
 
 #alertBox .ui-collapsible-content {
 	font-family: 'Open Sans',sans-serif;
-	font-weight: 300;
+	font-weight: 400;
 	background-color: rgba(255,255,255,0.7);
 	box-shadow: 10px 0px 30px 0px rgba(0,0,0,0.3);
 	text-shadow: none;
@@ -93,6 +93,7 @@
 	height: 100%;
 }
 
+/*PING BUTTON FOR GOV TEAM*/
 #searchButton {
 	pointer-events: all;
 	/*top: 50vh;*/
@@ -106,6 +107,61 @@
 	border-radius: 50%;
 	background: rgba(255,255,255,0.5);
 	/*position: static;*/
+}
+
+
+/*<div>Icons made by <a href="http://www.flaticon.com/authors/daniel-bruce" title="Daniel Bruce">Daniel Bruce</a> from <a href="http://www.flaticon.com" title="Flaticon">www.flaticon.com</a>             is licensed by <a href="http://creativecommons.org/licenses/by/3.0/" title="Creative Commons BY 3.0">CC BY 3.0</a></div>*/
+.ui-icon-specialeye:after {
+	background-image: url("cssImages/specialeye.svg");
+}
+/* Fallback */
+.ui-nosvg .ui-icon-specialeye:after {
+	background-image: url("cssImages/specialeye.png");
+}
+
+.ui-icon-scan:after {
+	background-image: url("cssImages/sidescan.png");
+}
+/* Fallback */
+.ui-nosvg .ui-icon-scan:after {
+	background-image: url("cssImages/sidescan.png");
+}
+
+/*SCAN BUTTON FOR INS TEAM*/
+#scanButton {
+	pointer-events: all;
+	/*top: 50vh;*/
+	position: absolute;
+/*	top: calc(50vh - 30px);
+	left: calc(50% - 40px);*/
+	top: 50vh;
+    left: 50%;
+    transform: translate(-50%,-50%);
+	margin: auto;
+	width: 30px;
+	height: 40px;
+	box-shadow: 0px 1px 10px 5px rgba(0,0,0,0.2);
+	border-radius: 50%;
+	background: rgba(255,255,255,0.5);
+}
+
+.scanSpinner {
+	//width: 20px;
+	//height: 60px;
+	//transform: tra;
+	background-color: rgba(255,255,255,0.3);
+	position: absolute;
+	top: 50vh;
+    left: 50%;
+    transform: translate(-50%,-50%) rotate(30deg);
+	transition-duration: 1s;
+}
+
+.scanPointer {
+	width: inherit;
+	height: 20px;
+	background-color: rgba(255,255,0,1.0);
+
 }
 
 #pingContainer {

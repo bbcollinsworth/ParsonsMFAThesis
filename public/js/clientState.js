@@ -29,8 +29,8 @@ var clientState = {
 		ins: {
 			inCaptureRange: false,
 			startCapture: function(e) {
-				//e.preventDefault();
-				//if (this.inCaptureRange) {
+		
+				//IMPORTANT: NEED TO START WATCHING POS TO FIGURE OUT IF MOVING
 				console.log("Starting capture on " + newPlayer.localID);
 
 				if (!('captureCircle' in newPlayer)) {
@@ -44,7 +44,8 @@ var clientState = {
 				// newPlayer['captureCircle'] = viz.addCaptureCircle(newPlayer.latestPos);
 				// newPlayer['captureCircle'].addTo(map);
 				newPlayer['captureCircle'].startAnim();
-				newPlayer.marker.on('mouseup', this.stopCapture); //viz.markerOptions.mouseDownEvent);
+				map.on('mouseup', newPlayer.stopCapture);
+				//newPlayer.marker.on('mouseup', this.stopCapture); //viz.markerOptions.mouseDownEvent);
 
 				//}
 			},
@@ -56,11 +57,14 @@ var clientState = {
 				console.log("Attaching Capture Events to " + this.localID);
 
 				this.marker.on('mousedown', this.startCapture); //viz.markerOptions.mouseDownEvent);
-				this.marker.on('mouseup', function(e) {
-					//e.preventDefault();
-					console.log("Mouse up - capture pausing");
-					newPlayer.captureCircle.animRunning = false;
-				}); //viz.markerOptions.mouseDownEvent);
+				
+				// this.marker.on('mouseup', function(e) {
+				// 	//e.preventDefault();
+				// 	console.log("Mouse up - capture pausing");
+				// 	newPlayer.captureCircle.animRunning = false;
+				// }); 
+
+				//viz.markerOptions.mouseDownEvent);
 				// this['captureCircle'] = viz.addCaptureCircle(this.latestPos);
 				// this['captureCircle'].startAnim();
 			},

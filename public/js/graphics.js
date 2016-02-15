@@ -8,14 +8,14 @@ var viz = {
 	markerOptions: {
 		'suspect': {
 			zIndexOffset: 1000,
-			opacity: 0.8//,
+			opacity: 0.8 //,
 			// startCaptureEvent: function(){
 			// 	//if ()
 			// }
 		},
 		'agent': {
 			opacity: 0.5 //,
-		}//,
+		} //,
 		// mouseDownEvent: function(e) {
 		// 	e.preventDefault();
 		// 	console.log("Starting capture!");
@@ -78,32 +78,6 @@ var viz = {
 		return pC;
 	},
 
-	scanSetup: {
-		//radius: 0,
-		options: {
-			'radius': '40',
-			'className': "scanCircle",
-			'fillColor': '#ffffff',
-			'fillOpacity': '0.8',
-			'stroke': false//,
-			//'draggable': true
-		}
-	},
-
-	createScanButton: function(){
-		var s = L.scanCircle(map.getCenter(),viz.scanSetup.options);
-		s.makeDraggable();
-
-		map.on('move moveend',function(){
-			console.log("Move fired");
-			s.setLatLng(map.getCenter());
-			s.redraw();
-			s.bringToFront();
-		});
-
-		return s;
-	},
-
 	captureSetup: {
 		radius: 80,
 		options: {
@@ -121,7 +95,7 @@ var viz = {
 	},
 
 	addCaptureCircle: function(pos) {
-		var c = L.captureCircle([pos.lat,pos.lng], viz.captureSetup.options);
+		var c = L.captureCircle([pos.lat, pos.lng], viz.captureSetup.options);
 		// c.startRadius = +window.height*0.7;
 		// console.log('start radius set to: ' + c.startRadius);
 		//c.addTo(map);
@@ -224,7 +198,7 @@ var viz = {
 	searchButton: function() {
 
 		var eyeIcon = $("<div />", {
-			'class': "ui-btn ui-corner-all ui-icon-eye ui-btn-icon-notext"
+			'class': "ui-btn ui-nodisc-icon ui-corner-all ui-icon-specialeye ui-btn-icon-notext"
 
 		});
 
@@ -238,6 +212,141 @@ var viz = {
 
 		return button;
 
+	},
+
+	// scanSetup: {
+	// 	//radius: 0,
+	// 	options: {
+	// 		'radius': '40',
+	// 		'className': "scanCircle",
+	// 		'fillColor': '#ffffff',
+	// 		'fillOpacity': '0.8',
+	// 		'stroke': false //,
+	// 		//'draggable': true
+	// 	}
+	// },
+
+	scanSetup: {
+		'pointer': {
+			'width': '20px',
+			'height': '100px'
+		}
+	},
+
+	makeTransform: function(r,t) {
+		var transformString = "translate(" + t + ") rotate(" + r + ")";
+
+		return {
+			'webkitTransform': transfromString,
+			'MozTransform': transfromString,
+			'msTransform': transfromString,
+			'OTransform': transfromString,
+			'transform': transfromString
+		};
+	},
+
+	scanPointer: {
+		transform: {
+			translation: "-50%,-50%",
+			rotation: "0"
+		},
+		rotate: function(degrees, time) {
+			if (domID in this) {
+				$(domID).css(viz.makeTransform(degrees));
+				if (time !== undefined){
+					$(domID).css({'trasition-duration': time + "s"});
+				}
+			}
+
+		},
+		create: function(id) {
+
+			// var options = {
+			// 	spinnerWidth: '20px',
+			// 	spinnerHeight: '60px'
+			// }
+
+			var spinner = $("<div />", {
+				'class': 'scanSpinner',
+				'id': id,
+				'css': {
+					'width': viz.scanSetup.pointer.width,
+					'height': viz.scanSetup.pointer.height
+				}
+
+			});
+
+			var pointer = $("<div />", {
+				'class': 'scanPointer',
+				'css': {
+					'width': viz.scanSetup.pointer.width
+				}
+			});
+
+			spinner.append(pointer);
+
+			return spinner;
+		}
+	},
+
+	scanPointer: function(id) {
+
+		// var options = {
+		// 	spinnerWidth: '20px',
+		// 	spinnerHeight: '60px'
+		// }
+
+		var spinner = $("<div />", {
+			'class': 'scanSpinner',
+			'id': id,
+			'css': {
+				'width': viz.scanSetup.pointer.width,
+				'height': viz.scanSetup.pointer.height
+			}
+
+		});
+
+		var pointer = $("<div />", {
+			'class': 'scanPointer',
+			'css': {
+				'width': viz.scanSetup.pointer.width
+			}
+		});
+
+		spinner.append(pointer);
+
+		return spinner;
+	},
+
+	scanButton: function() {
+
+		var scanIcon = $("<div />", {
+			'class': "ui-btn ui-nodisc-icon ui-corner-all ui-icon-scan ui-btn-icon-notext"
+
+		});
+
+		var button = $("<div />", {
+			'class': "ui-btn",
+			'id': "scanButton",
+			'data-icon': "eye"
+		});
+
+		button.append(scanIcon);
+
+		return button;
+
+
+		// var s = L.scanCircle(map.getCenter(),viz.scanSetup.options);
+		// s.makeDraggable();
+
+		// map.on('move moveend',function(){
+		// 	console.log("Move fired");
+		// 	s.setLatLng(map.getCenter());
+		// 	s.redraw();
+		// 	s.bringToFront();
+		// });
+
+		// return s;
 	}
 
 

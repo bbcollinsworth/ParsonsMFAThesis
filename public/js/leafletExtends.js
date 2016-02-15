@@ -68,36 +68,36 @@ var initLeafletExtensions = function() {
 			}
 			var pHTML = this.makePopupHTML();
 			this.setPopupContent(pHTML);
-		},
+		}//,
 
-		_initInteraction: function() {
+		// _initInteraction: function() {
 
-			if (!this.options.clickable) {
-				return;
-			}
+		// 	if (!this.options.clickable) {
+		// 		return;
+		// 	}
 
-			// TODO refactor into something shared with Map/Path/etc. to DRY it up
+		// 	// TODO refactor into something shared with Map/Path/etc. to DRY it up
 
-			//IMPORTANT: ADDED MOUSEUP EVENT HERE 
-			var icon = this._icon,
-				events = ['dblclick', 'mousedown', 'mouseover', 'mouseout', 'contextmenu', 'mouseup'];
+		// 	//IMPORTANT: ADDED MOUSEUP EVENT HERE 
+		// 	var icon = this._icon,
+		// 		events = ['dblclick', 'mousedown', 'mouseover', 'mouseout', 'contextmenu', 'mouseup'];
 
-			L.DomUtil.addClass(icon, 'leaflet-clickable');
-			L.DomEvent.on(icon, 'click', this._onMouseClick, this);
-			L.DomEvent.on(icon, 'keypress', this._onKeyPress, this);
+		// 	L.DomUtil.addClass(icon, 'leaflet-clickable');
+		// 	L.DomEvent.on(icon, 'click', this._onMouseClick, this);
+		// 	L.DomEvent.on(icon, 'keypress', this._onKeyPress, this);
 
-			for (var i = 0; i < events.length; i++) {
-				L.DomEvent.on(icon, events[i], this._fireMouseEvent, this);
-			}
+		// 	for (var i = 0; i < events.length; i++) {
+		// 		L.DomEvent.on(icon, events[i], this._fireMouseEvent, this);
+		// 	}
 
-			if (L.Handler.MarkerDrag) {
-				this.dragging = new L.Handler.MarkerDrag(this);
+		// 	if (L.Handler.MarkerDrag) {
+		// 		this.dragging = new L.Handler.MarkerDrag(this);
 
-				if (this.options.draggable) {
-					this.dragging.enable();
-				}
-			}
-		},
+		// 		if (this.options.draggable) {
+		// 			this.dragging.enable();
+		// 		}
+		// 	}
+		// },
 
 		// startCaptureEvent: function(){
 		// 		//if ()

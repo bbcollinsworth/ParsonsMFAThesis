@@ -2,8 +2,14 @@ var ins = {
 	ui: {},
 
 	renderUI: function() {
-		app.scanButton = viz.createScanButton();
-		app.scanButton.addTo(map);
+		var scanButton = viz.scanButton();
+		$('#container').append(scanButton);
+
+		var pointer = viz.scanPointer('spinner1');
+		$('#container').append(pointer);
+
+		// app.scanButton = viz.createScanButton();
+		// app.scanButton.addTo(map);
 	}
 };
 
