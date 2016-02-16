@@ -8,6 +8,19 @@ var startup = {
 	setup: function() {
 
 		initLeafletExtensions();
+
+		//custom map function
+		Math.map = function(varToMap, varMin, varMax, mapToMin, mapToMax, clamp) {
+
+			var mappedValue = mapToMin + (mapToMax - mapToMin) * ((varToMap - varMin) / (varMax - varMin));
+
+			if (clamp) {
+				return Math.min(Math.max(mappedValue, mapToMin), mapToMax);
+			} else {
+				return mappedValue;
+			}
+		};
+
 		//custom first-letter capitalize function
 		String.prototype.firstCap = function() {
 			return this.charAt(0).toUpperCase() + this.slice(1);
@@ -101,7 +114,7 @@ var startup = {
 				if (clientState.connected && clientState.mapLoaded) {
 					clientState.ready = true;
 					$('#app').trigger('initialized');
-					
+
 					clearInterval(waitForReady);
 				} else if (readyCounter > 0) {
 					readyCounter--;

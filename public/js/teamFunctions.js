@@ -1,25 +1,73 @@
 var ins = {
-	ui: {},
+	ui: {
+		'hubPointers': []
+	},
 
 	renderUI: function() {
-		var scanButton = viz.scanButton();
-		$('#container').append(scanButton);
+
+		// this.ui['pointer1'] = viz.scanPointer.init('spinner1');
+		for (var i = 0; i < 1; i++) {
+			var newPointer = viz.scanPointer.init('spinner' + i);
+			this.ui.hubPointers.push(newPointer);
+			this.ui.hubPointers[i].addTo('#container');
+			//this.ui.pointer1.addTo('#container');
+		}
+
+		this.ui['scanButton'] = viz.scanButton();
+		$('#container').append(this.ui['scanButton']);
 
 		//var pointer = viz.scanPointer('spinner1');
-		var pointer = viz.scanPointer.init('spinner1');
-		pointer.addTo('#container');
-
-
 		//$('#container').append(pointer);
-		var r = 0;
-		setInterval(function(){
-			r += 30;
-			pointer.rotate(r);
-			//$('#spinner1').rotate(30);
-		},1000);
+		// var r = 0;
+		// setInterval(function(){
+		// 	r += 30;
+		var p = this.ui.hubPointers[0];
+		setTimeout(function() {
+			p.rotate(360, 5);
+
+			setTimeout(function() {
+				//p.fade();
+			}, 5000);
+		}, 2000);
+		//$('#spinner1').rotate(30);
+		//},1000);
 
 		// app.scanButton = viz.createScanButton();
 		// app.scanButton.addTo(map);
+	},
+
+	pointToHubs: function(hubArray) {
+
+		//var getVectorFromMapCenter = function(screenPos){
+		var getAngleFromMapCenter = function(screenPos) {
+
+			var screenCenter = map.project(map.getCenter());
+
+			var vec = {
+				'x': screenPos.x - screenCenter.x,
+				'y': screenPos.y - screenCenter.y
+			};
+
+			var theta = Math.atan2(vec.y, vec.x); // range (-PI, PI]
+			theta *= 180 / Math.PI;
+
+			//ADJUST FOR ROTATION FROM TOP:
+			theta += 90;
+			//return vectorToPoint;
+			return theta;
+		};
+
+		for (var i = 0; i < 1; i++) {
+
+			var hubScreenCoords = map.project([hubArray[i].lat, hubArray[i].lng]);
+			//var vectToHub = getVectorFromMapCenter(hubScreenCoords);
+			//var angleToHub = getAngleFromMapCenter(hubScreenCoords);
+			hubArray[i]['angleTo'] = getAngleFromMapCenter(hubScreenCoords);
+			console.log("Angle to " + hubArray[i].name + " is " + hubArray[i]['angleTo'] + " degrees");
+
+			ins.ui.hubPointers[i].update(hubArray[i]);
+			//ins.ui.hubPointers[i].rotate(hubArray[i]['angleTo'],0);	
+		}
 	}
 };
 
@@ -81,12 +129,12 @@ var gov = {
 					otherPlayers[id].inCaptureRange = true;
 					//otherPlayers[id].marker.attachCaptureEvents();
 					otherPlayers[id].attachCaptureEvents();
-					msg("Suspect in capture range! Click and hold on suspect marker to lock out device.",'urgent'
+					msg("Suspect in capture range! Click and hold on suspect marker to lock out device.", 'urgent'
 						// {
 						// 	'color': 'white',
 						// 	'background-color': 'rgba(255,255,0,0.7)'
 						// }
-						);
+					);
 
 				} else if (otherPlayers[id].inCaptureRange) {
 
@@ -99,10 +147,10 @@ var gov = {
 		}
 	},
 
-	captureComplete: function(capturedPlayerRef){
+	captureComplete: function(capturedPlayerRef) {
 		console.log("Sending captureComplete for: ");
 		console.log(capturedPlayerRef);
-		emit("capturedPlayer",{
+		emit("capturedPlayer", {
 			//playerID
 		});
 	},

@@ -29,7 +29,7 @@ var clientState = {
 		ins: {
 			inCaptureRange: false,
 			startCapture: function(e) {
-		
+
 				//IMPORTANT: NEED TO START WATCHING POS TO FIGURE OUT IF MOVING
 				console.log("Starting capture on " + newPlayer.localID);
 
@@ -57,7 +57,7 @@ var clientState = {
 				console.log("Attaching Capture Events to " + this.localID);
 
 				this.marker.on('mousedown', this.startCapture); //viz.markerOptions.mouseDownEvent);
-				
+
 				// this.marker.on('mouseup', function(e) {
 				// 	//e.preventDefault();
 				// 	console.log("Mouse up - capture pausing");
@@ -79,14 +79,7 @@ var clientState = {
 		newPlayer = {
 			team: player.team,
 			type: player.type,
-			latestPos: player.locData[0] //,
-			// mouseDownEvent: function(e) {
-			// 	e.preventDefault();
-			// 	console.log("Starting capture on " + newPlayer.localID);
-			// 	//newPlayer['captureCircle'] = viz.drawCaptureCircle(newPlayer.latestPos);
-
-			//} //,
-			//marker: viz.marker(player.type, player.locData[0]).addTo(map),
+			latestPos: player.locData[0]
 		};
 
 		newPlayer.marker = viz.marker(player.type, newPlayer.latestPos).addTo(map);
@@ -111,20 +104,10 @@ var clientState = {
 		newPlayer.marker.addPopup(true);
 
 		if (newPlayer.team == 'ins') {
-
-			//newPlayer['startCaptureFn'] = 
 			$.extend(true, newPlayer, clientState.markerEvents.ins);
-
-			// newPlayer.marker.on('mouseDown', newPlayer.startCapture);
-			// newPlayer.marker.on('mouseUp', newPlayer.stopCapture);
-
-			//$.extend(true, newPlayer, clientState.markerEvents.ins);
-
 		}
 
 		console.log("New player stored locally as " + newPlayer.localID);
-
-
 
 		return newPlayer;
 	},

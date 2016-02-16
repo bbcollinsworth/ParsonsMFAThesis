@@ -67,16 +67,18 @@ module.exports = function(users, _socket) {
 			socket.join(teamName);
 			log('User ' + user.userID + ' added to ' + teamName, colors.orange);
 		},
+
 		removeFromTeam: function(teamName) {
 			socket.leave(teamName);
 			log('User ' + user.userID + ' removed from ' + teamName, colors.orange);
 		},
+
 		getLocationData: function(limit) {
 			var locArray = [];
 			if (limit !== undefined) {
 				for (i in user.locationData) {
 					if (i < limit) {
-						locArray.push(user.locationData);
+						locArray.push(user.locationData[i]);
 					} else {
 						break;
 					}
@@ -87,6 +89,51 @@ module.exports = function(users, _socket) {
 
 			return locArray;
 		},
+
+		findDistanceToHubs: function(liveHubs) {
+			//var liveHubs = getLiveHubs();
+
+			var hubsWithDist = [];
+
+
+
+			liveHubs.forEach(function(h) {
+				var hubPos = {
+					lat: h.lat,
+					lng: h.lng
+				};
+
+				var distToHub = getDistBetween(userPos, hubPos);
+
+				console.log("Distance to Hub: " + distToHub);
+
+				hubWithDist = {
+					id: h.id,
+					lat: h.lat,
+					lng: h.lng,
+					dist: distToHub,
+					attackRange: h.attackRange,
+					proximity: -1
+				}
+
+				hubsWithDist.push(hubWithDist);
+			});
+
+			hubsWithDist.sort(function(a, b) {
+				return a.dist - b.dist;
+			});
+
+			for (var h in hubsWithDist) {
+				hub = hubsWithDist[h];
+				hub.proximity = +h + 1;
+			}
+
+			console.log("Hubs Sorted by Distance: ");
+			console.log(hubsWithDist);
+
+			return hubsWithDist;
+		},
+
 		disconnect: function() {
 			user.socketID = '';
 			user.connected = false;

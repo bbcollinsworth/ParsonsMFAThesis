@@ -214,42 +214,20 @@ var viz = {
 
 	},
 
-	// scanSetup: {
-	// 	//radius: 0,
-	// 	options: {
-	// 		'radius': '40',
-	// 		'className': "scanCircle",
-	// 		'fillColor': '#ffffff',
-	// 		'fillOpacity': '0.8',
-	// 		'stroke': false //,
-	// 		//'draggable': true
-	// 	}
-	// },
-
 	scanSetup: {
 		'pointer': {
-			'width': '20px',
+			'width': '40px',
 			'height': '100px'
 		}
-	},
-
-	makeTransform: function(r, t) {
-		var transformString = "translate(" + t + ") rotate(" + r + ")";
-
-		return {
-			'webkitTransform': transfromString,
-			'MozTransform': transfromString,
-			'msTransform': transfromString,
-			'OTransform': transfromString,
-			'transform': transfromString
-		};
 	},
 
 	scanPointer: {
 		transform: {
 			translate: "-50%,-50%",
-			rotate: "0"
+			rotate: "0deg",
+			scale: 1
 		},
+		distanceReading: 100,
 		updateTransform: function(transformObj) {
 
 			for (operation in this.transform) {
@@ -258,13 +236,13 @@ var viz = {
 				}
 			}
 
-			var transformString = "translate(" + this.transform.translate + ") rotate(" + this.transform.rotate + ")";
+			var transformString = "translate(" + this.transform.translate + ") rotate(" + this.transform.rotate + ") scale(" + this.transform.scale + ")";
 
 			var cssUpdate = {
-				// 'webkitTransform': transformString,
-				// 'MozTransform': transformString,
-				// 'msTransform': transformString,
-				// 'OTransform': transformString,
+				'webkitTransform': transformString,
+				'MozTransform': transformString,
+				'msTransform': transformString,
+				'OTransform': transformString,
 				'transform': transformString
 			};
 
@@ -273,10 +251,19 @@ var viz = {
 				console.log(cssUpdate);
 				//var el = document.getElementById(this.domID);
 				//el.setAttribute('transform',transformString);
-				$('#'+this.domID).css(cssUpdate);
+				$('#' + this.domID).css(cssUpdate);
 			} else {
 				console.log("Error: no domID to update CSS");
 			}
+		},
+
+		fade: function() {
+			var fadeTime = 7;
+
+			$('#' + this.domID).css({
+				'transition-duration': fadeTime + "s",
+				'opacity': '0'
+			});
 		},
 
 		rotate: function(degrees, time) {
@@ -285,11 +272,24 @@ var viz = {
 			});
 
 			if ('domID' in this) {
-				//this isn't resetting the stored rotation
-				//$(domID).css(viz.makeTransform(degrees));
 				if (time !== undefined) {
-					$(this.domID).css({
-						'trasition-duration': time + "s"
+					$('#' + this.domID).css({
+						'transition-duration': time + "s"
+					});
+				}
+			}
+
+		},
+
+		scale: function(size, time) {
+			this.updateTransform({
+				'scale': size
+			});
+
+			if ('domID' in this) {
+				if (time !== undefined) {
+					$('#' + this.domID).css({
+						'transition-duration': time + "s"
 					});
 				}
 			}
@@ -298,11 +298,23 @@ var viz = {
 
 		init: function(id) {
 			this['domID'] = id;
+			this['htmlID'] = id + "html";
 
 			return this;
 		},
 
-		addTo: function(domID) {
+		update: function(hubInfo) {
+			// console.log("Hub info is: ");
+			// console.log(hubInfo);
+			this.distanceReading = hubInfo.distance;
+			$('#' + this.htmlID).html('<div class="scanArrow"></div><span class="scanText">' + this.distanceReading + 'm</span>');
+			
+			this.rotate(hubInfo.angleTo, 0);
+			var mappedScale = Math.map(this.distanceReading,0,1000,2.0,1.0);
+			this.scale(mappedScale);
+		},
+
+		addTo: function(IDofDomToAttach) {
 
 			var spinnerObj = this;
 
@@ -315,16 +327,17 @@ var viz = {
 				'class': 'scanSpinner',
 				'id': spinnerObj.domID,
 				'css': {
-					'width': viz.scanSetup.pointer.width,
-					'height': viz.scanSetup.pointer.height
+					// 'width': viz.scanSetup.pointer.width,
+					// 'height': viz.scanSetup.pointer.height
 				}
-
 			});
 
 			var pointer = $("<div />", {
 				'class': 'scanPointer',
+				'id': spinnerObj.htmlID,
+				'html': '<div class="scanArrow"></div><span class="scanText">' + spinnerObj.distanceReading + 'm</span>',
 				'css': {
-					'width': viz.scanSetup.pointer.width
+					//'width': viz.scanSetup.pointer.width
 				}
 			});
 
@@ -334,40 +347,12 @@ var viz = {
 
 			console.log("New spinner element is: " + this.domElement);
 
-			$(domID).append(spinner);
+			$(IDofDomToAttach).append(spinner);
 
 			//return spinner;
-		}
+		} //,
+
 	},
-
-	// scanPointer: function(id) {
-
-	// 	// var options = {
-	// 	// 	spinnerWidth: '20px',
-	// 	// 	spinnerHeight: '60px'
-	// 	// }
-
-	// 	var spinner = $("<div />", {
-	// 		'class': 'scanSpinner',
-	// 		'id': id,
-	// 		'css': {
-	// 			'width': viz.scanSetup.pointer.width,
-	// 			'height': viz.scanSetup.pointer.height
-	// 		}
-
-	// 	});
-
-	// 	var pointer = $("<div />", {
-	// 		'class': 'scanPointer',
-	// 		'css': {
-	// 			'width': viz.scanSetup.pointer.width
-	// 		}
-	// 	});
-
-	// 	spinner.append(pointer);
-
-	// 	return spinner;
-	// },
 
 	scanButton: function() {
 
@@ -383,6 +368,21 @@ var viz = {
 		});
 
 		button.append(scanIcon);
+
+		button['animRunning'] = false;
+
+		button['animate'] = function() {
+			$('#scanButton').addClass('scanAnim');
+			$('#scanButton').on('animationend oAnimationEnd webkitAnimationEnd', function() {
+				button.stopAnimation();
+			});
+		};
+
+		button['stopAnimation'] = function() {
+			$('#scanButton').removeClass('scanAnim');
+			button.animRunning = false;
+			console.log("animRunning set to: " + button.animRunning);
+		};
 
 		return button;
 

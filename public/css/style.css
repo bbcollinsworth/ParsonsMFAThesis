@@ -129,6 +129,7 @@
 
 /*SCAN BUTTON FOR INS TEAM*/
 #scanButton {
+
 	pointer-events: all;
 	/*top: 50vh;*/
 	position: absolute;
@@ -145,27 +146,58 @@
 	background: rgba(255,255,255,0.5);
 }
 
+#scanButton.scanAnim {
+	-webkit-animation: scan ease 1s 5; /* Safari 4+ */
+	-moz-animation:    scan ease 1s 5; /* Fx 5+ */
+	-o-animation:      scan ease 1s 5; /* Opera 12+ */
+	animation:         scan ease 1s 5;
+}
+
 #spinner1 {
-	
+
 }
 
 .scanSpinner {
-	//width: 20px;
-	//height: 60px;
-	//transform: tra;
-	background-color: rgba(255,255,255,0.3);
+	line-height: 0;
+	width: 50px;
+	height: 180px;
+	//background-color: rgba(255,255,255,0.3);
 	position: absolute;
 	top: 50vh;
     left: 50%;
     transform: translate(-50%,-50%) rotate(30deg);
 	transition-duration: 1s;
+	opacity: 1;
 }
 
 .scanPointer {
+	line-height: inherit;
 	width: inherit;
-	height: 20px;
-	background-color: rgba(255,255,0,1.0);
+	height: 55px;
+	//background-color: rgba(255,255,0,1.0);
+	background: linear-gradient(
+			to top,
+			rgba(255,255,0,1.0) 30%,
+			rgba(255,255,0,0.0)
+		);
 
+}
+
+.scanArrow {
+	width: 0px;
+    height: 0px;
+    border-left: 15px solid transparent;
+    border-right: 15px solid transparent;
+    border-bottom: 20px solid white;
+    margin-left: auto;
+    margin-right: auto;
+    margin-bottom: 0.3em;
+    padding-top: 0.6em;
+}
+
+.scanText {
+	color: white;
+	line-height: 1em;
 }
 
 #pingContainer {
@@ -228,6 +260,52 @@
 
 
 /*-------------------- ANIMATIONS --------------------*/
+
+@keyframes scan {
+	0% {
+		transform: translate(-50%,-50%) rotate(0deg) scale(1);
+	}
+	50% {
+		transform: translate(-50%,-50%) rotate(180deg) scale(1.5);
+	}
+	100% {
+		transform: translate(-50%,-50%) rotate(360deg) scale(1);
+	}
+}
+@-webkit-keyframes scan {
+	0% {
+		transform: translate(-50%,-50%) rotate(0deg) scale(1);
+	}
+	50% {
+		transform: translate(-50%,-50%) rotate(180deg) scale(1.5);
+	}
+	100% {
+		transform: translate(-50%,-50%) rotate(360deg) scale(1);
+	}
+}
+@-moz-keyframes scan {
+	0% {
+		transform: translate(-50%,-50%) rotate(0deg) scale(1);
+	}
+	50% {
+		transform: translate(-50%,-50%) rotate(180deg) scale(1.5);
+	}
+	100% {
+		transform: translate(-50%,-50%) rotate(360deg) scale(1);
+	}
+}
+@-o-keyframes scan {
+	0% {
+		transform: translate(-50%,-50%) rotate(0deg) scale(1);
+	}
+	50% {
+		transform: translate(-50%,-50%) rotate(180deg) scale(1.5);
+	}
+	100% {
+		transform: translate(-50%,-50%) rotate(360deg) scale(1);
+	}
+}
+
 
 @keyframes ping {
 	0% {

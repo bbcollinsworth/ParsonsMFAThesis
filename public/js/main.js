@@ -15,17 +15,10 @@ var hubs = [];
 var msg = function(text, styling) {
 	$('#alertBodyText').html('<p>' + text + '</p>');
 
-	if (styling in viz.headerStyles){
+	if (styling in viz.headerStyles) {
 		console.log("adding header styling! " + styling);
 		$('#alertBox .ui-collapsible-content').addClass(viz.headerStyles[styling]);
-	} //else {
-		//$('#alertBox .ui-collapsible-content').addClass(viz.headerStyles['normal']);
-	
-	//}
-
-	// if (stylingOptions !== undefined) {
-	// 	$('#alertBox .u').css(stylingOptions);
-	// }
+	}
 };
 
 var attachEvents = function() {
@@ -52,7 +45,7 @@ var attachEvents = function() {
 		storeAndSendLocation(pingFunction);
 
 		if (!gov.ui.pingCircle.animRunning) {
-			console.log("calling animation");
+			console.log("calling ping animation");
 			gov.ui.pingCircle.reCenter();
 
 			gov.ui.pingCircle.animRunning = true;
@@ -70,6 +63,28 @@ var attachEvents = function() {
 
 				console.log("Animation removed");
 			});
+		}
+	});
+
+	$('#scanButton').off('click').on('click', function() {
+		console.log("SCAN BUTTON CLICKED");
+
+		centerOnPlayer();
+
+		var scanFunction = function() {
+			emit('detectHubs', {
+				playerPos: player.pos,
+				existingLocData: []
+			});
+		};
+
+		storeAndSendLocation(scanFunction);
+
+		if (!ins.ui.scanButton.animRunning) {
+			console.log("calling scan animation");
+
+			ins.ui.scanButton.animRunning = true;
+			ins.ui.scanButton.animate();
 		}
 	});
 };
@@ -187,7 +202,7 @@ socket.on('serverMsg', function(res, err) {
 			});
 		},
 
-		insStartData: function(){
+		insStartData: function() {
 			ins.renderUI();
 			attachEvents();
 		},
@@ -203,6 +218,13 @@ socket.on('serverMsg', function(res, err) {
 			console.log(res.locData);
 
 			gov.renderPlayers(res.locData, gov.suspectRangeCheck);
+		},
+
+		hubsByDistance: function() {
+			console.log("Hubs by distance received: ");
+			console.log(res.hubsByDistance);
+
+			ins.pointToHubs(res.hubsByDistance);
 		}
 	};
 

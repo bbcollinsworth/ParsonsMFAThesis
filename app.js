@@ -110,6 +110,38 @@ io.on('connection', function(socket) {
 		}, 10000);
 	};
 
+	var getHubsByDistance = function() {
+
+		log("Finding hubs by distance to " + player.userID);
+
+		var hubsObj = {};
+
+		for (i in hubs) {
+			hubsObj[i] = {
+				"latitude": hubs[i].lat,
+				"longitude": hubs[i].lng,
+				"name": hubs[i].name
+			};
+		}
+
+		var sortedHubs = geolib.orderByDistance({
+			"latitude": player.locationData[0].lat,
+			"longitude": player.locationData[0].lng
+		}, hubsObj);
+
+		for (id in sortedHubs) {
+			sortedHubs[id].lat = sortedHubs[id].latitude;
+			sortedHubs[id].lng = sortedHubs[id].longitude;
+			sortedHubs[id]['name'] = hubsObj[sortedHubs[id].key].name;
+		}
+
+		log("Sorted hubs by distance: ");
+		console.log(sortedHubs);
+
+		return sortedHubs;
+
+	};
+
 	// log('The user ' + socket.id + ' just connected!', colors.yellow);
 	// emitTo.socket('connected', {});
 
@@ -203,10 +235,19 @@ io.on('connection', function(socket) {
 				emitTo.socket('suspectData', {
 					locData: newLocData
 				});
+			},
+
+			detectHubs: function() {
+				emitTo.socket('hubsByDistance', {
+					hubsByDistance: getHubsByDistance()
+				});
+				//getHubsByDistance();
+				// for (i in hubs) {
+
+				// }
 			}
 		};
 
-		//handleClientMsg[res.tag]();
 		try {
 			handleClientMsg[res.tag]();
 		} catch (err) {
