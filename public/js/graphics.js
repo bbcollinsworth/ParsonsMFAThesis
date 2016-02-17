@@ -346,9 +346,11 @@ var viz = {
 
 			ptr.distanceReading = hubInfo.distance;
 
+			var normalizedDist = ptr.distanceReading/ptr.maxDistance;
+
 			var mapDistToColor = function(opacity) {
-				var r = Math.floor(Math.map(ptr.distanceReading, 50, ptr.maxDistance, 255, 50));
-				var g = Math.floor(Math.map(ptr.distanceReading, 50, ptr.maxDistance, 255, 50)); //Math.floor(Math.map(ptr.distanceReading, 50, ptr.maxDistance - ptr.maxDistance * 0.5, 255, 0));
+				var r = Math.floor(Math.map(ptr.distanceReading, 75, ptr.maxDistance, 255, 170));
+				var g = Math.floor(Math.map(ptr.distanceReading, 75, ptr.maxDistance, 255, 120)); //Math.floor(Math.map(ptr.distanceReading, 50, ptr.maxDistance - ptr.maxDistance * 0.5, 255, 0));
 				var b = 0; //Math.floor(Math.map(ptr.distanceReading, 50, ptr.maxDistance, 0, 100));
 
 				return "rgba(" + r + "," + g + "," + b + "," + opacity + ")";
@@ -366,7 +368,7 @@ var viz = {
 			});
 
 			this.rotate(hubInfo.angleTo, 0);
-			var mappedScale = Math.map(this.distanceReading, 0, this.maxDistance, 1.0, 0.5);
+			var mappedScale = Math.map(normalizedDist, 0, 1, 1.0, 0.5);
 			this.scale(mappedScale);
 		},
 

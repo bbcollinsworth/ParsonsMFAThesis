@@ -147,10 +147,10 @@
 }
 
 #scanButton.scanAnim {
-	-webkit-animation: scan ease 1s 5; /* Safari 4+ */
-	-moz-animation:    scan ease 1s 5; /* Fx 5+ */
-	-o-animation:      scan ease 1s 5; /* Opera 12+ */
-	animation:         scan ease 1s 5;
+	-webkit-animation: scan ease 1s 3; /* Safari 4+ */
+	-moz-animation:    scan ease 1s 3; /* Fx 5+ */
+	-o-animation:      scan ease 1s 3; /* Opera 12+ */
+	animation:         scan ease 1s 3;
 }
 
 .scanSpinner {
@@ -163,7 +163,7 @@
     left: 50%;
     transform: translate(-50%,-50%) rotate(30deg);
 	transition-duration: 1s;
-	//opacity: 0;
+	opacity: 0;
 }
 
 .scanPointer {
