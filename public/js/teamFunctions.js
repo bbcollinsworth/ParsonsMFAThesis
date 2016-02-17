@@ -1,20 +1,28 @@
 var ins = {
 	ui: {
-		'hubPointers': []
+		'hubPointers': [],
+		'maxHubsDetected': 3,
 	},
 
 	renderUI: function() {
 
 		// this.ui['pointer1'] = viz.scanPointer.init('spinner1');
-		for (var i = 0; i < 1; i++) {
+
+		//***doing this in reverse so pointer[0] will be last appended (i.e. on top?)
+		for (var i = ins.ui.maxHubsDetected - 1; i >= 0; i--) {
 			var newPointer = viz.scanPointer.init('spinner' + i);
-			this.ui.hubPointers.push(newPointer);
-			this.ui.hubPointers[i].addTo('#container');
+			newPointer.addTo('#container');
+			this.ui.hubPointers.unshift(newPointer);
+
+			//this.ui.hubPointers[i].addTo('#container');
 			//this.ui.pointer1.addTo('#container');
 		}
 
 		this.ui['scanButton'] = viz.scanButton();
 		$('#container').append(this.ui['scanButton']);
+
+		console.log('Hub pointers created: ');
+		console.log(this.ui.hubPointers);
 
 		//var pointer = viz.scanPointer('spinner1');
 		//$('#container').append(pointer);
@@ -23,12 +31,12 @@ var ins = {
 		// 	r += 30;
 		var p = this.ui.hubPointers[0];
 		setTimeout(function() {
-			p.rotate(360, 5);
+			p.rotate(360, 2);
 
 			setTimeout(function() {
-				//p.fade();
+				p.fade();
 			}, 5000);
-		}, 2000);
+		}, 1000);
 		//$('#spinner1').rotate(30);
 		//},1000);
 
@@ -36,7 +44,21 @@ var ins = {
 		// app.scanButton.addTo(map);
 	},
 
-	pointToHubs: function(hubArray) {
+	popPointers: function() {
+		for (i in ins.ui.hubPointers) {
+
+			var p = ins.ui.hubPointers[i];
+			p.show();
+			p.fade();
+			setTimeout(function() {
+				p.fade();
+			}, 2000);
+
+			//ins.ui.hubPointers[i].makePop(2);
+		}
+	},
+
+	pointToHubs: function(hubArray, callback) {
 
 		//var getVectorFromMapCenter = function(screenPos){
 		var getAngleFromMapCenter = function(screenPos) {
@@ -57,7 +79,7 @@ var ins = {
 			return theta;
 		};
 
-		for (var i = 0; i < 1; i++) {
+		for (var i = 0; i < ins.ui.maxHubsDetected; i++) {
 
 			var hubScreenCoords = map.project([hubArray[i].lat, hubArray[i].lng]);
 			//var vectToHub = getVectorFromMapCenter(hubScreenCoords);
@@ -67,6 +89,10 @@ var ins = {
 
 			ins.ui.hubPointers[i].update(hubArray[i]);
 			//ins.ui.hubPointers[i].rotate(hubArray[i]['angleTo'],0);	
+		}
+
+		if (callback !== undefined) {
+			callback();
 		}
 	}
 };

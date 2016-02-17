@@ -49,7 +49,6 @@ var attachEvents = function() {
 			gov.ui.pingCircle.reCenter();
 
 			gov.ui.pingCircle.animRunning = true;
-
 			gov.ui.pingCircle.animateBurst();
 
 			var tempPingCircle = document.getElementsByClassName('onMapPingCircle');
@@ -224,7 +223,11 @@ socket.on('serverMsg', function(res, err) {
 			console.log("Hubs by distance received: ");
 			console.log(res.hubsByDistance);
 
-			ins.pointToHubs(res.hubsByDistance);
+			$('#app').on('scanComplete', function(){
+				ins.pointToHubs(res.hubsByDistance,ins.popPointers);
+			});
+
+			
 		}
 	};
 

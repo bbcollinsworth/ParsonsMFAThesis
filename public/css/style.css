@@ -153,27 +153,23 @@
 	animation:         scan ease 1s 5;
 }
 
-#spinner1 {
-
-}
-
 .scanSpinner {
 	line-height: 0;
-	width: 50px;
-	height: 180px;
+	width: 100px;
+	height: 300px;
 	//background-color: rgba(255,255,255,0.3);
 	position: absolute;
 	top: 50vh;
     left: 50%;
     transform: translate(-50%,-50%) rotate(30deg);
 	transition-duration: 1s;
-	opacity: 1;
+	//opacity: 0;
 }
 
 .scanPointer {
 	line-height: inherit;
 	width: inherit;
-	height: 55px;
+	height: 95px;
 	//background-color: rgba(255,255,0,1.0);
 	background: linear-gradient(
 			to top,
@@ -186,18 +182,20 @@
 .scanArrow {
 	width: 0px;
     height: 0px;
-    border-left: 15px solid transparent;
-    border-right: 15px solid transparent;
-    border-bottom: 20px solid white;
+    border-left: 30px solid transparent;
+    border-right: 30px solid transparent;
+    border-bottom: 35px solid white;
     margin-left: auto;
     margin-right: auto;
-    margin-bottom: 0.3em;
-    padding-top: 0.6em;
+    margin-bottom: 0.5em;
+    padding-top: 1em;
 }
 
 .scanText {
 	color: white;
 	line-height: 1em;
+    font-size: 1.8em;
+    //font-weight: 400;
 }
 
 #pingContainer {

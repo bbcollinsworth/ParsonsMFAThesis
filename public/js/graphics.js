@@ -228,6 +228,7 @@ var viz = {
 			scale: 1
 		},
 		distanceReading: 100,
+		maxDistance: 600,
 		updateTransform: function(transformObj) {
 
 			for (operation in this.transform) {
@@ -255,15 +256,6 @@ var viz = {
 			} else {
 				console.log("Error: no domID to update CSS");
 			}
-		},
-
-		fade: function() {
-			var fadeTime = 7;
-
-			$('#' + this.domID).css({
-				'transition-duration': fadeTime + "s",
-				'opacity': '0'
-			});
 		},
 
 		rotate: function(degrees, time) {
@@ -297,20 +289,74 @@ var viz = {
 		},
 
 		init: function(id) {
-			this['domID'] = id;
-			this['htmlID'] = id + "html";
+			var newPointer = $.extend(true, {
+				'domID': id,
+				'htmlID': id + "html"
+			}, viz.scanPointer);
+			// this['domID'] = id;
+			// this['htmlID'] = id + "html";
 
-			return this;
+			return newPointer;
+		},
+
+		makePop: function(secondsBeforeFade) {
+			var delay = +1000*secondsBeforeFade;
+			console.log("Popping pointer");
+
+			this.show();
+			setTimeout(function(){
+				viz.scanPointer.fade();
+			},delay);
+		},
+
+		show: function() {
+			$('#' + this.domID).css({
+				'opacity': '1'
+			});
+		},
+
+		fade: function() {
+			var fadeTime = 7;
+
+			console.log("Trying to fade");
+			console.log('#' + viz.scanPointer.domID);
+			$('#' + viz.scanPointer.domID).css({
+				'transition-duration': fadeTime + "s",
+				'opacity': '0'
+			});
 		},
 
 		update: function(hubInfo) {
+
+			var ptr = this;
+
+			ptr.distanceReading = hubInfo.distance;
+
+			var mapDistToColor = function(opacity) {
+				var r = Math.floor(Math.map(ptr.distanceReading, 50, ptr.maxDistance, 255, 50));
+				var g = Math.floor(Math.map(ptr.distanceReading, 50, ptr.maxDistance - ptr.maxDistance * 0.5, 255, 0));
+				var b = Math.floor(Math.map(ptr.distanceReading, 50, ptr.maxDistance, 0, 100));
+
+				//var b = 0;//Math.floor(Math.map(ptr.distanceReading,0,ptr.maxDistance,0,200));
+
+				return "rgba(" + r + "," + g + "," + b + "," + opacity + ")";
+			};
 			// console.log("Hub info is: ");
 			// console.log(hubInfo);
-			this.distanceReading = hubInfo.distance;
+
 			$('#' + this.htmlID).html('<div class="scanArrow"></div><span class="scanText">' + this.distanceReading + 'm</span>');
-			
+
+			var mappedColorStart = mapDistToColor(1.0);
+			var mappedColorEnd = mapDistToColor(0.0);
+			var gradient = "linear-gradient(to top, " + mappedColorStart + " 30%, " + mappedColorEnd + ")";
+			console.log(gradient);
+
+			$('#' + this.htmlID).css({
+				'background': gradient
+			});
+
 			this.rotate(hubInfo.angleTo, 0);
-			var mappedScale = Math.map(this.distanceReading,0,1000,2.0,1.0);
+			var mappedScale = Math.map(this.distanceReading, 0, this.maxDistance, 1.0, 0.5);
 			this.scale(mappedScale);
 		},
 
@@ -375,6 +421,8 @@ var viz = {
 			$('#scanButton').addClass('scanAnim');
 			$('#scanButton').on('animationend oAnimationEnd webkitAnimationEnd', function() {
 				button.stopAnimation();
+				$('#app').trigger('scanComplete');
+				//ins.popPointers();
 			});
 		};
 
