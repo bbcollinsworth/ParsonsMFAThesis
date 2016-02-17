@@ -409,13 +409,19 @@ var viz = {
 
 		});
 
+		var scanIconImg = $("<img />", {
+			'class': "scanIcon",
+			'src': "css/cssImages/sidescan.svg"
+
+		});
+
 		var button = $("<div />", {
-			'class': "ui-btn",
+			'class': "ui-btn scanIcon",
 			'id': "scanButton",
 			'data-icon': "eye"
 		});
 
-		button.append(scanIcon);
+		//button.append(scanIconImg);
 
 		button['animRunning'] = false;
 

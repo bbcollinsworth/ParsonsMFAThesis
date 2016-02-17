@@ -139,11 +139,16 @@
     left: 50%;
     transform: translate(-50%,-50%);
 	margin: auto;
-	width: 30px;
-	height: 40px;
+	/*width: 30px;
+	height: 40px;*/
+	padding: 0.1em;
+	width: 60px;
+    height: 60px;
 	box-shadow: 0px 1px 10px 5px rgba(0,0,0,0.2);
 	border-radius: 50%;
-	background: rgba(255,255,255,0.5);
+	border: 6px solid rgba(255,255,255,0.5);
+	background-color: rgba(255,255,255,0.5);
+	background-repeat: no-repeat;
 }
 
 #scanButton.scanAnim {
@@ -151,6 +156,12 @@
 	-moz-animation:    scan ease 1s 3; /* Fx 5+ */
 	-o-animation:      scan ease 1s 3; /* Opera 12+ */
 	animation:         scan ease 1s 3;
+}
+
+.scanIcon {
+	background-image: url("cssImages/sidescan.svg");
+	background-size: contain;
+
 }
 
 .scanSpinner {
