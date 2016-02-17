@@ -14,18 +14,22 @@ var hubs = [{
 	lat: 40.736523,
 	lng: -73.992729
 }, {
+	name: '16th and 5th Ave SW corner park',
+	lat: 40.737283,
+	lng: -73.992879
+}, {
 	name: 'Washington Ave and Lincoln Pl',
 	lat: 40.672643,
 	lng: -73.962675
 }, {
 	name: 'McNair Park',
 	lat: 40.670774,
-	lng: - 73.961985
+	lng: -73.961985
 }];
 
 var hubStats = {
 	hackRange: 50, //in meters
-	hackTimeInMinutes: 5,
+	hackTimeInMinutes: 4,
 	getHackTime: function() {
 		return hubStats.hackTimeInMinutes * 60000;
 	} //in milliseconds
@@ -50,6 +54,7 @@ var state = {
 			hub['hackTime'] = hubStats.getHackTime();
 			hub['decrement'] = 100.0 / hub.hackTime;
 			hub['alertState'] = 0;
+			hub['live'] = true;
 
 		}; //);
 	},

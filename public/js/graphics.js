@@ -199,7 +199,6 @@ var viz = {
 
 		var eyeIcon = $("<div />", {
 			'class': "ui-btn ui-nodisc-icon ui-corner-all ui-icon-specialeye ui-btn-icon-notext"
-
 		});
 
 		var button = $("<div />", {
@@ -270,7 +269,6 @@ var viz = {
 					});
 				}
 			}
-
 		},
 
 		scale: function(size, time) {
@@ -285,7 +283,6 @@ var viz = {
 					});
 				}
 			}
-
 		},
 
 		init: function(id) {
@@ -299,15 +296,15 @@ var viz = {
 			return newPointer;
 		},
 
-		makePop: function(secondsBeforeFade) {
-			var delay = +1000 * secondsBeforeFade;
-			console.log("Popping pointer");
+		// makePop: function(secondsBeforeFade) {
+		// 	var delay = +1000 * secondsBeforeFade;
+		// 	console.log("Popping pointer");
 
-			this.show();
-			setTimeout(function() {
-				viz.scanPointer.fade();
-			}, delay);
-		},
+		// 	this.show();
+		// 	setTimeout(function() {
+		// 		viz.scanPointer.fade();
+		// 	}, delay);
+		// },
 
 		show: function() {
 			var holdTime = 2000;
@@ -329,16 +326,16 @@ var viz = {
 			},2000);
 		},
 
-		fade: function() {
-			var fadeTime = 7;
+		// fade: function() {
+		// 	var fadeTime = 7;
 
-			console.log("Trying to fade");
-			console.log('#' + this.domID);
-			$('#' + this.domID).css({
-				'transition-duration': fadeTime + "s",
-				'opacity': '0'
-			});
-		},
+		// 	console.log("Trying to fade");
+		// 	console.log('#' + this.domID);
+		// 	$('#' + this.domID).css({
+		// 		'transition-duration': fadeTime + "s",
+		// 		'opacity': '0'
+		// 	});
+		// },
 
 		update: function(hubInfo) {
 
@@ -404,16 +401,16 @@ var viz = {
 
 	scanButton: function() {
 
-		var scanIcon = $("<div />", {
-			'class': "ui-btn ui-nodisc-icon ui-corner-all ui-icon-scan ui-btn-icon-notext"
+		// var scanIcon = $("<div />", {
+		// 	'class': "ui-btn ui-nodisc-icon ui-corner-all ui-icon-scan ui-btn-icon-notext"
 
-		});
+		// });
 
-		var scanIconImg = $("<img />", {
-			'class': "scanIcon",
-			'src': "css/cssImages/sidescan.svg"
+		// var scanIconImg = $("<img />", {
+		// 	'class': "scanIcon",
+		// 	'src': "css/cssImages/sidescan.svg"
 
-		});
+		// });
 
 		var button = $("<div />", {
 			'class': "ui-btn scanIcon",

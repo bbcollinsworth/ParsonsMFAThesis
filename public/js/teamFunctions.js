@@ -4,6 +4,8 @@ var ins = {
 		'maxHubsDetected': 3,
 	},
 
+	//hackRange: 75,
+
 	renderUI: function() {
 
 		//***doing this in reverse so pointer[0] will be last appended (i.e. on top?)
@@ -19,61 +21,78 @@ var ins = {
 		console.log('Hub pointers created: ');
 		console.log(this.ui.hubPointers);
 
-		var p = this.ui.hubPointers[0];
-		setTimeout(function() {
-			p.rotate(360, 1);
+		// var p = this.ui.hubPointers[0];
+		// setTimeout(function() {
+		// 	p.rotate(360, 1);
 
-			setTimeout(function() {
-				p.fade();
-			}, 1000);
-		}, 1000);
+		// 	setTimeout(function() {
+		// 		//p.fade();
+		// 	}, 1000);
+		// }, 1000);
 
 	},
 
 	popPointers: function() {
 		for (i in ins.ui.hubPointers) {
 
-			//var p = ins.ui.hubPointers[i];
 			ins.ui.hubPointers[i].show();
-			//p.fade();
-			 // setTimeout(function(){
-			 // 	ins.ui.hubPointers[i].fade();
-			 // }, 2000);
 
-			//ins.ui.hubPointers[i].makePop(2);
 		}
+	},
+
+	enableHack: function() {
+		msg({
+			1: "Surveillence site in range!",
+			2: "<b>Press below to begin hacking.</b>",
+			3: "(NOTE: More hackers will increase hack speed.)"
+		}, 'urgent');
 	},
 
 	pointToHubs: function(hubArray, callback) {
 
-		var getAngleFromMapCenter = function(screenPos) {
+		var hubToAttack = {};
 
-			var screenCenter = map.project(map.getCenter());
-
-			var vec = {
-				'x': screenPos.x - screenCenter.x,
-				'y': screenPos.y - screenCenter.y
-			};
-
-			var theta = Math.atan2(vec.y, vec.x); // range (-PI, PI]
-			theta *= 180 / Math.PI;
-
-			//ADJUST FOR ROTATION FROM TOP:
-			theta += 90;
-			return theta;
-		};
-
-		for (var i = 0; i < ins.ui.maxHubsDetected; i++) {
-
-			var hubScreenCoords = map.project([hubArray[i].lat, hubArray[i].lng]);
-			hubArray[i]['angleTo'] = getAngleFromMapCenter(hubScreenCoords);
-			console.log("Angle to " + hubArray[i].name + " is " + hubArray[i]['angleTo'] + " degrees");
-
-			ins.ui.hubPointers[i].update(hubArray[i]);
+		for (h in hubArray) {
+			if (hubArray[h].distance < hubArray[h].hackRange) {
+				hubToAttack = hubArray[h];
+				break;
+			}
 		}
 
-		if (callback !== undefined) {
-			callback();
+		//Check if object isn't empty:
+		if ('hackRange' in hubToAttack) {
+			ins.enableHack();
+		} else {
+
+			var getAngleFromMapCenter = function(screenPos) {
+
+				var screenCenter = map.project(map.getCenter());
+
+				var vec = {
+					'x': screenPos.x - screenCenter.x,
+					'y': screenPos.y - screenCenter.y
+				};
+
+				var theta = Math.atan2(vec.y, vec.x); // range (-PI, PI]
+				theta *= 180 / Math.PI;
+
+				//ADJUST FOR ROTATION FROM TOP:
+				theta += 90;
+				return theta;
+			};
+
+			for (var i = 0; i < ins.ui.maxHubsDetected; i++) {
+
+				var hubScreenCoords = map.project([hubArray[i].lat, hubArray[i].lng]);
+				hubArray[i]['angleTo'] = getAngleFromMapCenter(hubScreenCoords);
+				console.log("Angle to " + hubArray[i].name + " is " + hubArray[i]['angleTo'] + " degrees");
+
+				ins.ui.hubPointers[i].update(hubArray[i]);
+			}
+
+			if (callback !== undefined) {
+				callback();
+			}
 		}
 	}
 };

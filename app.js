@@ -119,9 +119,13 @@ io.on('connection', function(socket) {
 		for (i in hubs) {
 			hubsObj[i] = {
 				"latitude": hubs[i].lat,
-				"longitude": hubs[i].lng,
-				"name": hubs[i].name
+				"longitude": hubs[i].lng//,
+				//"name": hubs[i].name
 			};
+
+			// for (key in hubs){
+			// 	hubsObj[i][key] = hubs[i][key];
+			// }
 		}
 
 		var sortedHubs = geolib.orderByDistance({
@@ -129,11 +133,21 @@ io.on('connection', function(socket) {
 			"longitude": player.locationData[0].lng
 		}, hubsObj);
 
-		for (id in sortedHubs) {
-			sortedHubs[id].lat = sortedHubs[id].latitude;
-			sortedHubs[id].lng = sortedHubs[id].longitude;
-			sortedHubs[id]['name'] = hubsObj[sortedHubs[id].key].name;
+		for (i in sortedHubs){
+			var matchingHub = hubs[sortedHubs[i].key];
+			for (prop in matchingHub){
+				sortedHubs[i][prop] = matchingHub[prop];
+			}
 		}
+		// for (id in sortedHubs) {
+		// 	// sortedHubs[id].lat = sortedHubs[id].latitude;
+		// 	// sortedHubs[id].lng = sortedHubs[id].longitude;
+		// 	// sortedHubs[id]['name'] = hubsObj[sortedHubs[id].key].name;
+		
+		// 	for (prop in hubs){
+		// 		sortedHubs[id][prop] = hubs[sortedHubs[id].key][prop]
+		// 	}
+		// }
 
 		log("Sorted hubs by distance: ");
 		console.log(sortedHubs);
@@ -248,12 +262,12 @@ io.on('connection', function(socket) {
 			}
 		};
 
-		try {
+		// try {
 			handleClientMsg[res.tag]();
-		} catch (err) {
-			log('Error: "' + res.tag + '" is not a valid socket.on message because:', colors.err);
-			log(err, colors.err);
-		}
+		// } catch (err) {
+		// 	log('Error: "' + res.tag + '" is not a valid socket.on message because:', colors.err);
+		// 	log(err, colors.err);
+		// }
 
 	});
 

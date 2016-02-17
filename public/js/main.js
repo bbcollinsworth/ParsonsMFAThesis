@@ -13,7 +13,18 @@ var player = {
 var hubs = [];
 
 var msg = function(text, styling) {
-	$('#alertBodyText').html('<p>' + text + '</p>');
+
+	var msgHTML = "";
+
+	if (typeof text === 'string' || text instanceof String){
+		msgHTML = '<p>' + text + '</p>';
+	} else {
+		for (line in text){
+			msgHTML += '<p>' + text[line] + '</p>';
+		}
+	}
+
+	$('#alertBodyText').html(msgHTML);
 
 	if (styling in viz.headerStyles) {
 		console.log("adding header styling! " + styling);
