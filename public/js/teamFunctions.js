@@ -6,16 +6,11 @@ var ins = {
 
 	renderUI: function() {
 
-		// this.ui['pointer1'] = viz.scanPointer.init('spinner1');
-
 		//***doing this in reverse so pointer[0] will be last appended (i.e. on top?)
 		for (var i = ins.ui.maxHubsDetected - 1; i >= 0; i--) {
 			var newPointer = viz.scanPointer.init('spinner' + i);
 			newPointer.addTo('#container');
 			this.ui.hubPointers.unshift(newPointer);
-
-			//this.ui.hubPointers[i].addTo('#container');
-			//this.ui.pointer1.addTo('#container');
 		}
 
 		this.ui['scanButton'] = viz.scanButton();
@@ -24,35 +19,26 @@ var ins = {
 		console.log('Hub pointers created: ');
 		console.log(this.ui.hubPointers);
 
-		//var pointer = viz.scanPointer('spinner1');
-		//$('#container').append(pointer);
-		// var r = 0;
-		// setInterval(function(){
-		// 	r += 30;
 		var p = this.ui.hubPointers[0];
 		setTimeout(function() {
-			p.rotate(360, 2);
+			p.rotate(360, 1);
 
 			setTimeout(function() {
 				p.fade();
-			}, 5000);
+			}, 1000);
 		}, 1000);
-		//$('#spinner1').rotate(30);
-		//},1000);
 
-		// app.scanButton = viz.createScanButton();
-		// app.scanButton.addTo(map);
 	},
 
 	popPointers: function() {
 		for (i in ins.ui.hubPointers) {
 
-			var p = ins.ui.hubPointers[i];
-			p.show();
-			p.fade();
-			setTimeout(function() {
-				p.fade();
-			}, 2000);
+			//var p = ins.ui.hubPointers[i];
+			ins.ui.hubPointers[i].show();
+			//p.fade();
+			 // setTimeout(function(){
+			 // 	ins.ui.hubPointers[i].fade();
+			 // }, 2000);
 
 			//ins.ui.hubPointers[i].makePop(2);
 		}
@@ -60,7 +46,6 @@ var ins = {
 
 	pointToHubs: function(hubArray, callback) {
 
-		//var getVectorFromMapCenter = function(screenPos){
 		var getAngleFromMapCenter = function(screenPos) {
 
 			var screenCenter = map.project(map.getCenter());
@@ -75,20 +60,16 @@ var ins = {
 
 			//ADJUST FOR ROTATION FROM TOP:
 			theta += 90;
-			//return vectorToPoint;
 			return theta;
 		};
 
 		for (var i = 0; i < ins.ui.maxHubsDetected; i++) {
 
 			var hubScreenCoords = map.project([hubArray[i].lat, hubArray[i].lng]);
-			//var vectToHub = getVectorFromMapCenter(hubScreenCoords);
-			//var angleToHub = getAngleFromMapCenter(hubScreenCoords);
 			hubArray[i]['angleTo'] = getAngleFromMapCenter(hubScreenCoords);
 			console.log("Angle to " + hubArray[i].name + " is " + hubArray[i]['angleTo'] + " degrees");
 
 			ins.ui.hubPointers[i].update(hubArray[i]);
-			//ins.ui.hubPointers[i].rotate(hubArray[i]['angleTo'],0);	
 		}
 
 		if (callback !== undefined) {
@@ -155,12 +136,7 @@ var gov = {
 					otherPlayers[id].inCaptureRange = true;
 					//otherPlayers[id].marker.attachCaptureEvents();
 					otherPlayers[id].attachCaptureEvents();
-					msg("Suspect in capture range! Click and hold on suspect marker to lock out device.", 'urgent'
-						// {
-						// 	'color': 'white',
-						// 	'background-color': 'rgba(255,255,0,0.7)'
-						// }
-					);
+					msg("Suspect in capture range! Click and hold on suspect marker to lock out device.", 'urgent');
 
 				} else if (otherPlayers[id].inCaptureRange) {
 

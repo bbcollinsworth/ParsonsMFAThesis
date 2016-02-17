@@ -300,27 +300,41 @@ var viz = {
 		},
 
 		makePop: function(secondsBeforeFade) {
-			var delay = +1000*secondsBeforeFade;
+			var delay = +1000 * secondsBeforeFade;
 			console.log("Popping pointer");
 
 			this.show();
-			setTimeout(function(){
+			setTimeout(function() {
 				viz.scanPointer.fade();
-			},delay);
+			}, delay);
 		},
 
 		show: function() {
-			$('#' + this.domID).css({
+			var holdTime = 2000;
+			var fadeTime = 7;
+
+			console.log("Showing hubs");
+			console.log('#' + this.domID);
+
+			var element = '#' + this.domID;
+			$(element).css({
 				'opacity': '1'
 			});
+
+			setTimeout(function() {
+				$(element).css({
+					'transition-duration': fadeTime + "s",
+					'opacity': '0'
+				});
+			},2000);
 		},
 
 		fade: function() {
 			var fadeTime = 7;
 
 			console.log("Trying to fade");
-			console.log('#' + viz.scanPointer.domID);
-			$('#' + viz.scanPointer.domID).css({
+			console.log('#' + this.domID);
+			$('#' + this.domID).css({
 				'transition-duration': fadeTime + "s",
 				'opacity': '0'
 			});
@@ -334,15 +348,11 @@ var viz = {
 
 			var mapDistToColor = function(opacity) {
 				var r = Math.floor(Math.map(ptr.distanceReading, 50, ptr.maxDistance, 255, 50));
-				var g = Math.floor(Math.map(ptr.distanceReading, 50, ptr.maxDistance - ptr.maxDistance * 0.5, 255, 0));
-				var b = Math.floor(Math.map(ptr.distanceReading, 50, ptr.maxDistance, 0, 100));
-
-				//var b = 0;//Math.floor(Math.map(ptr.distanceReading,0,ptr.maxDistance,0,200));
+				var g = Math.floor(Math.map(ptr.distanceReading, 50, ptr.maxDistance, 255, 50)); //Math.floor(Math.map(ptr.distanceReading, 50, ptr.maxDistance - ptr.maxDistance * 0.5, 255, 0));
+				var b = 0; //Math.floor(Math.map(ptr.distanceReading, 50, ptr.maxDistance, 0, 100));
 
 				return "rgba(" + r + "," + g + "," + b + "," + opacity + ")";
 			};
-			// console.log("Hub info is: ");
-			// console.log(hubInfo);
 
 			$('#' + this.htmlID).html('<div class="scanArrow"></div><span class="scanText">' + this.distanceReading + 'm</span>');
 
@@ -364,27 +374,17 @@ var viz = {
 
 			var spinnerObj = this;
 
-			// var options = {
-			// 	spinnerWidth: '20px',
-			// 	spinnerHeight: '60px'
-			// }
-
 			var spinner = $("<div />", {
 				'class': 'scanSpinner',
 				'id': spinnerObj.domID,
-				'css': {
-					// 'width': viz.scanSetup.pointer.width,
-					// 'height': viz.scanSetup.pointer.height
-				}
+				'css': {}
 			});
 
 			var pointer = $("<div />", {
 				'class': 'scanPointer',
 				'id': spinnerObj.htmlID,
 				'html': '<div class="scanArrow"></div><span class="scanText">' + spinnerObj.distanceReading + 'm</span>',
-				'css': {
-					//'width': viz.scanSetup.pointer.width
-				}
+				'css': {}
 			});
 
 			spinner.append(pointer);
@@ -434,18 +434,6 @@ var viz = {
 
 		return button;
 
-
-		// var s = L.scanCircle(map.getCenter(),viz.scanSetup.options);
-		// s.makeDraggable();
-
-		// map.on('move moveend',function(){
-		// 	console.log("Move fired");
-		// 	s.setLatLng(map.getCenter());
-		// 	s.redraw();
-		// 	s.bringToFront();
-		// });
-
-		// return s;
 	}
 
 
