@@ -10,7 +10,9 @@ var initLeafletExtensions = function() {
 
 		refresh: function(posObj, options) {
 			this.setLatLng([posObj.lat, posObj.lng]);
-			if (options !== undefined) {}
+			if (options !== undefined) {
+				this.setStyle(options);
+			}
 
 			console.log("Marker refreshed to: " + posObj.lat + ", " + posObj.lng);
 		},
@@ -59,7 +61,24 @@ var initLeafletExtensions = function() {
 			}
 			var pHTML = this.makePopupHTML();
 			this.setPopupContent(pHTML);
-		}//,
+		},
+
+		renderLockout: function(data) {
+
+			var icon = L.mapbox.marker.icon({
+					'marker-size': 'medium',
+					'marker-symbol': 'cross',
+					'marker-color': '#000000'
+				});
+			var zIndexOffset = -100;
+			var opacity = 0.7; //,
+			
+			this.setIcon(icon);
+			this.setZIndexOffset(zIndexOffset);
+			this.setOpacity(opacity);
+		}
+
+		//,
 
 		// _initInteraction: function() {
 

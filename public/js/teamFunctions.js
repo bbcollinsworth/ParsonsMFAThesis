@@ -275,7 +275,7 @@ var gov = {
 
 		for (id in otherPlayers) {
 
-			if (otherPlayers[id].team == 'ins') {
+			if (otherPlayers[id].team == 'ins' && !otherPlayers[id].lockedOut) {
 
 				var dist = player.distanceTo(otherPlayers[id].latestPos);
 				console.log("Distance to " + otherPlayers[id].localID + " is " + dist + "m");
@@ -338,6 +338,11 @@ var gov = {
 						ln1: "(As of " + convertTimestamp(players[userID].latestPos.time) + ")"
 					}
 				});
+
+				if (playerData.lockedOut){
+					players[userID]['lockedOut']=true;
+					players[userID].marker.renderLockout();
+				}
 				players[userID].marker.refresh(players[userID].latestPos);
 			}
 

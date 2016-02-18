@@ -262,17 +262,21 @@ io.on('connection', function(socket) {
 
 			findSuspects: function() {
 				newLocData = {}; //getInsLocData();
-				for (p in players) {
-					var locArray = players[p].getLocationData();
 
-					if (locArray.length > 0) {
-						//var setType = 
-						newLocData[players[p].userID] = {
-							team: players[p].team,
-							type: players[p].type,
-							locData: locArray
-						};
-					}
+				for (p in players) {
+					//if (!players[p].lockedOut) { //will still show players, just gray on client side
+						var locArray = players[p].getLocationData();
+
+						if (locArray.length > 0) {
+							//var setType = 
+							newLocData[players[p].userID] = {
+								team: players[p].team,
+								type: players[p].type,
+								lockedOut: players[p].lockedOut,
+								locData: locArray
+							};
+						}
+					//}
 				}
 
 				log('Data to be sent to ' + socket.id + ":");
@@ -282,11 +286,11 @@ io.on('connection', function(socket) {
 				});
 			},
 
-			capturedPlayer: function(){
+			capturedPlayer: function() {
 				var lockedPlayer = players[res.userID];
 				console.log("Lockout request received for " + lockedPlayer.userID);
 				lockedPlayer.lockout();
-				emitTo.user(lockedPlayer,'lockoutAlert',{
+				emitTo.user(lockedPlayer, 'lockoutAlert', {
 					capturingPlayer: player.userID
 				});
 			},
@@ -354,7 +358,7 @@ io.on('connection', function(socket) {
 				}
 			},
 
-			playerLeftHubRange: function(){
+			playerLeftHubRange: function() {
 				var attackedHub = hubs[res.hubIndex];
 				updateAttackingPlayers(attackedHub, true);
 

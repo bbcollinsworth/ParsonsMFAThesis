@@ -24,7 +24,7 @@ var viz = {
 			'marker-color': '#ff0000'
 		},
 		agent: {
-			'marker-size': 'large',
+			'marker-size': 'medium',
 			'marker-symbol': 'police',
 			'marker-color': '#0000ff'
 		}
