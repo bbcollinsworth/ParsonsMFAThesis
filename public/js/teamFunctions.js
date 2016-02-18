@@ -180,14 +180,7 @@ var ins = {
 				hubID: ins.targetHub.id,
 				hubName: ins.targetHub.name,
 				hubIndex: ins.targetHub.key,
-				//timeInterval: emitInterval,
 				timestamp: Date.now() //,
-				// playerID: localStorage.userID,
-				// playerPos: playerLoc,
-				// hubPos: {
-				// 	lat: targetHub.lat,
-				// 	lng: targetHub.lng
-				// }
 			});
 
 			setTimeout(ins.hackHub, ins.targetHub.hackProgressInterval);

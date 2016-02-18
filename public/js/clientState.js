@@ -12,7 +12,7 @@ var clientState = {
 		localCount: {
 			'agent': 0,
 			'suspect': 0,
-			'update': function(type) {
+			update: function(type) {
 				var typeCount = 0;
 				for (id in clientState.allPlayers) {
 					if (type in clientState.allPlayers[id]) {
@@ -41,8 +41,7 @@ var clientState = {
 					//newPlayer.captureCircle.remove();
 					// add something to remove the old one
 				}
-				// newPlayer['captureCircle'] = viz.addCaptureCircle(newPlayer.latestPos);
-				// newPlayer['captureCircle'].addTo(map);
+
 				newPlayer['captureCircle'].startAnim();
 				map.on('mouseup', newPlayer.stopCapture);
 				//newPlayer.marker.on('mouseup', this.stopCapture); //viz.markerOptions.mouseDownEvent);
@@ -83,11 +82,9 @@ var clientState = {
 		};
 
 		newPlayer.marker = viz.marker(player.type, newPlayer.latestPos).addTo(map);
-
-		//newPlayer.marker = viz.marker(player.type, newPlayer.latestPos).addTo(map);
+		console.log("ALL PLAYERS: ");
 		console.log(clientState.allPlayers);
 
-		//newPlayer.marker.addTo(map);
 		clientState.allPlayers.localCount.update(player.type);
 		//updateLocalCounts(player.type);
 		newPlayer.localID = player.type + " " + clientState.allPlayers.localCount[player.type].toString();

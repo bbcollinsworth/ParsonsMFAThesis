@@ -9,18 +9,10 @@ var viz = {
 		'suspect': {
 			zIndexOffset: 1000,
 			opacity: 0.8 //,
-			// startCaptureEvent: function(){
-			// 	//if ()
-			// }
 		},
 		'agent': {
 			opacity: 0.5 //,
 		} //,
-		// mouseDownEvent: function(e) {
-		// 	e.preventDefault();
-		// 	console.log("Starting capture!");
-		// 	//newPlayer['captureCircle'] = viz.drawCaptureCircle(newPlayer.latestPos);
-		// }
 	},
 
 	markerIconOptions: {
@@ -289,21 +281,9 @@ var viz = {
 				'domID': id,
 				'htmlID': id + "html"
 			}, viz.scanPointer);
-			// this['domID'] = id;
-			// this['htmlID'] = id + "html";
 
 			return newPointer;
 		},
-
-		// makePop: function(secondsBeforeFade) {
-		// 	var delay = +1000 * secondsBeforeFade;
-		// 	console.log("Popping pointer");
-
-		// 	this.show();
-		// 	setTimeout(function() {
-		// 		viz.scanPointer.fade();
-		// 	}, delay);
-		// },
 
 		show: function() {
 			var holdTime = 2000;
@@ -393,31 +373,17 @@ var viz = {
 
 			$(IDofDomToAttach).append(spinner);
 
-			//return spinner;
 		} //,
 
 	},
 
 	scanButton: function() {
 
-		// var scanIcon = $("<div />", {
-		// 	'class': "ui-btn ui-nodisc-icon ui-corner-all ui-icon-scan ui-btn-icon-notext"
-
-		// });
-
-		// var scanIconImg = $("<img />", {
-		// 	'class': "scanIcon",
-		// 	'src': "css/cssImages/sidescan.svg"
-
-		// });
-
 		var button = $("<div />", {
 			'class': "ui-btn",
 			'id': "scanButton",
 			'data-icon': "eye"
 		});
-
-		//button.append(scanIconImg);
 
 		button['animRunning'] = false;
 
