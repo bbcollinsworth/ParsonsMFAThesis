@@ -265,17 +265,17 @@ io.on('connection', function(socket) {
 
 				for (p in players) {
 					//if (!players[p].lockedOut) { //will still show players, just gray on client side
-						var locArray = players[p].getLocationData();
+					var locArray = players[p].getLocationData();
 
-						if (locArray.length > 0) {
-							//var setType = 
-							newLocData[players[p].userID] = {
-								team: players[p].team,
-								type: players[p].type,
-								lockedOut: players[p].lockedOut,
-								locData: locArray
-							};
-						}
+					if (locArray.length > 0) {
+						//var setType = 
+						newLocData[players[p].userID] = {
+							team: players[p].team,
+							type: players[p].type,
+							lockedOut: players[p].lockedOut,
+							locData: locArray
+						};
+					}
 					//}
 				}
 
@@ -286,12 +286,36 @@ io.on('connection', function(socket) {
 				});
 			},
 
+			agentGettingClose: function() {
+				var otherPlayer = players[res.otherPlayerID];
+				if (!otherPlayer.warned[res.distance]) {
+					log("Warning " + otherPlayer.userID + "of Gov proximity", colors.orange);
+
+					otherPlayer.warned[res.distance] = true;
+					emitTo.user(otherPlayer, "agentCloseWarning", {
+						distance: res.distance
+					});
+					var warningResetTime = 180000;
+					log("Will reset warning for " + res.distance + "to false in " + warningResetTime / 60000 + " minutes.");
+
+					setTimeout(function() {
+						otherPlayer.warned[res.distance] = false;
+					}, warningResetTime);
+				}
+			},
+
 			capturedPlayer: function() {
 				var lockedPlayer = players[res.userID];
 				console.log("Lockout request received for " + lockedPlayer.userID);
+				//	this might be better in separate fn with emits as callbacks
 				lockedPlayer.lockout();
 				emitTo.user(lockedPlayer, 'lockoutAlert', {
 					capturingPlayer: player.userID
+				});
+
+				emitTo.all('playerLockoutsUpdate', {
+					'lockedPlayer': lockedPlayer,
+					'capturingPlayer': player.userID
 				});
 			},
 
@@ -321,13 +345,14 @@ io.on('connection', function(socket) {
 					emitTo.socket('hackComplete', {
 						hubName: attackedHub.name
 					});
-
-					emitTo.all('hubDown', {
-						hubName: attackedHub.name,
-						hubID: attackedHub.id,
-						hubIndex: res.hubIndex,
-						liveHubsLeft: hubsLeft
-					});
+					setTimeout(function() {
+						emitTo.all('hubDown', {
+							hubName: attackedHub.name,
+							hubID: attackedHub.id,
+							hubIndex: res.hubIndex,
+							liveHubsLeft: hubsLeft
+						});
+					}, 1000);
 
 				} else {
 

@@ -42,6 +42,11 @@ module.exports = function(users, _socket) {
 			user['userID'] = team + teamNumber.toString();
 			user['connected'] = false;
 			user['trackActive'] = false;
+			user['warned'] = {
+				'50': false,
+				'100': false,
+				'200': false
+			};
 			user['locationData'] = [];
 			user['captureData'] = {
 				//# of responses received to fast capture pings
@@ -90,7 +95,7 @@ module.exports = function(users, _socket) {
 			return locArray;
 		},
 
-		lockout: function(){
+		lockout: function() {
 			user.lockedOut = true;
 			log("Player " + user.userID + "lockout status is: " + user.lockedOut, colors.orange);
 		},

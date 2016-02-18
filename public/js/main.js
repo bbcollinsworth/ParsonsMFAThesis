@@ -46,40 +46,43 @@ var attachEvents = function() {
 	$('#app').on('ready', function() {
 		//readyCheckRunning = false;
 		// localStorage.setItem('svcCheckComplete',true);
+		$('#footerText').css({
+			'display': 'none'
+		});
 		emit('readyToPlay', {});
 	});
 
-	$('#searchButton').off('click').on('click', function() {
-		msg('Ping button clicked');
+	// $('#searchButton').off('click').on('click', function() {
+	// 	//msg('Ping button clicked');
 
-		var pingFunction = function() {
-			emit('findSuspects', {
-				existingLocData: []
-			});
-		};
+	// 	var pingFunction = function() {
+	// 		emit('findSuspects', {
+	// 			existingLocData: []
+	// 		});
+	// 	};
 
-		storeAndSendLocation(pingFunction);
+	// 	storeAndSendLocation(pingFunction);
 
-		if (!gov.ui.pingCircle.animRunning) {
-			console.log("calling ping animation");
-			gov.ui.pingCircle.reCenter();
+	// 	if (!gov.ui.pingCircle.animRunning) {
+	// 		console.log("calling ping animation");
+	// 		gov.ui.pingCircle.reCenter();
 
-			gov.ui.pingCircle.animRunning = true;
-			gov.ui.pingCircle.animateBurst();
+	// 		gov.ui.pingCircle.animRunning = true;
+	// 		gov.ui.pingCircle.animateBurst();
 
-			var tempPingCircle = document.getElementsByClassName('onMapPingCircle');
-			tempPingCircle[0].classList.add('run');
-			//console.log(tempPingCircle[0]);
+	// 		var tempPingCircle = document.getElementsByClassName('onMapPingCircle');
+	// 		tempPingCircle[0].classList.add('run');
+	// 		//console.log(tempPingCircle[0]);
 
-			$('.onMapPingCircle').on('animationend webkitAnimationEnd', function() {
+	// 		$('.onMapPingCircle').on('animationend webkitAnimationEnd', function() {
 
-				tempPingCircle[0].classList.remove('run');
-				gov.ui.pingCircle.animRunning = false;
+	// 			tempPingCircle[0].classList.remove('run');
+	// 			gov.ui.pingCircle.animRunning = false;
 
-				console.log("Animation removed");
-			});
-		}
-	});
+	// 			console.log("Animation removed");
+	// 		});
+	// 	}
+	// });
 
 };
 
@@ -220,10 +223,38 @@ socket.on('serverMsg', function(res, err) {
 			gov.renderPlayers(res.locData, gov.suspectRangeCheck);
 		},
 
+		agentCloseWarning: function(){
+			window.alert("WARNING: State agents within " + res.distance + " meters.");
+		},
+
 		lockoutAlert: function() {
 			console.log('lockout Alert received');
 			window.alert("FAILURE: State Agents have locked your device!");
 			ins.renderLockout();
+		},
+
+		playerLockoutsUpdate: function() {
+			var lP = res.lockedPlayer;
+			var players = clientState.allPlayers;
+			if (lP.userID !== player.localID) {
+				switch (player.team) {
+					case "gov":
+						players[lP.userID]['lockedOut'] = true;
+						players[lP.userID].marker.renderLockout();
+						console.log("Locking out player: ");
+						console.log(players[lP.userID]);
+						setTimeout(function() {
+							window.alert("UPDATE: A suspect has been successfully neutralized.");
+							gov.ui.attachPingEvents();
+						}, 750);
+						break;
+					case "ins":
+						window.alert("ALERT: A fellow hacker has been neutralized.");
+						break;
+					default:
+						break;
+				}
+			}
 		},
 
 		hubsByDistance: function() {
@@ -231,6 +262,7 @@ socket.on('serverMsg', function(res, err) {
 			console.log(res.hubsByDistance);
 
 			$('#app').on('scanComplete', function() {
+				centerOnPlayer();
 				ins.runHubRangeCheck(res.hubsByDistance);
 				// ins.pointToHubs(res.hubsByDistance,ins.popPointers);
 			});

@@ -218,8 +218,8 @@ var ins = {
 		}
 	},
 
-	renderLockout: function(){
-		msg("Compromised",'lockout');
+	renderLockout: function() {
+		msg("Compromised", 'lockout');
 		$('#container').addClass('lockScreen');
 		$('#scanButton').off('click');
 		//$('#scanButton').addClass('lockClass');
@@ -229,7 +229,46 @@ var ins = {
 
 var gov = {
 
-	ui: {},
+	ui: {
+		attachPingEvents: function() {
+			msg({
+				1: "Press the button below for latest locations of tracked suspects and allies.",
+				2: "(NOTE: Locations will only update when targets are using their mobile devices.)"
+			});
+
+			$('#searchButton').off('click').on('click', function() {
+				//msg('Ping button clicked');
+
+				var pingFunction = function() {
+					emit('findSuspects', {
+						existingLocData: []
+					});
+				};
+
+				storeAndSendLocation(pingFunction);
+
+				if (!gov.ui.pingCircle.animRunning) {
+					console.log("calling ping animation");
+					gov.ui.pingCircle.reCenter();
+
+					gov.ui.pingCircle.animRunning = true;
+					gov.ui.pingCircle.animateBurst();
+
+					var tempPingCircle = document.getElementsByClassName('onMapPingCircle');
+					tempPingCircle[0].classList.add('run');
+					//console.log(tempPingCircle[0]);
+
+					$('.onMapPingCircle').on('animationend webkitAnimationEnd', function() {
+
+						tempPingCircle[0].classList.remove('run');
+						gov.ui.pingCircle.animRunning = false;
+
+						console.log("Animation removed");
+					});
+				}
+			});
+		}
+	},
 
 	captureRange: 20,
 
@@ -251,6 +290,8 @@ var gov = {
 		$('#mobileFooter').prepend(pingButton);
 
 		gov.ui['pingCircle'] = viz.addPingCircle();
+
+		gov.ui.attachPingEvents();
 	},
 
 	renderHubs: function(hubData) {
@@ -292,6 +333,17 @@ var gov = {
 					otherPlayers[id].inCaptureRange = false;
 					//otherPlayers[id].marker.clearCaptureEvents();
 					otherPlayers[id].clearCaptureEvents();
+					gov.ui.attachPingEvents();
+				}
+
+				if (dist < 100){
+					console.log("Sending close warning to " + id);
+
+					emit('agentGettingClose',{
+						playerID: player.localID,
+						otherPlayerID: id,
+						distance: '100'
+					});
 				}
 			}
 		}
@@ -339,10 +391,10 @@ var gov = {
 					}
 				});
 
-				if (playerData.lockedOut){
-					players[userID]['lockedOut']=true;
-					players[userID].marker.renderLockout();
-				}
+				// if (playerData.lockedOut) {
+				// 	players[userID]['lockedOut'] = true;
+				// 	players[userID].marker.renderLockout();
+				// }
 				players[userID].marker.refresh(players[userID].latestPos);
 			}
 

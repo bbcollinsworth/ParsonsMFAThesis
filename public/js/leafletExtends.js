@@ -66,12 +66,12 @@ var initLeafletExtensions = function() {
 		renderLockout: function(data) {
 
 			var icon = L.mapbox.marker.icon({
-					'marker-size': 'medium',
+					'marker-size': 'large',
 					'marker-symbol': 'cross',
 					'marker-color': '#000000'
 				});
 			var zIndexOffset = -100;
-			var opacity = 0.7; //,
+			var opacity = 0.5; //,
 			
 			this.setIcon(icon);
 			this.setZIndexOffset(zIndexOffset);

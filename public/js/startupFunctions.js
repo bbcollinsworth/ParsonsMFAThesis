@@ -158,13 +158,13 @@ var startup = {
 
 			if (thisFeature.supported) {
 				var supportedMsg = feature + " supported.";
-				$('#footerText').append('<p>' + supportedMsg + '</p>');
+				//$('#footerText').append('<p>' + supportedMsg + '</p>');
 				console.log(supportedMsg);
 				//need to return feature variable
 				return thisFeature.setup;
 			} else {
 				var unsupportedMsg = feature + " not supported.";
-				$('#footerText').append('<p>' + unsupportedMsg + '</p>');
+				//$('#footerText').append('<p>' + unsupportedMsg + '</p>');
 				console.log(unsupportedMsg);
 				return function() {
 					console.log("Error: " + feature + " not supported. skipping...");
