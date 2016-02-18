@@ -56,7 +56,10 @@ var clientState = {
 				var playerToCapture = this;
 				console.log("Attaching Capture Events to " + playerToCapture.localID);
 
-				playerToCapture.marker.on('mousedown', function(){
+				playerToCapture.marker.on('click', function(e){
+				
+				//playerToCapture.marker.on('mousedown', function(e){
+					//e.preventDefault();
 					//this.startCapture
 					clientState.markerEvents.ins.startCapture(playerToCapture);
 				}); //viz.markerOptions.mouseDownEvent);
