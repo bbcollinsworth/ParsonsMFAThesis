@@ -29,8 +29,9 @@ var hubs = [{
 
 var hubStats = {
 	hackRange: 50, //in meters
-	hackTimeInMinutes: 2,
+	hackTimeInMinutes: 0.5,
 	hackProgressInterval: 2000,
+	attackingPlayers: [],
 	getHackTime: function() {
 		return hubStats.hackTimeInMinutes * 60000;
 	}, //in milliseconds
@@ -81,6 +82,7 @@ var state = {
 			hub['alertState'] = 0;
 			hub['live'] = true;
 			hub['setAlertState'] = hubStats.setAlertState;
+			hub['attackingPlayers'] = hubStats.attackingPlayers;
 
 		}; //);
 	},

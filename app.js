@@ -112,16 +112,21 @@ io.on('connection', function(socket) {
 
 	var getHubsByDistance = function() {
 
+		//hubs[3].live = false;
+
 		log("Finding hubs by distance to " + player.userID);
 
 		var hubsObj = {};
 
 		for (i in hubs) {
-			hubsObj[i] = {
-				"latitude": hubs[i].lat,
-				"longitude": hubs[i].lng //,
-				//"name": hubs[i].name
-			};
+			//is key same as index? Testing killing hub 3 seemed to work
+			if (hubs[i].live) {
+				hubsObj[i] = {
+					"latitude": hubs[i].lat,
+					"longitude": hubs[i].lng //,
+					//"name": hubs[i].name
+				};
+			}
 
 			// for (key in hubs){
 			// 	hubsObj[i][key] = hubs[i][key];
@@ -156,6 +161,29 @@ io.on('connection', function(socket) {
 
 	};
 
+	var updateAttackingPlayers = function(aHub, removePlayer) {
+		log("Checking for " + player.userID + " in attacking players for " + aHub.id);
+		var playerFound = false;
+		for (i in aHub.attackingPlayers) {
+			if (player.userID == aHub.attackingPlayers[i]) {
+				playerFound = true;
+
+				if (removePlayer) {
+					aHub.attackingPlayers.splice(i, 1);
+					log("Removed " + player.userID + "from attacking players; new length is: ");
+					log(aHub.attackingPlayers.length, colors.orange);
+
+				}
+				break;
+			}
+		}
+		if (!removePlayer && !playerFound) {
+			aHub.attackingPlayers.push(player.userID);
+			log("Adding " + player.userID + "to Attacking Players for " + aHub.id, colors.pink);
+		}
+
+	};
+
 	// log('The user ' + socket.id + ' just connected!', colors.yellow);
 	// emitTo.socket('connected', {});
 
@@ -185,7 +213,8 @@ io.on('connection', function(socket) {
 
 				//send new ID to player:
 				emitTo.socket('newUserID', {
-					newID: player.userID
+					newID: player.userID,
+					team: player.team
 				});
 
 			},
@@ -200,7 +229,9 @@ io.on('connection', function(socket) {
 
 				player.connected = true;
 
-				emitTo.socket('returningReadyCheck', {});
+				emitTo.socket('returningReadyCheck', {
+					team: player.team
+				});
 			},
 
 			readyToPlay: function() {
@@ -261,33 +292,73 @@ io.on('connection', function(socket) {
 
 				var attackedHub = hubs[res.hubIndex];
 
-				// var decr = attackedHub.hackTime / attackedHub.hackProgressInterval;
-				// console.log("Decrements are: " + decr);
-				// //...then divide 100 by that to get health decrement:
-				// attackedHub.health -= (100 / decr);
-				// console.log("Hub " + attackedHub.id + " health decreased to " + attackedHub.health);
+				var decr = attackedHub.hackTime / attackedHub.hackProgressInterval;
+				console.log("Decrements are: " + decr);
+				//...then divide 100 by that to get health decrement:
+				attackedHub.health -= (100 / decr);
+				console.log("Hub " + attackedHub.id + " health decreased to " + attackedHub.health);
 
 
 				if (attackedHub.health <= 0) {
 					attackedHub.health = 0;
 					attackedHub.live = false;
-					log("Live hubs remaining: " + gameState.liveHubCount(), colors.yellow.inverse);
-				
-				} else {
-					var decr = attackedHub.hackTime / attackedHub.hackProgressInterval;
-					console.log("Decrements are: " + decr);
-					//...then divide 100 by that to get health decrement:
-					attackedHub.health -= (100 / decr);
-					console.log("Hub " + attackedHub.id + " health decreased to " + attackedHub.health);
+					var hubsLeft = gameState.liveHubCount();
+					log("Live hubs remaining: " + hubsLeft, colors.yellow.inverse);
 
+					emitTo.socket('hackComplete', {
+						hubName: attackedHub.name
+					});
+
+					emitTo.all('hubDown', {
+						hubName: attackedHub.name,
+						hubID: attackedHub.id,
+						hubIndex: res.hubIndex,
+						liveHubsLeft: hubsLeft
+					});
+
+				} else {
+
+					updateAttackingPlayers(attackedHub, false);
+					// var decr = attackedHub.hackTime / attackedHub.hackProgressInterval;
+					// console.log("Decrements are: " + decr);
+					// //...then divide 100 by that to get health decrement:
+					// attackedHub.health -= (100 / decr);
+					// console.log("Hub " + attackedHub.id + " health decreased to " + attackedHub.health);
+					var prevAlertState = attackedHub.alertState;
 
 					attackedHub.setAlertState();
 					emitTo.socket('hubHealthUpdate', {
 						hubName: attackedHub.name,
 						healthLeft: attackedHub.health
 					});
+
+					if (attackedHub.alertState !== prevAlertState) {
+						emitTo.team('gov', 'hubAttackUpdate', {
+							hubName: attackedHub.name,
+							healthLeft: attackedHub.health,
+							hubID: attackedHub.id,
+							hubIndex: res.hubIndex,
+							alertState: attackedHub.alertState
+							//hubIndex: hubs.indexOf(attackedHub)
+						});
+					}
+				}
+			},
+
+			playerLeftHubRange: function(){
+				var attackedHub = hubs[res.hubIndex];
+				updateAttackingPlayers(attackedHub, true);
+
+				if (attackedHub.attackingPlayers.length < 1) {
+					attackedHub.alertState = 0;
+					emitTo.team('gov', 'hubAttackStopped', {
+						hubName: attackedHub.name,
+						hubID: attackedHub.id,
+						hubIndex: res.hubIndex
+					});
 				}
 			}
+
 		};
 
 		try {

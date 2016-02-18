@@ -4,9 +4,12 @@ var ins = {
 		'maxHubsDetected': 3,
 
 		attachScanEvents: function() {
+			msg("Press the button below to scan for active surveillance sites nearby.");
+
 			$('#scanButton').removeClass('hackReady')
 				.removeClass('uploadProgress')
 				.removeClass('hackAnim')
+				.removeClass('hackComplete')
 				.addClass('scanIcon');
 
 			$('#scanButton').off('click').on('click', function() {
@@ -55,6 +58,22 @@ var ins = {
 		refreshHackProgress: function() {
 			var pct = Math.floor(100 - ins.targetHub.health);
 			$('#scanButton').html("<span>" + pct + "%</span>");
+		},
+
+		hackSuccess: function(){
+			$('#scanButton').html("")
+				.removeClass('hackReady')
+				.removeClass('uploadProgress')
+				.removeClass('hackAnim')
+				.addClass('hackComplete');
+
+			ins.clearTargetHub();
+
+			msg("Hack Complete", 'success');
+			setTimeout(function(){
+				console.log("resetting scan");
+				ins.ui.attachScanEvents();
+			}, 3000);
 		}
 	},
 
@@ -154,6 +173,14 @@ var ins = {
 
 	hubHackInterval: {},
 
+	hackSuccess: function() {
+
+	},
+
+	clearTargetHub: function() {
+		ins.targetHub = {};
+	},
+
 	hackHub: function() {
 
 		//var hubHackInterval = 
@@ -167,14 +194,14 @@ var ins = {
 
 			emit('playerLeftHubRange', {
 				hubID: ins.targetHub.id,
-				hubName: ins.targetHub.name
+				hubName: ins.targetHub.name,
+				playerID: player.localID
 			});
 
-			ins.targetHub = {};
-
+			ins.clearTargetHub();
 			ins.ui.attachScanEvents();
 
-		} else {
+		} else if (ins.targetHub.health > 0) {
 			console.log("Sending hack progress to server");
 			emit('hubHackProgress', {
 				hubID: ins.targetHub.id,
@@ -184,6 +211,9 @@ var ins = {
 			});
 
 			setTimeout(ins.hackHub, ins.targetHub.hackProgressInterval);
+
+		} else {
+
 		}
 	}
 };

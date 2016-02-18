@@ -1,7 +1,8 @@
 var viz = {
 
 	headerStyles: {
-		'urgent': 'urgent-alert'//,
+		'urgent': 'urgent-alert',
+		'success': 'success-alert'//,
 		//'normal': 'normal-alert'
 	},
 
@@ -152,6 +153,7 @@ var viz = {
 			area: L.circle([hData.lat, hData.lng], hData.hackRange, viz.hubOptions['area']),
 			marker: L.circleMarker([hData.lat, hData.lng], viz.hubOptions['marker']), //this.renderMarker(this.markerRadius),
 			markerRadius: 10,
+			flashing: false,
 			flash: function(interval) {
 				//gov.flashHub(this,interv);
 				if (interval === undefined) {
@@ -161,6 +163,8 @@ var viz = {
 				var c = '#ff0000';
 
 				h.stopFlash();
+
+				h.flashing = true;
 				h['flasher'] = setInterval(function() {
 
 					h.area.setStyle({
@@ -175,6 +179,7 @@ var viz = {
 				}, interval);
 			},
 			stopFlash: function() {
+				h.flashing = false;
 				if (h.flasher) {
 					clearInterval(h.flasher);
 				}

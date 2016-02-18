@@ -67,6 +67,11 @@
 	background-color: rgba(255,0,0,0.7);
 }
 
+#alertBox .ui-collapsible-content.success-alert {
+	color: white;
+	background-color: rgba(255,255,0,0.7);
+}
+
 #svcChecklist .ui-collapsible-heading {
 	border-radius: 0px;
 }
@@ -134,16 +139,16 @@
 	/*top: 50vh;*/
 	position: absolute;
 /*	top: calc(50vh - 30px);
-	left: calc(50% - 40px);*/
-	top: 50vh;
-    left: 50%;
-    transform: translate(-50%,-50%);
-	margin: auto;
+left: calc(50% - 40px);*/
+top: 50vh;
+left: 50%;
+transform: translate(-50%,-50%);
+margin: auto;
 	/*width: 30px;
 	height: 40px;*/
 	padding: 0.1em;
 	width: 60px;
-    height: 60px;
+	height: 60px;
 	box-shadow: 0px 1px 10px 5px rgba(0,0,0,0.2);
 	border-radius: 50%;
 	border: 6px solid transparent; //rgba(255,255,255,0.5);
@@ -173,6 +178,7 @@
 }
 
 #scanButton.hackReady {
+	border: 6px solid #FFDA44;
 	width: 80px;
 	height: 80px;
 	background-color: rgba(255,255,255,0.5);
@@ -183,12 +189,27 @@
 
 #scanButton.uploadProgress {
 	background-color: rgba(255,255,255,0.5);
-	/*width: 80px;
-	height: 80px;*/
+	width: 80px;
+	height: 80px;
 	//color: #FFDA44;
-	font-size: 1.3em;
-    line-height: 2.7em;
-    font-weight: 200;
+	font-size: 1.8em;
+	line-height: 2.8em;
+	font-weight: 100;
+}
+
+#scanButton.hackComplete {
+	border: 6px solid #FFDA44;
+	width: 80px;
+	height: 80px;
+	background-color: rgba(255,0,0,0.3);
+	background-repeat: no-repeat;
+	background-image: url("cssImages/exclamation.svg");
+	background-size: contain;
+	text-transform: uppercase;
+	font-weight: 600;
+	letter-spacing: 0.2em;
+	font-size: 1.4em;
+	line-height: 1em;
 }
 
 .scanSpinner {
@@ -198,8 +219,8 @@
 	//background-color: rgba(255,255,255,0.3);
 	position: absolute;
 	top: 50vh;
-    left: 50%;
-    transform: translate(-50%,-50%) rotate(30deg);
+	left: 50%;
+	transform: translate(-50%,-50%) rotate(30deg);
 	transition-duration: 1s;
 	opacity: 0;
 }
@@ -210,30 +231,30 @@
 	height: 95px;
 	//background-color: rgba(255,255,0,1.0);
 	background: linear-gradient(
-			to top,
-			rgba(255,255,0,1.0) 30%,
-			rgba(255,255,0,0.0)
+		to top,
+		rgba(255,255,0,1.0) 30%,
+		rgba(255,255,0,0.0)
 		);
 
 }
 
 .scanArrow {
 	width: 0px;
-    height: 0px;
-    border-left: 30px solid transparent;
-    border-right: 30px solid transparent;
-    border-bottom: 35px solid white;
-    margin-left: auto;
-    margin-right: auto;
-    margin-bottom: 0.5em;
-    padding-top: 1em;
+	height: 0px;
+	border-left: 30px solid transparent;
+	border-right: 30px solid transparent;
+	border-bottom: 35px solid white;
+	margin-left: auto;
+	margin-right: auto;
+	margin-bottom: 0.5em;
+	padding-top: 1em;
 }
 
 .scanText {
 	color: white;
 	line-height: 1em;
-    font-size: 1.8em;
-    //font-weight: 400;
+	font-size: 1.8em;
+	//font-weight: 400;
 }
 
 #pingContainer {

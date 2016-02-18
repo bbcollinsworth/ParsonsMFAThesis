@@ -3,6 +3,7 @@ var socket;
 
 var player = {
 	localID: '',
+	team: '',
 	pos: {},
 	distanceTo: function(otherPos) {
 		var d = L.latLng(player.pos.lat, player.pos.lng).distanceTo([otherPos.lat, otherPos.lng]);
@@ -16,10 +17,10 @@ var msg = function(text, styling) {
 
 	var msgHTML = "";
 
-	if (typeof text === 'string' || text instanceof String){
+	if (typeof text === 'string' || text instanceof String) {
 		msgHTML = '<p>' + text + '</p>';
 	} else {
-		for (line in text){
+		for (line in text) {
 			msgHTML += '<p>' + text[line] + '</p>';
 		}
 	}
@@ -80,27 +81,6 @@ var attachEvents = function() {
 		}
 	});
 
-	// $('#scanButton').off('click').on('click', function() {
-	// 	console.log("SCAN BUTTON CLICKED");
-
-	// 	centerOnPlayer();
-
-	// 	var scanFunction = function() {
-	// 		emit('detectHubs', {
-	// 			playerPos: player.pos,
-	// 			existingLocData: []
-	// 		});
-	// 	};
-
-	// 	storeAndSendLocation(scanFunction);
-
-	// 	if (!ins.ui.scanButton.animRunning) {
-	// 		console.log("calling scan animation");
-
-	// 		ins.ui.scanButton.animRunning = true;
-	// 		ins.ui.scanButton.animate();
-	// 	}
-	// });
 };
 
 app.init = function() {
@@ -167,6 +147,7 @@ socket.on('serverMsg', function(res, err) {
 
 			if (storedUserFound) { //send returning player
 				clientState.localID = localStorage.userID;
+				player.localID = localStorage.userID;
 				emit('returningPlayer', {
 					userID: localStorage.userID
 				});
@@ -181,7 +162,10 @@ socket.on('serverMsg', function(res, err) {
 		newUserID: function() {
 			if (supported('localstorage')) {
 				localStorage.setItem("userID", res.newID);
+				//not sure this one is used...
 				clientState.localID = localStorage.userID;
+				player.localID = localStorage.userID;
+				player.team = res.team;
 				console.log("UserID stored locally as: " + localStorage.userID);
 			} else {
 				console.log("Warning: localStorage unsupported. ID not stored.");
@@ -192,7 +176,9 @@ socket.on('serverMsg', function(res, err) {
 		},
 
 		returningReadyCheck: function() {
+			player.team = res.team;
 			if (localStorage.svcCheckComplete) {
+				$('#footerText').html('');
 				$('#app').trigger('ready');
 			} else {
 				startup.svcCheck();
@@ -238,20 +224,60 @@ socket.on('serverMsg', function(res, err) {
 			console.log("Hubs by distance received: ");
 			console.log(res.hubsByDistance);
 
-			$('#app').on('scanComplete', function(){
+			$('#app').on('scanComplete', function() {
 				ins.runHubRangeCheck(res.hubsByDistance);
 				// ins.pointToHubs(res.hubsByDistance,ins.popPointers);
 			});
-	
+
 		},
 
-		hubHealthUpdate: function(){
+		hubHealthUpdate: function() {
 
 			console.log("Health left: " + res.healthLeft);
 			//Probably don't need
 			//if (res.hubName == ins.targetHub.name){
 			ins.targetHub.health = res.healthLeft;
 			ins.ui.refreshHackProgress();
+		},
+
+		hubAttackUpdate: function() {
+			console.log("Hub attack update received");
+			var i = res.hubIndex;
+			//Probably not necessary
+			//if (!hubs[i].flashing){
+			var flashSpeed = 1000;
+			if (res.alertState > 0){
+				flashSpeed /= res.alertState;
+			}
+
+			hubs[i].flash(flashSpeed);
+			//}
+		},
+
+		hubAttackStopped: function() {
+			console.log("Hub attack stop received");
+			var i = res.hubIndex;
+			hubs[i].stopFlash();
+			// if (hubs[i].flashing){
+
+			// }
+		},
+
+		hackComplete: function() {
+			ins.ui.hackSuccess();
+		},
+
+		hubDown: function() {
+			switch (player.team) {
+				case "gov":
+					hubs[res.hubIndex].stopFlash();
+					window.alert("Hackers have taken down a security hub!");
+					break;
+				case "ins":
+				default:
+					window.alert("SUCCESS: A surveillance site has been hacked!");
+					break;
+			}
 		}
 	};
 
