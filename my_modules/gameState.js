@@ -29,10 +29,34 @@ var hubs = [{
 
 var hubStats = {
 	hackRange: 50, //in meters
-	hackTimeInMinutes: 4,
+	hackTimeInMinutes: 2,
+	hackProgressInterval: 2000,
 	getHackTime: function() {
 		return hubStats.hackTimeInMinutes * 60000;
-	} //in milliseconds
+	}, //in milliseconds
+	setAlertState: function() {
+		var h = this;
+		
+		switch (Math.floor(h.health / 25)) {
+			case 0: //hubHealth < 25%
+				h.alertState = 4;
+				break;
+			case 1: //hubHealth < 50%
+				h.alertState = 3;
+				break;
+			case 2: //hubHealth < 75%
+				h.alertState = 2;
+				break;
+			case 3: //hubHealth < 100%
+				h.alertState = 1;
+				break;
+			default:
+				h.alertState = 0;
+				break;
+		}
+
+		console.log("Hub " + h.id + " AlertState set to: " + h.alertState);
+	}
 
 };
 
@@ -52,19 +76,32 @@ var state = {
 			hub['health'] = 100.0;
 			hub['hackRange'] = hubStats.hackRange;
 			hub['hackTime'] = hubStats.getHackTime();
+			hub['hackProgressInterval'] = hubStats.hackProgressInterval;
 			hub['decrement'] = 100.0 / hub.hackTime;
 			hub['alertState'] = 0;
 			hub['live'] = true;
+			hub['setAlertState'] = hubStats.setAlertState;
 
 		}; //);
 	},
 
 	playerCount: function() {
 		var numberOfPlayers = 0;
-		for (var p in players) {
+		//for (var p in players) {
+		for (var p in state.players) {
 			numberOfPlayers++;
 		}
 		return numberOfPlayers;
+	},
+
+	liveHubCount: function() {
+		var liveHubs = 0;
+		for (var h in hubs) {
+			if (hubs[h].live) {
+				liveHubs++;
+			}
+		}
+		return liveHubs;
 	},
 
 	'preStart': {

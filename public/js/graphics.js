@@ -1,8 +1,8 @@
 var viz = {
 
 	headerStyles: {
-		'urgent': 'urgent-alert',
-		'normal': 'normal-alert'
+		'urgent': 'urgent-alert'//,
+		//'normal': 'normal-alert'
 	},
 
 	markerOptions: {
@@ -153,7 +153,6 @@ var viz = {
 		marker: {
 			'weight': 3
 		}
-
 	},
 
 	hub: function(hData) {
@@ -413,7 +412,7 @@ var viz = {
 		// });
 
 		var button = $("<div />", {
-			'class': "ui-btn scanIcon",
+			'class': "ui-btn",
 			'id': "scanButton",
 			'data-icon': "eye"
 		});

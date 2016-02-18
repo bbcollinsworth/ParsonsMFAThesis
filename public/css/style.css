@@ -129,7 +129,7 @@
 
 /*SCAN BUTTON FOR INS TEAM*/
 #scanButton {
-
+	transition-duration: 0.2s;
 	pointer-events: all;
 	/*top: 50vh;*/
 	position: absolute;
@@ -146,9 +146,9 @@
     height: 60px;
 	box-shadow: 0px 1px 10px 5px rgba(0,0,0,0.2);
 	border-radius: 50%;
-	border: 6px solid rgba(255,255,255,0.5);
-	background-color: rgba(255,255,255,0.5);
-	background-repeat: no-repeat;
+	border: 6px solid transparent; //rgba(255,255,255,0.5);
+	/*background-color: rgba(255,255,255,0.5);
+	background-repeat: no-repeat;*/
 }
 
 #scanButton.scanAnim {
@@ -158,16 +158,42 @@
 	animation:         scan ease 1s 3;
 }
 
-.scanIcon {
+#scanButton.hackAnim {
+	-webkit-animation: hack ease 3s infinite; /* Safari 4+ */
+	-moz-animation:    hack ease 3s infinite; /* Fx 5+ */
+	-o-animation:      hack ease 3s infinite; /* Opera 12+ */
+	animation:         hack ease 3s infinite;
+}
+
+#scanButton.scanIcon {
+	background-color: rgba(255,255,255,0.5);
+	background-repeat: no-repeat;
 	background-image: url("cssImages/sidescan.svg");
 	background-size: contain;
+}
 
+#scanButton.hackReady {
+	width: 80px;
+	height: 80px;
+	background-color: rgba(255,255,255,0.5);
+	background-repeat: no-repeat;
+	background-image: url("cssImages/bolt-assym.svg");
+	background-size: contain;
+}
+
+#scanButton.uploadProgress {
+	background-color: rgba(255,255,255,0.5);
+	/*width: 80px;
+	height: 80px;*/
+	//color: #FFDA44;
+	font-size: 1.3em;
+    line-height: 2.7em;
 }
 
 .scanSpinner {
 	line-height: 0;
 	width: 100px;
-	height: 300px;
+	height: 340px;
 	//background-color: rgba(255,255,255,0.3);
 	position: absolute;
 	top: 50vh;
@@ -269,6 +295,47 @@
 
 
 /*-------------------- ANIMATIONS --------------------*/
+
+@keyframes hack {
+	0%,100% {
+		color: #FFDA44;
+		border: 6px solid #FFDA44;
+	}
+	50% {
+		color: #FF0000;
+		border: 12px solid #FF0000;
+	}
+}
+@-webkit-keyframes hack {
+	0%,100% {
+		color: #FFDA44;
+		border: 6px solid #FFDA44;
+	}
+	50% {
+		color: #FF0000;
+		border: 12px solid #FF0000;
+	}
+}
+@-moz-keyframes hack {
+	0%,100% {
+		color: #FFDA44;
+		border: 6px solid #FFDA44;
+	}
+	50% {
+		color: #FF0000;
+		border: 12px solid #FF0000;
+	}
+}
+@-o-keyframes hack {
+	0%,100% {
+		color: #FFDA44;
+		border: 6px solid #FFDA44;
+	}
+	50% {
+		color: #FF0000;
+		border: 12px solid #FF0000;
+	}
+}
 
 @keyframes scan {
 	0% {

@@ -26,6 +26,10 @@ var msg = function(text, styling) {
 
 	$('#alertBodyText').html(msgHTML);
 
+	for (s in viz.headerStyles) {
+		$('#alertBox .ui-collapsible-content').removeClass(viz.headerStyles[s]);
+	}
+
 	if (styling in viz.headerStyles) {
 		console.log("adding header styling! " + styling);
 		$('#alertBox .ui-collapsible-content').addClass(viz.headerStyles[styling]);
@@ -76,27 +80,27 @@ var attachEvents = function() {
 		}
 	});
 
-	$('#scanButton').off('click').on('click', function() {
-		console.log("SCAN BUTTON CLICKED");
+	// $('#scanButton').off('click').on('click', function() {
+	// 	console.log("SCAN BUTTON CLICKED");
 
-		centerOnPlayer();
+	// 	centerOnPlayer();
 
-		var scanFunction = function() {
-			emit('detectHubs', {
-				playerPos: player.pos,
-				existingLocData: []
-			});
-		};
+	// 	var scanFunction = function() {
+	// 		emit('detectHubs', {
+	// 			playerPos: player.pos,
+	// 			existingLocData: []
+	// 		});
+	// 	};
 
-		storeAndSendLocation(scanFunction);
+	// 	storeAndSendLocation(scanFunction);
 
-		if (!ins.ui.scanButton.animRunning) {
-			console.log("calling scan animation");
+	// 	if (!ins.ui.scanButton.animRunning) {
+	// 		console.log("calling scan animation");
 
-			ins.ui.scanButton.animRunning = true;
-			ins.ui.scanButton.animate();
-		}
-	});
+	// 		ins.ui.scanButton.animRunning = true;
+	// 		ins.ui.scanButton.animate();
+	// 	}
+	// });
 };
 
 app.init = function() {
@@ -235,10 +239,19 @@ socket.on('serverMsg', function(res, err) {
 			console.log(res.hubsByDistance);
 
 			$('#app').on('scanComplete', function(){
-				ins.pointToHubs(res.hubsByDistance,ins.popPointers);
+				ins.runHubRangeCheck(res.hubsByDistance);
+				// ins.pointToHubs(res.hubsByDistance,ins.popPointers);
 			});
+	
+		},
 
-			
+		hubHealthUpdate: function(){
+
+			console.log("Health left: " + res.healthLeft);
+			//Probably don't need
+			//if (res.hubName == ins.targetHub.name){
+			ins.targetHub.health = res.healthLeft;
+			ins.ui.refreshHackProgress();
 		}
 	};
 

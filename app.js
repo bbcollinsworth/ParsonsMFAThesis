@@ -119,7 +119,7 @@ io.on('connection', function(socket) {
 		for (i in hubs) {
 			hubsObj[i] = {
 				"latitude": hubs[i].lat,
-				"longitude": hubs[i].lng//,
+				"longitude": hubs[i].lng //,
 				//"name": hubs[i].name
 			};
 
@@ -133,9 +133,9 @@ io.on('connection', function(socket) {
 			"longitude": player.locationData[0].lng
 		}, hubsObj);
 
-		for (i in sortedHubs){
+		for (i in sortedHubs) {
 			var matchingHub = hubs[sortedHubs[i].key];
-			for (prop in matchingHub){
+			for (prop in matchingHub) {
 				sortedHubs[i][prop] = matchingHub[prop];
 			}
 		}
@@ -143,7 +143,7 @@ io.on('connection', function(socket) {
 		// 	// sortedHubs[id].lat = sortedHubs[id].latitude;
 		// 	// sortedHubs[id].lng = sortedHubs[id].longitude;
 		// 	// sortedHubs[id]['name'] = hubsObj[sortedHubs[id].key].name;
-		
+
 		// 	for (prop in hubs){
 		// 		sortedHubs[id][prop] = hubs[sortedHubs[id].key][prop]
 		// 	}
@@ -255,19 +255,47 @@ io.on('connection', function(socket) {
 				emitTo.socket('hubsByDistance', {
 					hubsByDistance: getHubsByDistance()
 				});
-				//getHubsByDistance();
-				// for (i in hubs) {
+			},
 
-				// }
+			hubHackProgress: function() {
+
+				var attackedHub = hubs[res.hubIndex];
+
+				// var decr = attackedHub.hackTime / attackedHub.hackProgressInterval;
+				// console.log("Decrements are: " + decr);
+				// //...then divide 100 by that to get health decrement:
+				// attackedHub.health -= (100 / decr);
+				// console.log("Hub " + attackedHub.id + " health decreased to " + attackedHub.health);
+
+
+				if (attackedHub.health <= 0) {
+					attackedHub.health = 0;
+					attackedHub.live = false;
+					log("Live hubs remaining: " + gameState.liveHubCount(), colors.yellow.inverse);
+				
+				} else {
+					var decr = attackedHub.hackTime / attackedHub.hackProgressInterval;
+					console.log("Decrements are: " + decr);
+					//...then divide 100 by that to get health decrement:
+					attackedHub.health -= (100 / decr);
+					console.log("Hub " + attackedHub.id + " health decreased to " + attackedHub.health);
+
+
+					attackedHub.setAlertState();
+					emitTo.socket('hubHealthUpdate', {
+						hubName: attackedHub.name,
+						healthLeft: attackedHub.health
+					});
+				}
 			}
 		};
 
-		// try {
+		try {
 			handleClientMsg[res.tag]();
-		// } catch (err) {
-		// 	log('Error: "' + res.tag + '" is not a valid socket.on message because:', colors.err);
-		// 	log(err, colors.err);
-		// }
+		} catch (err) {
+			log('Error: "' + res.tag + '" is not a valid socket.on message because:', colors.err);
+			log(err, colors.err);
+		}
 
 	});
 

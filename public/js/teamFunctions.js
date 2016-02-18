@@ -2,6 +2,60 @@ var ins = {
 	ui: {
 		'hubPointers': [],
 		'maxHubsDetected': 3,
+
+		attachScanEvents: function() {
+			$('#scanButton').removeClass('hackReady')
+				.removeClass('uploadProgress')
+				.removeClass('hackAnim')
+				.addClass('scanIcon');
+
+			$('#scanButton').off('click').on('click', function() {
+				console.log("SCAN BUTTON CLICKED");
+
+				centerOnPlayer();
+
+				var scanFunction = function() {
+					emit('detectHubs', {
+						playerPos: player.pos,
+						existingLocData: []
+					});
+				};
+
+				storeAndSendLocation(scanFunction);
+
+				if (!ins.ui.scanButton.animRunning) {
+					console.log("calling scan animation");
+
+					ins.ui.scanButton.animRunning = true;
+					ins.ui.scanButton.animate();
+				}
+			});
+		},
+
+		attachHackEvents: function() {
+			var btn = $('#scanButton');
+
+			btn.removeClass('scanIcon').addClass('hackReady');
+			btn.off('click').on('click', function() {
+				msg({
+					1: "Uploading virus.",
+					2: " Stay in range with phone active or upload will halt."
+				}, 'urgent');
+
+				ins.ui.refreshHackProgress();
+
+				btn.removeClass('hackReady')
+					.addClass('uploadProgress')
+					.addClass('hackAnim');
+
+				ins.hackHub();
+			});
+		},
+
+		refreshHackProgress: function() {
+			var pct = Math.floor(100 - ins.targetHub.health);
+			$('#scanButton').html("<span>" + pct + "%</span>");
+		}
 	},
 
 	//hackRange: 75,
@@ -18,17 +72,10 @@ var ins = {
 		this.ui['scanButton'] = viz.scanButton();
 		$('#container').append(this.ui['scanButton']);
 
+		ins.ui.attachScanEvents();
+
 		console.log('Hub pointers created: ');
 		console.log(this.ui.hubPointers);
-
-		// var p = this.ui.hubPointers[0];
-		// setTimeout(function() {
-		// 	p.rotate(360, 1);
-
-		// 	setTimeout(function() {
-		// 		//p.fade();
-		// 	}, 1000);
-		// }, 1000);
 
 	},
 
@@ -40,16 +87,7 @@ var ins = {
 		}
 	},
 
-	enableHack: function() {
-		msg({
-			1: "Surveillence site in range!",
-			2: "<b>Press below to begin hacking.</b>",
-			3: "(NOTE: More hackers will increase hack speed.)"
-		}, 'urgent');
-	},
-
-	pointToHubs: function(hubArray, callback) {
-
+	runHubRangeCheck: function(hubArray) {
 		var hubToAttack = {};
 
 		for (h in hubArray) {
@@ -58,41 +96,101 @@ var ins = {
 				break;
 			}
 		}
-
-		//Check if object isn't empty:
+		//Check if object isn't empty -- if so a hub is in range:
 		if ('hackRange' in hubToAttack) {
-			ins.enableHack();
+			ins.enableHack(hubToAttack);
 		} else {
+			ins.pointToHubs(hubArray, ins.popPointers);
+		}
+	},
 
-			var getAngleFromMapCenter = function(screenPos) {
+	enableHack: function(targetHub) {
+		msg({
+			1: "Surveillence site in range!",
+			2: "<b>Press below to begin hacking.</b>",
+			3: "(NOTE: More hackers will increase hack speed.)"
+		}, 'urgent');
 
-				var screenCenter = map.project(map.getCenter());
+		ins.targetHub = targetHub;
 
-				var vec = {
-					'x': screenPos.x - screenCenter.x,
-					'y': screenPos.y - screenCenter.y
-				};
+		ins.ui.attachHackEvents();
+	},
 
-				var theta = Math.atan2(vec.y, vec.x); // range (-PI, PI]
-				theta *= 180 / Math.PI;
+	pointToHubs: function(hubArray, callback) {
 
-				//ADJUST FOR ROTATION FROM TOP:
-				theta += 90;
-				return theta;
+		var getAngleFromMapCenter = function(screenPos) {
+
+			var screenCenter = map.project(map.getCenter());
+
+			var vec = {
+				'x': screenPos.x - screenCenter.x,
+				'y': screenPos.y - screenCenter.y
 			};
 
-			for (var i = 0; i < ins.ui.maxHubsDetected; i++) {
+			var theta = Math.atan2(vec.y, vec.x); // range (-PI, PI]
+			theta *= 180 / Math.PI;
 
-				var hubScreenCoords = map.project([hubArray[i].lat, hubArray[i].lng]);
-				hubArray[i]['angleTo'] = getAngleFromMapCenter(hubScreenCoords);
-				console.log("Angle to " + hubArray[i].name + " is " + hubArray[i]['angleTo'] + " degrees");
+			//ADJUST FOR ROTATION FROM TOP:
+			theta += 90;
+			return theta;
+		};
 
-				ins.ui.hubPointers[i].update(hubArray[i]);
-			}
+		for (var i = 0; i < ins.ui.maxHubsDetected; i++) {
 
-			if (callback !== undefined) {
-				callback();
-			}
+			var hubScreenCoords = map.project([hubArray[i].lat, hubArray[i].lng]);
+			hubArray[i]['angleTo'] = getAngleFromMapCenter(hubScreenCoords);
+			console.log("Angle to " + hubArray[i].name + " is " + hubArray[i]['angleTo'] + " degrees");
+
+			ins.ui.hubPointers[i].update(hubArray[i]);
+		}
+
+		if (callback !== undefined) {
+			callback();
+		}
+		//}
+	},
+
+	targetHub: {},
+
+	hubHackInterval: {},
+
+	hackHub: function() {
+
+		//var hubHackInterval = 
+
+		var d = player.distanceTo(ins.targetHub);
+
+		if (d > ins.targetHub.attackRange) {
+			//update this with mobile alerts
+			window.alert("Hack interrupted!");
+			//clearInterval(ins.hubHackInterval);
+
+			emit('playerLeftHubRange', {
+				hubID: ins.targetHub.id,
+				hubName: ins.targetHub.name
+			});
+
+			ins.targetHub = {};
+
+			ins.ui.attachScanEvents();
+
+		} else {
+			console.log("Sending hack progress to server");
+			emit('hubHackProgress', {
+				hubID: ins.targetHub.id,
+				hubName: ins.targetHub.name,
+				hubIndex: ins.targetHub.key,
+				//timeInterval: emitInterval,
+				timestamp: Date.now() //,
+				// playerID: localStorage.userID,
+				// playerPos: playerLoc,
+				// hubPos: {
+				// 	lat: targetHub.lat,
+				// 	lng: targetHub.lng
+				// }
+			});
+
+			setTimeout(ins.hackHub, ins.targetHub.hackProgressInterval);
 		}
 	}
 };
