@@ -282,6 +282,15 @@ io.on('connection', function(socket) {
 				});
 			},
 
+			capturedPlayer: function(){
+				var lockedPlayer = players[res.userID];
+				console.log("Lockout request received for " + lockedPlayer.userID);
+				lockedPlayer.lockout();
+				emitTo.user(lockedPlayer,'lockoutAlert',{
+					capturingPlayer: player.userID
+				});
+			},
+
 			detectHubs: function() {
 				emitTo.socket('hubsByDistance', {
 					hubsByDistance: getHubsByDistance()

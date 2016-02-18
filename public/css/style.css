@@ -30,6 +30,10 @@
 	overflow: hidden;
 }
 
+#container.lockScreen {
+	background-color: rgba(0,0,0,0.7);
+}
+
 
 #mobileHeader, #mobileFooter {
 	width: inherit;
@@ -68,8 +72,23 @@
 }
 
 #alertBox .ui-collapsible-content.success-alert {
+	text-transform: uppercase;
+	letter-spacing: 0.2em;
 	color: white;
 	background-color: rgba(255,255,0,0.7);
+	font-weight: 600;
+	font-size: 1.5em;
+	line-height: 1em;
+}
+
+#alertBox .ui-collapsible-content.lockout-alert {
+	text-transform: uppercase;
+	letter-spacing: 0.2em;
+	color: rgba(180,180,180,1.0);
+	background-color: rgba(0,0,0,0.7);
+	font-size: 1.5em;
+	font-weight: 600;
+	line-height: 1em;
 }
 
 #svcChecklist .ui-collapsible-heading {
@@ -175,6 +194,10 @@ margin: auto;
 	background-repeat: no-repeat;
 	background-image: url("cssImages/sidescan.svg");
 	background-size: contain;
+}
+
+#scanButton.lockClass {
+	display: none;
 }
 
 #scanButton.hackReady {

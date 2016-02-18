@@ -220,6 +220,12 @@ socket.on('serverMsg', function(res, err) {
 			gov.renderPlayers(res.locData, gov.suspectRangeCheck);
 		},
 
+		lockoutAlert: function() {
+			console.log('lockout Alert received');
+			window.alert("FAILURE: State Agents have locked your device!");
+			ins.renderLockout();
+		},
+
 		hubsByDistance: function() {
 			console.log("Hubs by distance received: ");
 			console.log(res.hubsByDistance);
@@ -246,11 +252,27 @@ socket.on('serverMsg', function(res, err) {
 			//Probably not necessary
 			//if (!hubs[i].flashing){
 			var flashSpeed = 1000;
-			if (res.alertState > 0){
+			if (res.alertState > 0) {
 				flashSpeed /= res.alertState;
 			}
 
 			hubs[i].flash(flashSpeed);
+
+			switch (res.alertState) {
+				case 3:
+					if (!hubs[i].alerts.lvl3) {
+						window.alert("WARNING: Security hub attack 50% complete.");
+						hubs[i].alerts.lvl3 = true;
+					}
+					break;
+				case 1:
+					//THIS SHOULD NOT have if test
+					window.alert("WARNING: A security hub is under attack.");
+					hubs[i].alerts.lvl1 = true;
+					break;
+				default:
+					break;
+			}
 			//}
 		},
 
@@ -271,6 +293,7 @@ socket.on('serverMsg', function(res, err) {
 			switch (player.team) {
 				case "gov":
 					hubs[res.hubIndex].stopFlash();
+					hubs[res.hubIndex].shutDown();
 					window.alert("Hackers have taken down a security hub!");
 					break;
 				case "ins":

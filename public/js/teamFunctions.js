@@ -60,7 +60,7 @@ var ins = {
 			$('#scanButton').html("<span>" + pct + "%</span>");
 		},
 
-		hackSuccess: function(){
+		hackSuccess: function() {
 			$('#scanButton').html("")
 				.removeClass('hackReady')
 				.removeClass('uploadProgress')
@@ -70,7 +70,7 @@ var ins = {
 			ins.clearTargetHub();
 
 			msg("Hack Complete", 'success');
-			setTimeout(function(){
+			setTimeout(function() {
 				console.log("resetting scan");
 				ins.ui.attachScanEvents();
 			}, 3000);
@@ -194,8 +194,9 @@ var ins = {
 
 			emit('playerLeftHubRange', {
 				hubID: ins.targetHub.id,
-				hubName: ins.targetHub.name,
-				playerID: player.localID
+				hubIndex: ins.targetHub.key,
+				hubName: ins.targetHub.name //,
+				//playerID: player.localID
 			});
 
 			ins.clearTargetHub();
@@ -215,6 +216,13 @@ var ins = {
 		} else {
 
 		}
+	},
+
+	renderLockout: function(){
+		msg("Compromised",'lockout');
+		$('#container').addClass('lockScreen');
+		$('#scanButton').off('click');
+		//$('#scanButton').addClass('lockClass');
 	}
 };
 
@@ -290,10 +298,12 @@ var gov = {
 	},
 
 	captureComplete: function(capturedPlayerRef) {
-		console.log("Sending captureComplete for: ");
+		console.log("Sending captureComplete for " + capturedPlayerRef.userID + ":");
 		console.log(capturedPlayerRef);
 		emit("capturedPlayer", {
-			//playerID
+			userID: capturedPlayerRef.userID,
+			team: capturedPlayerRef.team,
+			localID: capturedPlayerRef.localID
 		});
 	},
 
@@ -318,7 +328,7 @@ var gov = {
 			console.log(players);
 
 			if (!(userID in players)) {
-				players[userID] = clientState.addPlayer(playerData);
+				players[userID] = clientState.addPlayer(playerData, userID);
 
 			} else {
 

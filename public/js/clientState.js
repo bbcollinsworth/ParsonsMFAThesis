@@ -28,34 +28,38 @@ var clientState = {
 	markerEvents: {
 		ins: {
 			inCaptureRange: false,
-			startCapture: function(e) {
+			startCapture: function(p) {
+
+				//var p = this;
 
 				//IMPORTANT: NEED TO START WATCHING POS TO FIGURE OUT IF MOVING
-				console.log("Starting capture on " + newPlayer.localID);
+				console.log("Starting capture on " + p.localID);
 
-				if (!('captureCircle' in newPlayer)) {
-					newPlayer['captureCircle'] = viz.addCaptureCircle(newPlayer.latestPos);
-					newPlayer['captureCircle'].parentPlayerRef = newPlayer;
-					newPlayer['captureCircle'].addTo(map);
+				if (!('captureCircle' in p)) {
+					p['captureCircle'] = viz.addCaptureCircle(p.latestPos);
+					p['captureCircle'].parentPlayerRef = p;
+					p['captureCircle'].addTo(map);
 
 					//newPlayer.captureCircle.remove();
 					// add something to remove the old one
 				}
 
-				newPlayer['captureCircle'].startAnim();
-				map.on('mouseup', newPlayer.stopCapture);
-				//newPlayer.marker.on('mouseup', this.stopCapture); //viz.markerOptions.mouseDownEvent);
+				p['captureCircle'].startAnim();
+				//map.on('mouseup', p.stopCapture);
 
-				//}
 			},
 			stopCapture: function(e) {
 				console.log("Mouse up - capture pausing");
 				newPlayer.captureCircle.animRunning = false;
 			},
 			attachCaptureEvents: function() {
-				console.log("Attaching Capture Events to " + this.localID);
+				var playerToCapture = this;
+				console.log("Attaching Capture Events to " + playerToCapture.localID);
 
-				this.marker.on('mousedown', this.startCapture); //viz.markerOptions.mouseDownEvent);
+				playerToCapture.marker.on('mousedown', function(){
+					//this.startCapture
+					clientState.markerEvents.ins.startCapture(playerToCapture);
+				}); //viz.markerOptions.mouseDownEvent);
 
 				// this.marker.on('mouseup', function(e) {
 				// 	//e.preventDefault();
@@ -74,8 +78,9 @@ var clientState = {
 		}
 	},
 
-	addPlayer: function(player) {
+	addPlayer: function(player,uID) {
 		newPlayer = {
+			userID: uID,
 			team: player.team,
 			type: player.type,
 			latestPos: player.locData[0]

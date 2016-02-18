@@ -18,6 +18,10 @@ var hubs = [{
 	lat: 40.737283,
 	lng: -73.992879
 }, {
+	name: '15th St and 9th Ave NE corner',
+	lat: 40.741543,
+	lng: -74.004475
+}, {
 	name: 'Washington Ave and Lincoln Pl',
 	lat: 40.672643,
 	lng: -73.962675
@@ -37,7 +41,7 @@ var hubStats = {
 	}, //in milliseconds
 	setAlertState: function() {
 		var h = this;
-		
+
 		switch (Math.floor(h.health / 25)) {
 			case 0: //hubHealth < 25%
 				h.alertState = 4;

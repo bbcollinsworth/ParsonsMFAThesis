@@ -2,7 +2,8 @@ var viz = {
 
 	headerStyles: {
 		'urgent': 'urgent-alert',
-		'success': 'success-alert'//,
+		'success': 'success-alert',
+		'lockout': 'lockout-alert' //,
 		//'normal': 'normal-alert'
 	},
 
@@ -145,7 +146,8 @@ var viz = {
 		},
 		marker: {
 			'weight': 3
-		}
+		},
+		greyOut: '#707070'
 	},
 
 	hub: function(hData) {
@@ -154,6 +156,12 @@ var viz = {
 			marker: L.circleMarker([hData.lat, hData.lng], viz.hubOptions['marker']), //this.renderMarker(this.markerRadius),
 			markerRadius: 10,
 			flashing: false,
+			alerts: {
+				'lvl1': false,
+				'lvl2': false,
+				'lvl3': false,
+				'lvl4': false
+			},
 			flash: function(interval) {
 				//gov.flashHub(this,interv);
 				if (interval === undefined) {
@@ -183,6 +191,14 @@ var viz = {
 				if (h.flasher) {
 					clearInterval(h.flasher);
 				}
+			},
+			shutDown: function() {
+				h.area.setStyle({
+					'fillColor': viz.hubOptions.greyOut
+				});
+				h.marker.setStyle({
+					'color': viz.hubOptions.greyOut
+				});
 			}
 		};
 
@@ -307,7 +323,7 @@ var viz = {
 					'transition-duration': fadeTime + "s",
 					'opacity': '0'
 				});
-			},2000);
+			}, 2000);
 		},
 
 		// fade: function() {
@@ -327,7 +343,7 @@ var viz = {
 
 			ptr.distanceReading = hubInfo.distance;
 
-			var normalizedDist = ptr.distanceReading/ptr.maxDistance;
+			var normalizedDist = ptr.distanceReading / ptr.maxDistance;
 
 			var mapDistToColor = function(opacity) {
 				var r = Math.floor(Math.map(ptr.distanceReading, 75, ptr.maxDistance, 255, 170));
