@@ -10,30 +10,62 @@ var hubs = [{
 	lat: 40.734795,
 	lng: -73.990261
 }, {
+	name: 'Union Square Lincoln statue',
+	lat: 40.736183,
+	lng: -73.990122
+}, {
 	name: '15th Street near 5th Ave',
 	lat: 40.736523,
 	lng: -73.992729
 }, {
-	name: '16th and 5th Ave SW corner park',
-	lat: 40.737283,
-	lng: -73.992879
+	name: 'Church of St. Francis Xavier',
+	lat: 40.738258,
+	lng: -73.995006
 }, {
-	name: '15th St and 9th Ave NE corner',
-	lat: 40.741543,
-	lng: -74.004475
+	name: 'Quad cinemas',
+	lat: 40.736045,
+	lng: -73.996032
 }, {
-	name: 'Washington Ave and Lincoln Pl',
-	lat: 40.672643,
-	lng: -73.962675
+	name: '18th near 5th',
+	lat: 40.738731,
+	lng: -73.992364
 }, {
-	name: 'McNair Park',
-	lat: 40.670774,
-	lng: -73.961985
+	name: 'University and 13th',
+	lat: 40.734386,
+	lng: -73.992503
+}, {
+	name: 'University center',
+	lat: 40.735305,
+	lng: -73.994171
+}, {
+	name: 'Popeyes',
+	lat: 40.736858,
+	lng: -73.995447
 }];
+// {
+// 	name: '16th and 5th Ave SW corner park',
+// 	lat: 40.737283,
+// 	lng: -73.992879
+// },
+// {
+// 	name: '15th St and 9th Ave NE corner',
+// 	lat: 40.741543,
+// 	lng: -74.004475
+// }, 
+// {
+// 	name: 'Washington Ave and Lincoln Pl',
+// 	lat: 40.672643,
+// 	lng: -73.962675
+// }, {
+// 	name: 'McNair Park',
+// 	lat: 40.670774,
+// 	lng: -73.961985
+// }
+
 
 var hubStats = {
 	hackRange: 50, //in meters
-	hackTimeInMinutes: 0.5,
+	hackTimeInMinutes: 3,
 	hackProgressInterval: 2000,
 	attackingPlayers: [],
 	getHackTime: function() {

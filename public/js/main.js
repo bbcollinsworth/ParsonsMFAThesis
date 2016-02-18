@@ -52,38 +52,6 @@ var attachEvents = function() {
 		emit('readyToPlay', {});
 	});
 
-	// $('#searchButton').off('click').on('click', function() {
-	// 	//msg('Ping button clicked');
-
-	// 	var pingFunction = function() {
-	// 		emit('findSuspects', {
-	// 			existingLocData: []
-	// 		});
-	// 	};
-
-	// 	storeAndSendLocation(pingFunction);
-
-	// 	if (!gov.ui.pingCircle.animRunning) {
-	// 		console.log("calling ping animation");
-	// 		gov.ui.pingCircle.reCenter();
-
-	// 		gov.ui.pingCircle.animRunning = true;
-	// 		gov.ui.pingCircle.animateBurst();
-
-	// 		var tempPingCircle = document.getElementsByClassName('onMapPingCircle');
-	// 		tempPingCircle[0].classList.add('run');
-	// 		//console.log(tempPingCircle[0]);
-
-	// 		$('.onMapPingCircle').on('animationend webkitAnimationEnd', function() {
-
-	// 			tempPingCircle[0].classList.remove('run');
-	// 			gov.ui.pingCircle.animRunning = false;
-
-	// 			console.log("Animation removed");
-	// 		});
-	// 	}
-	// });
-
 };
 
 app.init = function() {
@@ -161,7 +129,7 @@ var runIntro = function(team) {
 				4: '<div id="nextButton">START</div>'
 			}
 		}
-	}
+	};
 
 	msg(intro[team].screen1);
 	$('#nextButton').off('click').on('click', function() {
@@ -180,8 +148,8 @@ socket.on('serverMsg', function(res, err) {
 		connected: function() {
 			clientState.connected = true;
 			console.log("Connected to server");
-			msg('Connected to server.');
-			vibrate(1000); // vibrate for check
+			//msg('Connected to server.');
+			//vibrate(1000); // vibrate for check
 		},
 
 		//1sec for new/returning player + teamHash, uniqueID

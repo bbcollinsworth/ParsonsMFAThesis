@@ -184,10 +184,10 @@ margin: auto;
 }
 
 #scanButton.scanAnim {
-	-webkit-animation: scan ease 1s 3; /* Safari 4+ */
-	-moz-animation:    scan ease 1s 3; /* Fx 5+ */
-	-o-animation:      scan ease 1s 3; /* Opera 12+ */
-	animation:         scan ease 1s 3;
+	-webkit-animation: scan ease 1s 6; /* Safari 4+ */
+	-moz-animation:    scan ease 1s 6; /* Fx 5+ */
+	-o-animation:      scan ease 1s 6; /* Opera 12+ */
+	animation:         scan ease 1s 6;
 }
 
 #scanButton.hackAnim {
