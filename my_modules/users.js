@@ -42,6 +42,7 @@ module.exports = function(users, _socket) {
 			user['userID'] = team + teamNumber.toString();
 			user['connected'] = false;
 			user['trackActive'] = false;
+			user['playStarted'] = false;
 			user['warned'] = {
 				'50': false,
 				'100': false,

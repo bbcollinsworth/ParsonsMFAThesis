@@ -241,6 +241,7 @@ io.on('connection', function(socket) {
 				switch (player.team) {
 					case 'gov':
 						emitTo.socket('govStartData', {
+							playStarted: player.playStarted,
 							hubs: hubs
 						});
 
@@ -248,10 +249,15 @@ io.on('connection', function(socket) {
 					case 'ins':
 					default:
 						emitTo.socket('insStartData', {
+							playStarted: player.playStarted,
 							hubs: hubs
 						});
 						break;
 				}
+			},
+
+			introCompleted: function(){
+				player.playStarted = true;
 			},
 
 			locationUpdate: function() {
