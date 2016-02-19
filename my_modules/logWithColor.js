@@ -18,10 +18,20 @@ module.exports = function(text, styling) {
 	// 	styling = styling;
 	// }
 
-	if (styling !== undefined) {
+	try {
 		console.log(styling(t));
-	} else {
+	} catch (err) {
 		console.log(t);
+
+		if (styling !== undefined) {
+			console.log(colors.bgRed("(" + err + ")"));
+		}
 	}
+
+	// if (styling !== undefined) {
+	// 	console.log(styling(t));
+	// } else {
+	// 	console.log(t);
+	// }
 
 };

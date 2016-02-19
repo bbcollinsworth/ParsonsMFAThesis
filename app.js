@@ -12,14 +12,16 @@ var geolib = require('geolib');
 var colors = require('colors');
 var log = require('./my_modules/logWithColor.js');
 colors.setTheme({
-	err: 'bgRed'
+	err: 'bgRed',
+	standout: 'bgMagenta'
 });
 
 var emitModule = require('./my_modules/emit.js');
 var userModule = require('./my_modules/users.js');
-var gameState = require('./my_modules/gameState.js');
-//var emitTo = require('./my_modules/emit.js')(io);
-//emitTo.start(io); //pass io to emitTo module
+// var gameState = require('./my_modules/gameState.js')(log);
+
+var stateModule = require('./my_modules/gameState.js');
+var gameState = stateModule(colors,log);
 
 app.use(bodyParser.json());
 app.use(function(req, res, next) {
@@ -42,17 +44,29 @@ server.listen(process.env.PORT || port, function() {
 });
 
 var players = gameState.players;
-
+var teams = gameState.teams;
 gameState.setupHubs();
 var hubs = gameState.hubs; //this should alter data in gamestate when altered
 log("Starting hubs are: ", colors.yellow.inverse);
 console.log(hubs);
 
-var teams = {
-	'g': 'gov',
-	'i': 'ins',
-	'default': 'ins'
-};
+var debugMode = true;
+
+// var teams = {
+// 	'g': 'gov',
+// 	'i': 'ins',
+// 	'default': 'gov', //set to Gov so first player will be int
+// 	variedDefault: function() {
+
+// 		if (gameState.randomize) {
+
+// 		} else {
+// 			teams.default = teams.default == 'ins' ? 'gov' : 'ins';
+// 			log('Default team switched to ' + teams.default, colors.standout);
+// 			return teams.default;
+// 		}
+// 	}
+// };
 
 
 /*––––––––––– SOCKET.IO starts here –––––––––––––––*/
@@ -60,7 +74,7 @@ io.on('connection', function(socket) {
 
 	//create new instance of emit module for each socket
 	var emitTo = emitModule(io, socket);
-	var player = {}; //userModule(players, socket);
+	var player = {};
 
 	var tracking;
 
@@ -87,12 +101,13 @@ io.on('connection', function(socket) {
 	};
 
 	var getTeam = function(hash) {
+
 		log("teamhash is: " + hash);
 		var t;
 		if (teams[hash] !== undefined) {
 			t = teams[hash];
 		} else {
-			t = teams['default'];
+			t = teams[gameState.teamPickMethod](); //teams['default'];
 		}
 		log('Team is: ' + t);
 		return t;
@@ -112,9 +127,7 @@ io.on('connection', function(socket) {
 
 	var getHubsByDistance = function() {
 
-		//hubs[3].live = false;
-
-		log("Finding hubs by distance to " + player.userID);
+		log("Finding hubs by distance to " + player.userID, colors.standout);
 
 		var hubsObj = {};
 
@@ -128,9 +141,6 @@ io.on('connection', function(socket) {
 				};
 			}
 
-			// for (key in hubs){
-			// 	hubsObj[i][key] = hubs[i][key];
-			// }
 		}
 
 		var sortedHubs = geolib.orderByDistance({
@@ -144,15 +154,6 @@ io.on('connection', function(socket) {
 				sortedHubs[i][prop] = matchingHub[prop];
 			}
 		}
-		// for (id in sortedHubs) {
-		// 	// sortedHubs[id].lat = sortedHubs[id].latitude;
-		// 	// sortedHubs[id].lng = sortedHubs[id].longitude;
-		// 	// sortedHubs[id]['name'] = hubsObj[sortedHubs[id].key].name;
-
-		// 	for (prop in hubs){
-		// 		sortedHubs[id][prop] = hubs[sortedHubs[id].key][prop]
-		// 	}
-		// }
 
 		log("Sorted hubs by distance: ");
 		console.log(sortedHubs);
@@ -170,8 +171,8 @@ io.on('connection', function(socket) {
 
 				if (removePlayer) {
 					aHub.attackingPlayers.splice(i, 1);
-					log("Removed " + player.userID + "from attacking players; new length is: ");
-					log(aHub.attackingPlayers.length, colors.orange);
+					log("Removed " + player.userID + "from attacking players; new length is: ", colors.standout);
+					log(aHub.attackingPlayers.length, colors.standout);
 
 				}
 				break;
@@ -179,7 +180,7 @@ io.on('connection', function(socket) {
 		}
 		if (!removePlayer && !playerFound) {
 			aHub.attackingPlayers.push(player.userID);
-			log("Adding " + player.userID + "to Attacking Players for " + aHub.id, colors.pink);
+			log("Adding " + player.userID + "to Attacking Players for " + aHub.id, colors.magenta);
 		}
 
 	};
@@ -256,7 +257,7 @@ io.on('connection', function(socket) {
 				}
 			},
 
-			introCompleted: function(){
+			introCompleted: function() {
 				player.playStarted = true;
 			},
 
@@ -405,11 +406,16 @@ io.on('connection', function(socket) {
 
 		};
 
-		try {
+		if (debugMode) {
 			handleClientMsg[res.tag]();
-		} catch (err) {
-			log('Error: "' + res.tag + '" is not a valid socket.on message because:', colors.err);
-			log(err, colors.err);
+		} else {
+			//When not debugging, use this to prevent server crashes
+			try {
+				handleClientMsg[res.tag]();
+			} catch (err) {
+				log('Error: "' + res.tag + '" is not a valid socket.on message because:', colors.err);
+				log(err, colors.err);
+			}
 		}
 
 	});

@@ -5,7 +5,7 @@ module.exports = function(users, _socket) {
 
 	var socket = _socket;
 
-	function getTeamSize(t) {
+	var getTeamSize = function(t) {
 		var existingTeamMembers = 0;
 
 		for (u in users) {
@@ -16,7 +16,7 @@ module.exports = function(users, _socket) {
 
 		log('Team size is ' + existingTeamMembers);
 		return existingTeamMembers;
-	}
+	};
 
 	var user = {
 		//stores properties of new user
@@ -31,32 +31,65 @@ module.exports = function(users, _socket) {
 						return 'suspect';
 				}
 			};
-			//will this work?
-			user['socketID'] = socket.id;
-			user['index'] = users.length;
-			//user['name'] = '';
-			user['team'] = team;
-			var teamNumber = getTeamSize(team) + 1;
-			user['numberOnTeam'] = teamNumber;
-			user['type'] = setTypeFromTeam(user.team);
-			user['userID'] = team + teamNumber.toString();
-			user['connected'] = false;
-			user['trackActive'] = false;
-			user['playStarted'] = false;
-			user['warned'] = {
-				'50': false,
-				'100': false,
-				'200': false
+
+			var teamNumber = getTeamSize() + 1;
+
+			var userProps = {
+				'socketID': socket.id,
+				'index': users.length,
+				//'name': '',
+				'team': team,
+				//var teamNumber = getTeamSize(team) + 1,
+				'numberOnTeam': teamNumber,
+				'type': setTypeFromTeam(user.team),
+				'userID': team + teamNumber.toString(),
+				'connected': false,
+				'trackActive': false,
+				'playStarted': false,
+				'warned': {
+					'50': false,
+					'100': false,
+					'200': false
+				},
+				'locationData': [],
+				'captureData': {
+					//# of responses received to fast capture pings
+					resCount: 0,
+					//# of times enough agents to capture were in range
+					captureCount: 0
+				},
+				'lockedOut': false,
 			};
-			user['locationData'] = [];
-			user['captureData'] = {
-				//# of responses received to fast capture pings
-				resCount: 0,
-				//# of times enough agents to capture were in range
-				captureCount: 0
-			};
-			user['lockedOut'] = false;
-			userID = ''; //ins1
+
+			for (prop in userProps){
+				user[prop] = userProps[prop];
+			}
+			// //will this work?
+			// user['socketID'] = socket.id;
+			// user['index'] = users.length;
+			// //user['name'] = '';
+			// user['team'] = team;
+			// var teamNumber = getTeamSize(team) + 1;
+			// user['numberOnTeam'] = teamNumber;
+			// user['type'] = setTypeFromTeam(user.team);
+			// user['userID'] = team + teamNumber.toString();
+			// user['connected'] = false;
+			// user['trackActive'] = false;
+			// user['playStarted'] = false;
+			// user['warned'] = {
+			// 	'50': false,
+			// 	'100': false,
+			// 	'200': false
+			// };
+			// user['locationData'] = [];
+			// user['captureData'] = {
+			// 	//# of responses received to fast capture pings
+			// 	resCount: 0,
+			// 	//# of times enough agents to capture were in range
+			// 	captureCount: 0
+			// };
+			// user['lockedOut'] = false;
+			// userID = ''; //ins1
 
 			log('Created player: ', colors.green);
 			console.log(user);
@@ -101,63 +134,12 @@ module.exports = function(users, _socket) {
 			log("Player " + user.userID + "lockout status is: " + user.lockedOut, colors.orange);
 		},
 
-		// findDistanceToHubs: function(liveHubs) {
-		// 	//var liveHubs = getLiveHubs();
-
-		// 	var hubsWithDist = [];
-
-		// 	liveHubs.forEach(function(h) {
-		// 		var hubPos = {
-		// 			lat: h.lat,
-		// 			lng: h.lng
-		// 		};
-
-		// 		var distToHub = getDistBetween(userPos, hubPos);
-
-		// 		console.log("Distance to Hub: " + distToHub);
-
-		// 		hubWithDist = {
-		// 			id: h.id,
-		// 			lat: h.lat,
-		// 			lng: h.lng,
-		// 			dist: distToHub,
-		// 			attackRange: h.attackRange,
-		// 			proximity: -1
-		// 		}
-
-		// 		hubsWithDist.push(hubWithDist);
-		// 	});
-
-		// 	hubsWithDist.sort(function(a, b) {
-		// 		return a.dist - b.dist;
-		// 	});
-
-		// 	for (var h in hubsWithDist) {
-		// 		hub = hubsWithDist[h];
-		// 		hub.proximity = +h + 1;
-		// 	}
-
-		// 	console.log("Hubs Sorted by Distance: ");
-		// 	console.log(hubsWithDist);
-
-		// 	return hubsWithDist;
-		// },
-
 		disconnect: function() {
 			user.socketID = '';
 			user.connected = false;
 			log(user.userID + ' has gone dark', colors.orange);
 		}
-		//,
-		// startTracking: function() {
-		// 	log('Start Tracking called');
-		// 	//var toReturn = function(){
-		// 	return setInterval(function() {
-		// 		emitTo.socket('getLocation', {});
-		// 	}, 10000);
-		// 	//};
-		// 	//return toReturn;
-		// }
+
 	};
 
 	return user;
