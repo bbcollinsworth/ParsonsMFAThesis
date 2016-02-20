@@ -1,6 +1,9 @@
 var app = {};
 var socket;
 
+//for quick restting of localstorage
+var lsclear = localStorage.clear();
+
 var player = {
 	localID: '',
 	team: '',

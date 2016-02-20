@@ -111,12 +111,12 @@ module.exports = function(colors,log) {
 			'lastAssigned': 'gov', //set to Gov so first player will be int
 			alternate: function() {
 				this.lastAssigned = (this.lastAssigned == 'ins') ? 'gov' : 'ins';
-				console.log('New player team randomized to ' + this.lastAssigned, colors.standout);
+				log('New player team flipped to ' + this.lastAssigned, colors.standout);
 				return this.lastAssigned;
 			},
 			random: function() {
 				this.lastAssigned = (Math.random() < 0.5) ? 'ins' : 'gov';
-				log('New player team flipped to ' + this.lastAssigned, colors.standout);
+				log('New player team randomized to ' + this.lastAssigned, colors.standout);
 				return this.lastAssigned;
 			},
 			proximity: function() {
