@@ -307,9 +307,31 @@ var gov = {
 
 			h.area.addTo(map);
 			h.marker.addTo(map);
+
+			// if (h.alertState > 0){
+
+			// }
+
+			if (!h.live) {
+				h.shutDown();
+			} else {
+				h.setFlashByAlertState();
+			}
 		});
 
+		console.log("Hub setup data from server: ");
+		console.log(hubs);
+
 	},
+
+	// setFlashByAlertState: function(hub) {
+	// 	var flashSpeed = 1000;
+	// 	if (hub.alertState > 0) {
+	// 		flashSpeed /= hub.alertState;
+	// 	}
+
+	// 	hub.flash(flashSpeed);
+	// },
 
 	suspectRangeCheck: function() {
 		var otherPlayers = clientState.allPlayers;
@@ -336,10 +358,10 @@ var gov = {
 					gov.ui.attachPingEvents();
 				}
 
-				if (dist < 100){
+				if (dist < 100) {
 					console.log("Sending close warning to " + id);
 
-					emit('agentGettingClose',{
+					emit('agentGettingClose', {
 						playerID: player.localID,
 						otherPlayerID: id,
 						distance: '100'

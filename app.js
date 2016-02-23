@@ -9,19 +9,28 @@ var admin = io.of('/admin');
 
 var geolib = require('geolib');
 
-var colors = require('colors');
-var log = require('./my_modules/logWithColor.js');
-colors.setTheme({
-	err: 'bgRed',
-	standout: 'bgMagenta'
-});
+var include = require('./my_modules/moduleLoader.js');
 
-var emitModule = require('./my_modules/emit.js');
-var userModule = require('./my_modules/users.js');
-// var gameState = require('./my_modules/gameState.js')(log);
+var colors = include('colors');
+var log = include('log');
+var emitModule = include('emit');
+var userModule = include('users');
+var gameState = include('gameState');
 
-var stateModule = require('./my_modules/gameState.js');
-var gameState = stateModule(colors,log);
+
+// var colors = require('colors');
+// var log = require('./my_modules/logWithColor.js');
+// colors.setTheme({
+// 	err: 'bgRed',
+// 	standout: 'bgMagenta'
+// });
+
+// var emitModule = require('./my_modules/emit.js');
+// var userModule = require('./my_modules/users.js');
+// // var gameState = require('./my_modules/gameState.js')(log);
+
+// var stateModule = require('./my_modules/gameState.js');
+// var gameState = stateModule(colors,log);
 
 app.use(bodyParser.json());
 app.use(function(req, res, next) {
@@ -51,22 +60,6 @@ log("Starting hubs are: ", colors.yellow.inverse);
 console.log(hubs);
 
 var debugMode = true;
-
-// var teams = {
-// 	'g': 'gov',
-// 	'i': 'ins',
-// 	'default': 'gov', //set to Gov so first player will be int
-// 	variedDefault: function() {
-
-// 		if (gameState.randomize) {
-
-// 		} else {
-// 			teams.default = teams.default == 'ins' ? 'gov' : 'ins';
-// 			log('Default team switched to ' + teams.default, colors.standout);
-// 			return teams.default;
-// 		}
-// 	}
-// };
 
 
 /*––––––––––– SOCKET.IO starts here –––––––––––––––*/
@@ -383,7 +376,7 @@ io.on('connection', function(socket) {
 							healthLeft: attackedHub.health,
 							hubID: attackedHub.id,
 							hubIndex: res.hubIndex,
-							alertState: attackedHub.alertState
+							hubAlertState: attackedHub.alertState
 							//hubIndex: hubs.indexOf(attackedHub)
 						});
 					}
@@ -399,7 +392,9 @@ io.on('connection', function(socket) {
 					emitTo.team('gov', 'hubAttackStopped', {
 						hubName: attackedHub.name,
 						hubID: attackedHub.id,
-						hubIndex: res.hubIndex
+						hubIndex: res.hubIndex,
+						hubAlertState: attackedHub.alertState,
+						hubInfo: attackedHub
 					});
 				}
 			}

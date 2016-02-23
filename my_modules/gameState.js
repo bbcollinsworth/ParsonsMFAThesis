@@ -1,4 +1,13 @@
-module.exports = function(colors,log) {
+(function() { //module.exports = function() {
+
+	var include = require('./moduleLoader.js');
+
+	var colors = include('colors');
+	var log = include('log');
+
+	// var colors = include('colors');
+	// var log = include('log');
+
 	//module.exports = function(players) {
 	var players = {};
 
@@ -42,31 +51,28 @@ module.exports = function(colors,log) {
 		name: 'Popeyes',
 		lat: 40.736858,
 		lng: -73.995447
+	}, {
+		name: '16th and 5th Ave SW corner park',
+		lat: 40.737283,
+		lng: -73.992879
+	}, {
+		name: '15th St and 9th Ave NE corner',
+		lat: 40.741543,
+		lng: -74.004475
+	}, {
+		name: 'Washington Ave and Lincoln Pl',
+		lat: 40.672643,
+		lng: -73.962675
+	}, {
+		name: 'McNair Park',
+		lat: 40.670774,
+		lng: -73.961985
 	}];
-	// {
-	// 	name: '16th and 5th Ave SW corner park',
-	// 	lat: 40.737283,
-	// 	lng: -73.992879
-	// },
-	// {
-	// 	name: '15th St and 9th Ave NE corner',
-	// 	lat: 40.741543,
-	// 	lng: -74.004475
-	// }, 
-	// {
-	// 	name: 'Washington Ave and Lincoln Pl',
-	// 	lat: 40.672643,
-	// 	lng: -73.962675
-	// }, {
-	// 	name: 'McNair Park',
-	// 	lat: 40.670774,
-	// 	lng: -73.961985
-	// }
 
 
 	var hubStats = {
 		hackRange: 50, //in meters
-		hackTimeInMinutes: 3,
+		hackTimeInMinutes: 1,
 		hackProgressInterval: 2000,
 		attackingPlayers: [],
 		getHackTime: function() {
@@ -124,16 +130,6 @@ module.exports = function(colors,log) {
 				//IF playercount is above a certain number
 				//else return this.random()
 			} //,
-			// variedDefault: function() {
-
-			// 	if (gameState.randomize) {
-
-			// 	} else {
-			// 		teams.default = teams.default == 'ins' ? 'gov' : 'ins';
-			// 		log('Default team switched to ' + teams.default, colors.standout);
-			// 		return teams.default;
-			// 	}
-			// }
 		},
 
 		'hubs': hubs,
@@ -155,7 +151,7 @@ module.exports = function(colors,log) {
 				hub['setAlertState'] = hubStats.setAlertState;
 				hub['attackingPlayers'] = hubStats.attackingPlayers;
 
-			}; //);
+			} //);
 		},
 
 		playerCount: function() {
@@ -215,8 +211,9 @@ module.exports = function(colors,log) {
 		}
 
 	};
-	return state;
+	//return state;
 
-};
+	//};
 
-// module.exports = state;
+	module.exports = state;
+})();

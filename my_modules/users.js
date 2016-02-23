@@ -1,7 +1,15 @@
-var colors = require('colors');
-var log = require('./logWithColor.js');
+
+
+// var colors = require('colors');
+// var log = require('./logWithColor.js');
 
 module.exports = function(users, _socket) {
+
+	var include = require('./moduleLoader.js');
+
+var colors = include('colors');
+var log = include('log');
+var gameState = include('gameState');
 
 	var socket = _socket;
 
@@ -64,32 +72,6 @@ module.exports = function(users, _socket) {
 			for (prop in userProps){
 				user[prop] = userProps[prop];
 			}
-			// //will this work?
-			// user['socketID'] = socket.id;
-			// user['index'] = users.length;
-			// //user['name'] = '';
-			// user['team'] = team;
-			// var teamNumber = getTeamSize(team) + 1;
-			// user['numberOnTeam'] = teamNumber;
-			// user['type'] = setTypeFromTeam(user.team);
-			// user['userID'] = team + teamNumber.toString();
-			// user['connected'] = false;
-			// user['trackActive'] = false;
-			// user['playStarted'] = false;
-			// user['warned'] = {
-			// 	'50': false,
-			// 	'100': false,
-			// 	'200': false
-			// };
-			// user['locationData'] = [];
-			// user['captureData'] = {
-			// 	//# of responses received to fast capture pings
-			// 	resCount: 0,
-			// 	//# of times enough agents to capture were in range
-			// 	captureCount: 0
-			// };
-			// user['lockedOut'] = false;
-			// userID = ''; //ins1
 
 			log('Created player: ', colors.green);
 			console.log(user);

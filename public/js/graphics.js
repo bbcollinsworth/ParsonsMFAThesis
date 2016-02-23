@@ -147,7 +147,8 @@ var viz = {
 		marker: {
 			'weight': 3
 		},
-		greyOut: '#707070'
+		greyOut: '#707070',
+		startingFlashSpeed: 1000
 	},
 
 	hub: function(hData) {
@@ -162,6 +163,8 @@ var viz = {
 				'lvl3': false,
 				'lvl4': false
 			},
+			// alertState: hData.alertState,
+			// live: hData.live,
 			flash: function(interval) {
 				//gov.flashHub(this,interv);
 				if (interval === undefined) {
@@ -192,6 +195,13 @@ var viz = {
 					clearInterval(h.flasher);
 				}
 			},
+			setFlashByAlertState: function(){
+				if (h.alertState > 0){
+					var flashSpeed = viz.hubOptions.startingFlashSpeed;
+					flashSpeed /= h.alertState;
+					h.flash(flashSpeed);
+				}
+			},
 			shutDown: function() {
 				h.area.setStyle({
 					'fillColor': viz.hubOptions.greyOut
@@ -203,6 +213,8 @@ var viz = {
 		};
 
 		h.marker.setRadius(h.markerRadius);
+
+		$.extend(true,h,hData);
 
 		return h;
 	},

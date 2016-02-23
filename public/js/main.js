@@ -314,14 +314,17 @@ socket.on('serverMsg', function(res, err) {
 		hubAttackUpdate: function() {
 			console.log("Hub attack update received");
 			var i = res.hubIndex;
+			hubs[i].alertState = res.hubAlertState;
+			hubs[i].setFlashByAlertState();
 			//Probably not necessary
 			//if (!hubs[i].flashing){
-			var flashSpeed = 1000;
-			if (res.alertState > 0) {
-				flashSpeed /= res.alertState;
-			}
+			//gov.setFlashByAlertState(hubs[i]);
+			// var flashSpeed = 1000;
+			// if (res.alertState > 0) {
+			// 	flashSpeed /= res.alertState;
+			// }
 
-			hubs[i].flash(flashSpeed);
+			// hubs[i].flash(flashSpeed);
 
 			switch (res.alertState) {
 				case 3:
