@@ -83,8 +83,17 @@ var centerOnPlayer = function() {
 	map.panTo([player.pos.lat, player.pos.lng]);
 };
 
-var storeAndSendLocation = function(callback) {
-
+var storeAndSendLocation = function(v1,v2) {//callback) {
+	var callback;
+	var serverReqTime;
+	if (isNaN(v1)){
+		callback = v1;
+	} else {
+		serverReqTime = v1;
+		if (v2 !== undefined){
+			callback = v2;
+		}
+	}
 	// var timeElapsed = Date.now() - reqTime;
 	// console.log("Time in seconds since request: " + timeElapsed / 1000);
 
@@ -99,7 +108,8 @@ var storeAndSendLocation = function(callback) {
 			};
 
 			emit('locationUpdate', {
-				reqTimestamp: clientState.lastLocReqTime,
+				//will this work or will it reset to latest for all?
+				reqTimestamp: serverReqTime,
 				locData: player.pos
 			});
 
@@ -215,10 +225,10 @@ socket.on('serverMsg', function(res, err) {
 
 			if (res.firstPing) {
 				clientState['trackInterval'] = res.trackingInterval;
-				storeAndSendLocation(centerOnPlayer);
+				storeAndSendLocation(res.timestamp,centerOnPlayer);
 			} else {
 				//if (timeElapsed < clientState.trackInterval) {
-					storeAndSendLocation();
+					storeAndSendLocation(res.timestamp);
 				//}
 			}
 		},
