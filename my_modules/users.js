@@ -1,5 +1,3 @@
-
-
 // var colors = require('colors');
 // var log = require('./logWithColor.js');
 
@@ -7,9 +5,9 @@ module.exports = function(users, _socket) {
 
 	var include = require('./moduleLoader.js');
 
-var colors = include('colors');
-var log = include('log');
-var gameState = include('gameState');
+	var colors = include('colors');
+	var log = include('log');
+	var gameState = include('gameState');
 
 	var socket = _socket;
 
@@ -69,7 +67,7 @@ var gameState = include('gameState');
 				'lockedOut': false,
 			};
 
-			for (prop in userProps){
+			for (prop in userProps) {
 				user[prop] = userProps[prop];
 			}
 

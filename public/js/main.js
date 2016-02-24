@@ -84,23 +84,30 @@ var centerOnPlayer = function() {
 };
 
 var storeAndSendLocation = function(callback) {
-	geo.getCurrentPosition(function(position) {
-		console.log('Position: ' + position.coords.latitude + ', ' + position.coords.longitude);
 
-		player.pos = {
-			lat: position.coords.latitude,
-			lng: position.coords.longitude,
-			time: Date.now()
-		};
+	// var timeElapsed = Date.now() - reqTime;
+	// console.log("Time in seconds since request: " + timeElapsed / 1000);
 
-		emit('locationUpdate', {
-			locData: player.pos
+	// if (timeElapsed < clientState.trackInterval) {
+		geo.getCurrentPosition(function(position) {
+			console.log('Position: ' + position.coords.latitude + ', ' + position.coords.longitude);
+
+			player.pos = {
+				lat: position.coords.latitude,
+				lng: position.coords.longitude,
+				time: Date.now()
+			};
+
+			emit('locationUpdate', {
+				reqTimestamp: clientState.lastLocReqTime,
+				locData: player.pos
+			});
+
+			if (callback !== undefined) {
+				callback();
+			}
 		});
-
-		if (callback !== undefined) {
-			callback();
-		}
-	});
+	//}
 };
 
 var runIntro = function(team) {
@@ -200,11 +207,19 @@ socket.on('serverMsg', function(res, err) {
 		},
 
 		getLocation: function() {
+			clientState['lastLocReqTime'] = res.timestamp;
+			//if now - res.timestamp less than tracking interval
+			var timeElapsed = Date.now() - res.timestamp;
+			console.log("Time in seconds since request in GetLoc: " + timeElapsed / 1000);
+
 
 			if (res.firstPing) {
+				clientState['trackInterval'] = res.trackingInterval;
 				storeAndSendLocation(centerOnPlayer);
 			} else {
-				storeAndSendLocation();
+				//if (timeElapsed < clientState.trackInterval) {
+					storeAndSendLocation();
+				//}
 			}
 		},
 
@@ -314,7 +329,8 @@ socket.on('serverMsg', function(res, err) {
 		hubAttackUpdate: function() {
 			console.log("Hub attack update received");
 			var i = res.hubIndex;
-			hubs[i].alertState = res.hubAlertState;
+			hubs[i].update(res.latestHubInfo);
+			//hubs[i].alertState = res.hubAlertState;
 			hubs[i].setFlashByAlertState();
 			//Probably not necessary
 			//if (!hubs[i].flashing){
@@ -347,6 +363,7 @@ socket.on('serverMsg', function(res, err) {
 		hubAttackStopped: function() {
 			console.log("Hub attack stop received");
 			var i = res.hubIndex;
+			hubs[i].update(res.latestHubInfo);
 			hubs[i].stopFlash();
 			// if (hubs[i].flashing){
 

@@ -128,17 +128,26 @@
 /*PING BUTTON FOR GOV TEAM*/
 #searchButton {
 	pointer-events: all;
-	/*top: 50vh;*/
 	position: absolute;
 	top: -75px;
-	left: calc(50% - 30px);
+	left: 50%;
+	transform: translate(-50%,-50%);
+	//left: calc(50% - 30px);
 	margin: auto;
-	width: 30px;
-	height: 40px;
+	padding: 0.1em;
+	width: 50px;
+	height: 50px;
 	box-shadow: 0px 1px 10px 5px rgba(0,0,0,0.2);
 	border-radius: 50%;
-	background: rgba(255,255,255,0.5);
-	/*position: static;*/
+	//background: rgba(255,255,255,0.5);
+}
+
+#searchButton.searchIcon {
+	background-color: rgba(255,255,255,0.5);
+	background-repeat: no-repeat;
+	background-image: url("cssImages/specialeye.svg"); /*targeteye*/
+	background-size: contain;
+	border: 6px solid rgba(255,255,255,0.5);
 }
 
 
@@ -163,16 +172,11 @@
 #scanButton {
 	transition-duration: 0.2s;
 	pointer-events: all;
-	/*top: 50vh;*/
 	position: absolute;
-/*	top: calc(50vh - 30px);
-left: calc(50% - 40px);*/
-top: 50vh;
-left: 50%;
-transform: translate(-50%,-50%);
-margin: auto;
-	/*width: 30px;
-	height: 40px;*/
+	top: 50vh;
+	left: 50%;
+	transform: translate(-50%,-50%);
+	margin: auto;
 	padding: 0.1em;
 	width: 60px;
 	height: 60px;
@@ -232,7 +236,7 @@ margin: auto;
 	border: 6px solid #FFDA44;
 	width: 80px;
 	height: 80px;
-	background-color: rgba(255,0,0,0.3);
+	background-color: rgba(255,255,255,0.5);
 	background-repeat: no-repeat;
 	background-image: url("cssImages/exclamation.svg");
 	background-size: contain;
@@ -352,41 +356,41 @@ margin: auto;
 @keyframes hack {
 	0%,100% {
 		color: #FFDA44;
-		border: 6px solid #FFDA44;
+		border: 8px solid #FFDA44;
 	}
 	50% {
 		color: #FF0000;
-		border: 12px solid #FF0000;
+		border: 16px solid #FF0000;
 	}
 }
 @-webkit-keyframes hack {
 	0%,100% {
 		color: #FFDA44;
-		border: 6px solid #FFDA44;
+		border: 8px solid #FFDA44;
 	}
 	50% {
 		color: #FF0000;
-		border: 12px solid #FF0000;
+		border: 16px solid #FF0000;
 	}
 }
 @-moz-keyframes hack {
 	0%,100% {
 		color: #FFDA44;
-		border: 6px solid #FFDA44;
+		border: 8px solid #FFDA44;
 	}
 	50% {
 		color: #FF0000;
-		border: 12px solid #FF0000;
+		border: 16px solid #FF0000;
 	}
 }
 @-o-keyframes hack {
 	0%,100% {
 		color: #FFDA44;
-		border: 6px solid #FFDA44;
+		border: 8px solid #FFDA44;
 	}
 	50% {
 		color: #FF0000;
-		border: 12px solid #FF0000;
+		border: 16px solid #FF0000;
 	}
 }
 

@@ -163,6 +163,13 @@ var viz = {
 				'lvl3': false,
 				'lvl4': false
 			},
+			update: function(hubDataFromServer){
+				console.log("Data from server is: ");
+				console.log(hubDataFromServer);
+				$.extend(true,h,hubDataFromServer);
+				console.log("Hub " + h.name + " updated to:");
+				console.log(h);
+			},
 			// alertState: hData.alertState,
 			// live: hData.live,
 			flash: function(interval) {
@@ -203,6 +210,7 @@ var viz = {
 				}
 			},
 			shutDown: function() {
+				h.live = false;
 				h.area.setStyle({
 					'fillColor': viz.hubOptions.greyOut
 				});
@@ -221,17 +229,19 @@ var viz = {
 
 	searchButton: function() {
 
-		var eyeIcon = $("<div />", {
-			'class': "ui-btn ui-nodisc-icon ui-corner-all ui-icon-specialeye ui-btn-icon-notext"
-		});
+		// var eyeIcon = $("<div />", {
+		// 	'class': "ui-btn ui-nodisc-icon ui-corner-all ui-icon-specialeye ui-btn-icon-notext"
+		// });
 
 		var button = $("<div />", {
 			'class': "ui-btn",
-			'id': "searchButton",
-			'data-icon': "eye"
+			'id': "searchButton"//,
+			//'data-icon': "eye"
 		});
 
-		button.append(eyeIcon);
+		button.addClass('searchIcon');
+
+		//button.append(eyeIcon);
 
 		return button;
 

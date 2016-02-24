@@ -1,3 +1,6 @@
+var debugMode = false;
+Error.stackTraceLimit = 2;
+
 var express = require('express');
 var bodyParser = require('body-parser');
 
@@ -7,30 +10,15 @@ var io = require('socket.io')(server);
 var port = 9000;
 var admin = io.of('/admin');
 
-var geolib = require('geolib');
-
 var include = require('./my_modules/moduleLoader.js');
 
+var geolib = include('geolib');
 var colors = include('colors');
 var log = include('log');
 var emitModule = include('emit');
 var userModule = include('users');
 var gameState = include('gameState');
 
-
-// var colors = require('colors');
-// var log = require('./my_modules/logWithColor.js');
-// colors.setTheme({
-// 	err: 'bgRed',
-// 	standout: 'bgMagenta'
-// });
-
-// var emitModule = require('./my_modules/emit.js');
-// var userModule = require('./my_modules/users.js');
-// // var gameState = require('./my_modules/gameState.js')(log);
-
-// var stateModule = require('./my_modules/gameState.js');
-// var gameState = stateModule(colors,log);
 
 app.use(bodyParser.json());
 app.use(function(req, res, next) {
@@ -54,12 +42,11 @@ server.listen(process.env.PORT || port, function() {
 
 var players = gameState.players;
 var teams = gameState.teams;
-gameState.setupHubs();
+//gameState.setupHubs();
 var hubs = gameState.hubs; //this should alter data in gamestate when altered
 log("Starting hubs are: ", colors.yellow.inverse);
 console.log(hubs);
 
-var debugMode = true;
 
 
 /*––––––––––– SOCKET.IO starts here –––––––––––––––*/
@@ -109,13 +96,38 @@ io.on('connection', function(socket) {
 	var startTracking = function() {
 		player.trackActive = true;
 		log('Started tracking ' + player.userID, colors.green);
+		player['lastLocReqTime'] = Date.now();
 		emitTo.socket('getLocation', {
-			firstPing: true
+			firstPing: true,
+			trackingInterval: gameState.trackingInterval,
+			timestamp: player.lastLocReqTime
 		});
 
+		// var timedLocationRequest = function(){
+		// 	emitTo.socket('getLocation', {
+		// 		timestamp: Date.now()
+		// 	});
+
+		// 	setTimeout()
+		// };
+
+		// tracking = setTimeout(sendLocationRequest,gameState.trackingInterval);
+
+
 		tracking = setInterval(function() {
-			emitTo.socket('getLocation', {});
-		}, 10000);
+			player['lastLocReqTime'] = Date.now();
+			emitTo.socket('getLocation', {
+				timestamp: player.lastLocReqTime
+			});
+
+			timeout = setTimeout(function() {
+
+			})
+
+			//clear here if response not received in a certain amount of time
+			//if response, setTimeout interval, re-emit;
+			//else, report dark
+		}, gameState.trackingInterval); //10000);
 	};
 
 	var getHubsByDistance = function() {
@@ -255,9 +267,24 @@ io.on('connection', function(socket) {
 			},
 
 			locationUpdate: function() {
-				player.locationData.unshift(res.locData);
-				log('Latest location data for ' + player.userID + ":");
-				console.log(player.locationData[0]);
+				var elapsed = (Date.now() - res.reqTimestamp)/1000;
+				console.log("Response received " + elapsed + "sec after req sent");
+
+				var storeLocation = function(){
+					player.locationData.unshift(res.locData);
+					log('Latest location data for ' + player.userID + ":");
+					console.log(player.locationData[0]);
+				};
+
+				if (res.timestamp - player.lastLocReqTime < gameState.trackingInterval) {
+					storeLocation();
+				} else if (res.reqTimestamp === player.lastLocReqTime){
+					storeLocation();
+					if (!player.trackActive){
+						startTracking();
+					}
+
+				}
 			},
 
 			findSuspects: function() {
@@ -376,7 +403,8 @@ io.on('connection', function(socket) {
 							healthLeft: attackedHub.health,
 							hubID: attackedHub.id,
 							hubIndex: res.hubIndex,
-							hubAlertState: attackedHub.alertState
+							hubAlertState: attackedHub.alertState,
+							latestHubInfo: attackedHub
 							//hubIndex: hubs.indexOf(attackedHub)
 						});
 					}
@@ -394,7 +422,7 @@ io.on('connection', function(socket) {
 						hubID: attackedHub.id,
 						hubIndex: res.hubIndex,
 						hubAlertState: attackedHub.alertState,
-						hubInfo: attackedHub
+						latestHubInfo: attackedHub
 					});
 				}
 			}
@@ -408,8 +436,9 @@ io.on('connection', function(socket) {
 			try {
 				handleClientMsg[res.tag]();
 			} catch (err) {
+				//err.stackTraceLimit = 2;
 				log('Error: "' + res.tag + '" is not a valid socket.on message because:', colors.err);
-				log(err, colors.err);
+				log(err.stack, colors.err);
 			}
 		}
 
@@ -427,7 +456,8 @@ io.on('connection', function(socket) {
 			//player.removeFromTeam(player.team);
 			player.disconnect();
 		} catch (err) {
-			log(err, colors.err);
+			//err.stackTraceLimit = 2;
+			log(err.stack, colors.err);
 		}
 
 		console.log('current players: ' + gameState.playerCount());

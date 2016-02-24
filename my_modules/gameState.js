@@ -106,6 +106,12 @@
 
 	var state = {
 
+		'trackIntervalInSeconds': 10,
+
+		get trackingInterval() {
+			return this.trackIntervalInSeconds * 1000;
+		},
+
 		'players': players,
 
 		'teamPickMethod': 'alternate',
