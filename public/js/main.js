@@ -16,29 +16,43 @@ var player = {
 
 var hubs = [];
 
-var msg = function(text, styling) {
+// var msg = function(text, styling) {
 
-	var msgHTML = "";
+// 	var msgHTML = "";
 
-	if (typeof text === 'string' || text instanceof String) {
-		msgHTML = '<p>' + text + '</p>';
-	} else {
-		for (line in text) {
-			msgHTML += '<p>' + text[line] + '</p>';
-		}
-	}
+// 	if (typeof text === 'string' || text instanceof String) {
+// 		msgHTML = '<p>' + text + '</p>';
+// 	} else {
+// 		for (line in text) {
+// 			msgHTML += '<p>' + text[line] + '</p>';
+// 		}
+// 	}
 
-	$('#alertBodyText').html(msgHTML);
+// 	$('#alertBodyText').html(msgHTML);
 
-	for (s in viz.headerStyles) {
-		$('#alertBox .ui-collapsible-content').removeClass(viz.headerStyles[s]);
-	}
+// 	for (s in viz.headerStyles) {
+// 		$('#alertBox .ui-collapsible-content').removeClass(viz.headerStyles[s]);
+// 	}
 
-	if (styling in viz.headerStyles) {
-		console.log("adding header styling! " + styling);
-		$('#alertBox .ui-collapsible-content').addClass(viz.headerStyles[styling]);
-	}
-};
+// 	if (styling in viz.headerStyles) {
+// 		console.log("adding header styling! " + styling);
+// 		$('#alertBox .ui-collapsible-content').addClass(viz.headerStyles[styling]);
+// 	}
+// };
+
+// var footerMsg = function(text,styling){
+// 	var msgHTML = "";
+
+// 	if (typeof text === 'string' || text instanceof String) {
+// 		msgHTML = '<p>' + text + '</p>';
+// 	} else {
+// 		for (line in text) {
+// 			msgHTML += '<p>' + text[line] + '</p>';
+// 		}
+// 	}
+
+// 	$('#footerText').html(msgHTML);
+// }
 
 var attachEvents = function() {
 	$('#app').on('initialized', function() {
@@ -49,17 +63,18 @@ var attachEvents = function() {
 	$('#app').on('ready', function() {
 		//readyCheckRunning = false;
 		// localStorage.setItem('svcCheckComplete',true);
-		$('#footerText').css({
-			'display': 'none'
-		});
+
+		// $('#footerText').css({
+		// 	'display': 'none'
+		// });
 		emit('readyToPlay', {});
 	});
 
 };
 
 app.init = function() {
-	msg('Connecting...');
 	startup.setup();
+	msg('Connecting...');
 	startup.initServices();
 	startup.parseHash(); //check URL hash for team and playerID data
 	startup.initMap(); //initialize map
@@ -83,40 +98,45 @@ var centerOnPlayer = function() {
 	map.panTo([player.pos.lat, player.pos.lng]);
 };
 
-var storeAndSendLocation = function(v1,v2) {//callback) {
+var storeAndSendLocation = function(v1, v2) { //callback) {
 	var callback;
 	var serverReqTime;
-	if (isNaN(v1)){
+	if (isNaN(v1)) {
 		callback = v1;
 	} else {
 		serverReqTime = v1;
-		if (v2 !== undefined){
+		if (v2 !== undefined) {
 			callback = v2;
 		}
 	}
-	// var timeElapsed = Date.now() - reqTime;
-	// console.log("Time in seconds since request: " + timeElapsed / 1000);
 
-	// if (timeElapsed < clientState.trackInterval) {
-		geo.getCurrentPosition(function(position) {
-			console.log('Position: ' + position.coords.latitude + ', ' + position.coords.longitude);
+	geo.getCurrentPosition(function(position) {
+		console.log('Position: ' + position.coords.latitude + ', ' + position.coords.longitude);
+		console.log(position);
 
-			player.pos = {
-				lat: position.coords.latitude,
-				lng: position.coords.longitude,
-				time: Date.now()
-			};
+		player.pos = {
+			lat: position.coords.latitude,
+			lng: position.coords.longitude,
+			time: position.timestamp//Date.now()
+		};
 
-			emit('locationUpdate', {
-				//will this work or will it reset to latest for all?
-				reqTimestamp: serverReqTime,
-				locData: player.pos
-			});
+		// console.log("Heading isNAN is " + isNaN(position.coords.heading));
+		// console.log(position.coords.heading);
+		if (position.coords.heading){
+			player.pos['heading'] = position.coords.heading;
+			footerMsg("Heading found: " + player.pos.heading);
+		}
 
-			if (callback !== undefined) {
-				callback();
-			}
+		emit('locationUpdate', {
+			//will this work or will it reset to latest for all?
+			reqTimestamp: serverReqTime,
+			locData: player.pos
 		});
+
+		if (callback !== undefined) {
+			callback();
+		}
+	});
 	//}
 };
 
@@ -225,10 +245,10 @@ socket.on('serverMsg', function(res, err) {
 
 			if (res.firstPing) {
 				clientState['trackInterval'] = res.trackingInterval;
-				storeAndSendLocation(res.timestamp,centerOnPlayer);
+				storeAndSendLocation(res.timestamp, centerOnPlayer);
 			} else {
 				//if (timeElapsed < clientState.trackInterval) {
-					storeAndSendLocation(res.timestamp);
+				storeAndSendLocation(res.timestamp);
 				//}
 			}
 		},

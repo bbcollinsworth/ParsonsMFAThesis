@@ -46,6 +46,44 @@ var startup = {
 
 		};
 
+		window.msg = function(text, styling) {
+
+			var msgHTML = "";
+
+			if (typeof text === 'string' || text instanceof String) {
+				msgHTML = '<p>' + text + '</p>';
+			} else {
+				for (line in text) {
+					msgHTML += '<p>' + text[line] + '</p>';
+				}
+			}
+
+			$('#alertBodyText').html(msgHTML);
+
+			for (s in viz.headerStyles) {
+				$('#alertBox .ui-collapsible-content').removeClass(viz.headerStyles[s]);
+			}
+
+			if (styling in viz.headerStyles) {
+				console.log("adding header styling! " + styling);
+				$('#alertBox .ui-collapsible-content').addClass(viz.headerStyles[styling]);
+			}
+		};
+
+		window.footerMsg = function(text, styling) {
+			var msgHTML = "";
+
+			if (typeof text === 'string' || text instanceof String) {
+				msgHTML = '<p>' + text + '</p>';
+			} else {
+				for (line in text) {
+					msgHTML += '<p>' + text[line] + '</p>';
+				}
+			}
+
+			$('#footerText').html(msgHTML);
+		}
+
 	},
 
 	parseHash: function() {

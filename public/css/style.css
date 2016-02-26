@@ -45,6 +45,12 @@
 	background-color: rgba(0,0,0,0);
 }
 
+#mobileFooter {
+	background-color: rgba(255,255,255,0.5);
+    box-shadow: 3px 3px 3px 3px rgba(100,100,100,0.5);
+    transition-duration: 1s;
+}
+
 #alertPopoutText {
 	/*display: none;*/
 }
@@ -348,6 +354,11 @@
 	text-align: center;
 	padding: 10px 10px 5px 10px;
 	line-height: 1.5em;
+}
+
+.leaflet-marker-icon .path-marker {
+	background-color: red;
+    border-radius: 50%;
 }
 
 

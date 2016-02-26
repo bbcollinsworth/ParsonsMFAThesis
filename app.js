@@ -118,18 +118,19 @@ io.on('connection', function(socket) {
 
 
 		tracking = setInterval(function() {
-			player['lastLocReqTime'] = Date.now();
-			emitTo.socket('getLocation', {
-				timestamp: player.lastLocReqTime
-			});
+
+			player['lastLocRequest'] = gameState.newLocRequest();
+			emitTo.socket('getLocation', player.lastLocRequest);
 
 			timeout = setTimeout(function() {
+				if (!player.lastLocRequest.resReceived){
+					log("No response to locRequest -",colors.red);
+					log("Player " + player.userID + " has gone dark.",colors.err);
+					player.trackActive = false;
+					clearInterval(tracking);
+				}
+			},gameState.trackingInterval);
 
-			});
-
-			//clear here if response not received in a certain amount of time
-			//if response, setTimeout interval, re-emit;
-			//else, report dark
 		}, gameState.trackingInterval); //10000);
 	};
 
@@ -274,14 +275,18 @@ io.on('connection', function(socket) {
 				console.log("Response received " + elapsed + "sec after req sent");
 
 				var storeLocation = function() {
+					//clearInterval(timeout);
 					player.locationData.unshift(res.locData);
 					log('Latest location data for ' + player.userID + ":");
 					console.log(player.locationData[0]);
 				};
 
+
+
 				if (res.timestamp - player.lastLocReqTime < gameState.trackingInterval) {
 					storeLocation();
-				} else if (res.reqTimestamp === player.lastLocReqTime) {
+				} else if (res.reqTimestamp === player.lastLocRequest.timestamp) {
+					player.lastLocRequest.resReceived = true;
 					storeLocation();
 					if (!player.trackActive) {
 						startTracking();

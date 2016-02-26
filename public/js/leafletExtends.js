@@ -66,13 +66,13 @@ var initLeafletExtensions = function() {
 		renderLockout: function(data) {
 
 			var icon = L.mapbox.marker.icon({
-					'marker-size': 'large',
-					'marker-symbol': 'cross',
-					'marker-color': '#000000'
-				});
+				'marker-size': 'large',
+				'marker-symbol': 'cross',
+				'marker-color': '#000000'
+			});
 			var zIndexOffset = -100;
 			var opacity = 0.5; //,
-			
+
 			this.setIcon(icon);
 			this.setZIndexOffset(zIndexOffset);
 			this.setOpacity(opacity);
@@ -122,6 +122,51 @@ var initLeafletExtensions = function() {
 
 	console.log("Custom playerMarker class created");
 
+
+	//=================================
+	//PLAYER MARKER INIT
+	//=================================
+
+	var pathMarkerExt = {
+
+		icon: L.divIcon({
+			className: 'path-marker'
+		}),
+
+		refresh: function(posObj, options) {
+			this.setLatLng([posObj.lat, posObj.lng]);
+			if (options !== undefined) {
+				this.setStyle(options);
+			}
+
+			console.log("Marker refreshed to: " + posObj.lat + ", " + posObj.lng);
+		},
+
+
+		renderLockout: function(data) {
+
+			var icon = L.mapbox.marker.icon({
+				'marker-size': 'large',
+				'marker-symbol': 'cross',
+				'marker-color': '#000000'
+			});
+			var zIndexOffset = -100;
+			var opacity = 0.5; //,
+
+			this.setIcon(icon);
+			this.setZIndexOffset(zIndexOffset);
+			this.setOpacity(opacity);
+		}
+
+	};
+
+	L.PathMarker = L.Marker.extend(pathMarkerExt);
+
+	L.pathMarker = function(position, options) {
+		return new L.PathMarker(position, options);
+	};
+
+	console.log("Custom pathMarker class created");
 
 	//=================================
 	//PING CIRCLE INIT

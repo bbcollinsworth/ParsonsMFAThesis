@@ -61,6 +61,44 @@ var viz = {
 		}
 	},
 
+	path: {
+		markerOptions: {
+			icon: L.divIcon({
+				className: 'path-marker'
+			}),
+			interactive: false
+		},
+		markers: [],
+		render: function(posData) {
+			var p = this;
+
+			if (p.markers.length > 0) {
+				for (n in p.markers) {
+					p.markers[n].remove();
+				}
+			}
+			p.markers = [];
+			for (var i = posData.length; i>0;i--) {
+				var pathMarker = L.pathMarker([posData[i].lat, posData[i].lng], p.markerOptions);
+				pathMarker['time'] = posData.time;
+				pathMarker['domID'] = "path"+i;
+				p.markers.push(pathMarker);
+				p.markers[i].addTo(map);
+			}
+
+			var markerEls = map.getElementsByClassName('path-marker');
+			console.log("LOGGING MARKER ELEMENTS");
+			markerEls.forEach(function(m){
+				console.log(m);
+				// m.css({
+
+				// });
+			})
+			console.log("Last path marker is: ");
+			console.log(p.markers[0]);
+		}
+	},
+
 	addPingCircle: function() {
 
 		var pC = L.pingCircle(map.getCenter(), viz.pingSetup.options);
@@ -163,10 +201,10 @@ var viz = {
 				'lvl3': false,
 				'lvl4': false
 			},
-			update: function(hubDataFromServer){
+			update: function(hubDataFromServer) {
 				console.log("Data from server is: ");
 				console.log(hubDataFromServer);
-				$.extend(true,h,hubDataFromServer);
+				$.extend(true, h, hubDataFromServer);
 				console.log("Hub " + h.name + " updated to:");
 				console.log(h);
 			},
@@ -202,8 +240,8 @@ var viz = {
 					clearInterval(h.flasher);
 				}
 			},
-			setFlashByAlertState: function(){
-				if (h.alertState > 0){
+			setFlashByAlertState: function() {
+				if (h.alertState > 0) {
 					var flashSpeed = viz.hubOptions.startingFlashSpeed;
 					flashSpeed /= h.alertState;
 					h.flash(flashSpeed);
@@ -222,7 +260,7 @@ var viz = {
 
 		h.marker.setRadius(h.markerRadius);
 
-		$.extend(true,h,hData);
+		$.extend(true, h, hData);
 
 		return h;
 	},
@@ -235,7 +273,7 @@ var viz = {
 
 		var button = $("<div />", {
 			'class': "ui-btn",
-			'id': "searchButton"//,
+			'id': "searchButton" //,
 			//'data-icon': "eye"
 		});
 

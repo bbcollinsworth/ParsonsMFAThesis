@@ -324,15 +324,6 @@ var gov = {
 
 	},
 
-	// setFlashByAlertState: function(hub) {
-	// 	var flashSpeed = 1000;
-	// 	if (hub.alertState > 0) {
-	// 		flashSpeed /= hub.alertState;
-	// 	}
-
-	// 	hub.flash(flashSpeed);
-	// },
-
 	suspectRangeCheck: function() {
 		var otherPlayers = clientState.allPlayers;
 
@@ -403,9 +394,10 @@ var gov = {
 
 			if (!(userID in players)) {
 				players[userID] = clientState.addPlayer(playerData, userID);
-
+				players[userID].path.render(players[userID].locData);
 			} else {
-
+				players[userID].locData = playerData.locData;
+				players[userID].path.render(players[userID].locData);
 				players[userID].latestPos = playerData.locData[0];
 				players[userID].marker.updatePopup({
 					'text': {

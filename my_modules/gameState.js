@@ -112,6 +112,18 @@
 			return this.trackIntervalInSeconds * 1000;
 		},
 
+		newLocRequest: function(){
+			var lReq = {
+				timestamp: Date.now(),
+				resReceived: false//,
+				// send: function(){
+				// 	emitTo.socket('getLocation', this);
+				// }
+			}
+
+			return lReq;
+		},
+
 		'players': players,
 
 		'teamPickMethod': 'alternate',

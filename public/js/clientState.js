@@ -87,10 +87,13 @@ var clientState = {
 			userID: uID,
 			team: player.team,
 			type: player.type,
-			latestPos: player.locData[0]
+			latestPos: player.locData[0],
+			locData: player.locData
 		};
 
 		newPlayer.marker = viz.marker(player.type, newPlayer.latestPos).addTo(map);
+		newPlayer.path = viz.path;
+
 		console.log("ALL PLAYERS: ");
 		console.log(clientState.allPlayers);
 

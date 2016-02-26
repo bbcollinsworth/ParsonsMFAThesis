@@ -58,6 +58,7 @@ module.exports = function(users, _socket) {
 					'200': false
 				},
 				'locationData': [],
+				'lastLocRequest': {},
 				'captureData': {
 					//# of responses received to fast capture pings
 					resCount: 0,
