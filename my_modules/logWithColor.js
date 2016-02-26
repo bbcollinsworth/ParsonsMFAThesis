@@ -1,22 +1,22 @@
 module.exports = function(text, styling) {
 
-	var t = text.toString();
+	var include = require('./moduleLoader.js');
+	var util = include('util');
 
-	// var theme = {
-	// 	sendingMsg: colors.magenta,
-	// 	error: colors.red
-	// };
+	var t = "";
+	if (typeof text === 'object') {
 
-	// colors.setTheme({
-	// error: colors.red,
+		var options = {
+			colors: true
+		};
+		if (styling !== undefined) {
+			options.colors = false;
+		}
+		t = util.inspect(text, options);
 
-	// });
-
-	// try {
-	// 	styling = theme[styling];
-	// } catch (err) {
-	// 	styling = styling;
-	// }
+	} else {
+		t = text.toString();
+	}
 
 	try {
 		console.log(styling(t));
@@ -27,11 +27,5 @@ module.exports = function(text, styling) {
 			console.log(colors.bgRed("(" + err + ")"));
 		}
 	}
-
-	// if (styling !== undefined) {
-	// 	console.log(styling(t));
-	// } else {
-	// 	console.log(t);
-	// }
 
 };

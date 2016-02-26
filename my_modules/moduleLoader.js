@@ -13,6 +13,9 @@ module.exports = function(moduleToLoad) {
 			});
 			return temp;
 		},
+		util: function(){
+			return require('util');
+		},
 		log: function() {
 			// var temp = require('./logWithColor.js');
 			// return temp;

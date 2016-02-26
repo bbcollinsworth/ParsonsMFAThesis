@@ -1,6 +1,8 @@
 var debugMode = false;
 Error.stackTraceLimit = 2;
 
+//var util = require('util');
+
 var express = require('express');
 var bodyParser = require('body-parser');
 
@@ -10,6 +12,7 @@ var io = require('socket.io')(server);
 var port = 9000;
 var admin = io.of('/admin');
 
+//********* LOAD MODULES *************
 var include = require('./my_modules/moduleLoader.js');
 
 var geolib = include('geolib');
@@ -40,13 +43,13 @@ server.listen(process.env.PORT || port, function() {
 	log(serverUpString, colors.cyan.inverse);
 });
 
+//*******SET UP SHORTCUTS FOR KEY VARIABLES/GAME CLASSES:
+
 var players = gameState.players;
 var teams = gameState.teams;
-//gameState.setupHubs();
 var hubs = gameState.hubs; //this should alter data in gamestate when altered
 log("Starting hubs are: ", colors.yellow.inverse);
-console.log(hubs);
-
+log(hubs);
 
 
 /*––––––––––– SOCKET.IO starts here –––––––––––––––*/
@@ -122,7 +125,7 @@ io.on('connection', function(socket) {
 
 			timeout = setTimeout(function() {
 
-			})
+			});
 
 			//clear here if response not received in a certain amount of time
 			//if response, setTimeout interval, re-emit;
@@ -267,10 +270,10 @@ io.on('connection', function(socket) {
 			},
 
 			locationUpdate: function() {
-				var elapsed = (Date.now() - res.reqTimestamp)/1000;
+				var elapsed = (Date.now() - res.reqTimestamp) / 1000;
 				console.log("Response received " + elapsed + "sec after req sent");
 
-				var storeLocation = function(){
+				var storeLocation = function() {
 					player.locationData.unshift(res.locData);
 					log('Latest location data for ' + player.userID + ":");
 					console.log(player.locationData[0]);
@@ -278,9 +281,9 @@ io.on('connection', function(socket) {
 
 				if (res.timestamp - player.lastLocReqTime < gameState.trackingInterval) {
 					storeLocation();
-				} else if (res.reqTimestamp === player.lastLocReqTime){
+				} else if (res.reqTimestamp === player.lastLocReqTime) {
 					storeLocation();
-					if (!player.trackActive){
+					if (!player.trackActive) {
 						startTracking();
 					}
 
