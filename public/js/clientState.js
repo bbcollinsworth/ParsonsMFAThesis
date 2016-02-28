@@ -12,15 +12,15 @@ var clientState = {
 		localCount: {
 			'agent': 0,
 			'suspect': 0,
-			update: function(type) {
+			update: function(playerType) {
 				var typeCount = 0;
 				for (id in clientState.allPlayers) {
-					if (type in clientState.allPlayers[id]) {
-						console.log(type + " found in allPlayers. Adding to count");
+					if (clientState.allPlayers[id].type == playerType) {
+						console.log(playerType + " found in allPlayers. Adding to count");
 						typeCount++;
 					}
 				}
-				this[type] = typeCount;
+				this[playerType] = typeCount;
 				//clientState.allPlayers.localCount[type] = typeCount;
 				console.log("Now locally tracking " + this.agent + " agents and " + this.suspect + " suspects.");
 			}
@@ -107,12 +107,14 @@ var clientState = {
 			}
 		};
 
+		clientState.allPlayers[uID] = newPlayer;
+
 		newPlayer.marker = viz.marker(player.type, newPlayer.latestPos).addTo(map);
 
 		console.log("ALL PLAYERS: ");
 		console.log(clientState.allPlayers);
 
-		clientState.allPlayers.localCount.update(player.type);
+		clientState.allPlayers.localCount.update(newPlayer.type);
 		//updateLocalCounts(player.type);
 		newPlayer.localID = player.type + " " + clientState.allPlayers.localCount[player.type].toString();
 
@@ -135,7 +137,7 @@ var clientState = {
 
 		console.log("New player stored locally as " + newPlayer.localID);
 
-		return newPlayer;
+		//return newPlayer;
 	},
 	features: {
 		geolocation: {

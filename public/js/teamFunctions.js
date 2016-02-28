@@ -398,7 +398,8 @@ var gov = {
 			// player.type = "self"
 
 			if (!(userID in players)) {
-				players[userID] = clientState.addPlayer(playerData, userID);
+				//players[userID] = clientState.addPlayer(playerData, userID);
+				clientState.addPlayer(playerData, userID);
 				players[userID].updateLocData(playerData);
 			} else {
 				players[userID].marker.updatePopup({
@@ -413,28 +414,45 @@ var gov = {
 
 		var findToSelect = function() {
 			var toSelect;
-			// var liveSuspectFound = false;
-			// var darkSuspectFound = false;
+			var liveSuspectFound = false;
+			//var darkSuspectFound = false;
 			var suspectFound = false;
-			//var agentFound = false;
-			reverseForIn(players, function(id) {
-				//var toSelect = {};
+
+			for (id in players){
 				if (players[id].type == 'suspect' && !players[id].goneDark) {
+					liveSuspectFound = true;
 					toSelect = players[id];
 					console.log("Found live suspect to select");
-					//players[id].marker.setSelected();
-					return;
-				} else if (players[id].type == 'suspect' && !suspectFound) {
+				} else if (players[id].type == 'suspect' && !liveSuspectFound) {
 					suspectFound = true;
 					console.log("Found suspect to select");
 					toSelect = players[id];
-				} else if (players[id].type == 'agent' && !suspectFound) {
+				} else if (players[id].type == 'agent' && !suspectFound && !liveSuspectFound) {
 					toSelect = players[id];
 					console.log("Found agent to select");
 					//players[id].marker.setSelected();
 					//return;
 				}
-			});
+			}
+			//var agentFound = false;
+			// reverseForIn(players, function(id) {
+			// 	//var toSelect = {};
+			// 	if (players[id].type == 'suspect' && !players[id].goneDark) {
+			// 		toSelect = players[id];
+			// 		console.log("Found live suspect to select");
+			// 		//players[id].marker.setSelected();
+			// 		return;
+			// 	} else if (players[id].type == 'suspect' && !suspectFound) {
+			// 		suspectFound = true;
+			// 		console.log("Found suspect to select");
+			// 		toSelect = players[id];
+			// 	} else if (players[id].type == 'agent' && !suspectFound) {
+			// 		toSelect = players[id];
+			// 		console.log("Found agent to select");
+			// 		//players[id].marker.setSelected();
+			// 		//return;
+			// 	}
+			// });
 			if (toSelect !== undefined) {
 				toSelect.marker.setSelected();
 			}
