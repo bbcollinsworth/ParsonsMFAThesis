@@ -72,15 +72,10 @@ var viz = {
 
 	trail: {
 		settings: {
-			maxSize: 15
+			maxSize: 15,
+			maxOpacity: 0.8,
+			maxBlur: 2 //1 less than actual max so there's always a minimum
 		},
-		// markerOptions: {
-		// 	icon: L.divIcon({
-		// 		className: 'trail-marker'
-		// 	}),
-		// 	interactive: false,
-		// 	opacity: 0.5
-		// },
 		markers: [],
 		generateTrailMarker: function(pos, oldest) {
 			//var oldestTime = t.playerRef.oldestTime;
@@ -108,7 +103,7 @@ var viz = {
 			thisMarker.animate = function(isLastMarker) {
 				setTimeout(function() {
 					$(thisMarker.uniqueClass).css({
-						'opacity': 1.0 * mappedToTime
+						'opacity': viz.trail.settings.maxOpacity * mappedToTime
 					});
 					if (isLastMarker){
 						$('#app').trigger('trailRendered');
@@ -136,7 +131,7 @@ var viz = {
 				var tM = t.markers[(posData.length - 1) - i];
 				tM.addTo(map);
 				var tDelay = 2.0 * tM.mappedToTime;
-				var blur = 1 + 4 * tM.mappedToTime;
+				var blur = 1 + viz.trail.settings.maxSize * tM.mappedToTime;
 				tM.setCSS({
 					//'transition-delay': tDelay.toString() + "s",
 					'-webkit-filter': "blur(" + blur + "px)",
@@ -165,6 +160,15 @@ var viz = {
 
 			// $('#app').trigger('trailRendered');
 		}
+	},
+
+	addSuspectContainer: function(){
+		var c = $('<div />',{
+			'id': 'suspect-container',
+			'class': 'tag-container'
+		});
+
+		$('#container').append(c);
 	},
 
 	addPingCircle: function() {

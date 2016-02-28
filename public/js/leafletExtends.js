@@ -36,6 +36,75 @@ var initLeafletExtensions = function() {
 			}
 		},
 
+		setSelected: function(_tag){
+			var thisMarker = this;
+			var tag;
+			if (!_tag) {
+				tag = thisMarker.tag;
+			} else {
+				tag = _tag;
+			}
+			$('.player-tag').removeClass('selected-tag');
+				var markerPos = thisMarker.getLatLng();
+				map.panTo(markerPos);
+				//NEED TO DO THIS BUT REVERT SOMEHOW
+				//thisMarker.setZIndexOffset(1000);
+				var tagPos = tag.offset();
+				var tagHeight = tag.height();
+				var mapCenterPoint = map.latLngToContainerPoint(markerPos);
+				console.log("Map Center is " + mapCenterPoint);
+				console.log("Tag Pos Top is: " + tagPos.top);
+				var currOffset = $('#suspect-container').offset();
+				// console.log("Current offset is: ");
+				// console.log(currOffset);
+				var pixelVOffset = currOffset.top + (mapCenterPoint.y - tagPos.top) - tagHeight*0.5;
+				
+				$('#suspect-container').css({
+					'transform': "translate(0," + pixelVOffset + "px)"
+				}); 
+				tag.addClass('selected-tag');
+				console.log("Amt to translate is " + pixelVOffset);
+		},
+
+		//tag: 
+
+		addTag: function(team){
+			var thisMarker = this;
+			var pHTML = thisMarker.makePopupHTML();
+			// var tag = $("<div />",{
+			thisMarker['tag'] = $("<div />",{
+				'id': this.title + "-tag",
+				'class': 'player-tag ' + team + '-tag',
+				'html': pHTML 
+			});
+			$('#suspect-container').append(thisMarker.tag);
+			
+			thisMarker.tag.on('click',function(){
+				thisMarker.setSelected($(this));
+				// $('.player-tag').removeClass('selected-tag');
+				// var markerPos = thisMarker.getLatLng();
+				// map.panTo(markerPos);
+				// //NEED TO DO THIS BUT REVERT SOMEHOW
+				// //thisMarker.setZIndexOffset(1000);
+				// var tagPos = $(this).offset();
+				// var tagHeight = $(this).height();
+				// var mapCenterPoint = map.latLngToContainerPoint(markerPos);
+				// console.log("Map Center is " + mapCenterPoint);
+				// console.log("Tag Pos Top is: " + tagPos.top);
+				// var currOffset = $('#suspect-container').offset();
+				// // console.log("Current offset is: ");
+				// // console.log(currOffset);
+				// var pixelVOffset = currOffset.top + (mapCenterPoint.y - tagPos.top) - tagHeight*0.5;
+				
+				// $('#suspect-container').css({
+				// 	'transform': "translate(0," + pixelVOffset + "px)"
+				// }); 
+				// $(this).addClass('selected-tag');
+				// console.log("Amt to translate is " + pixelVOffset);
+
+			});
+		},
+
 		addPopup: function(shouldOpen) {
 
 			var pHTML = this.makePopupHTML();

@@ -2,6 +2,7 @@
 
 #app {
 	font-family: 'Open Sans',sans-serif;
+	text-shadow: none;
 	font-weight: 300;
 	margin: auto;
 	/*height: 100%;*/
@@ -346,9 +347,53 @@
 	position: absolute;
 }
 
+#suspect-container {
+	position: absolute;
+	left: 0px;
+	top: 0px;
+	height: 100vh;
+	transform: translate(0,50%);
+	transition-duration: 0.75s;
+}
+
 .suspect-marker {
 	transition-delay: 2s;
 	transition-duration: 0.5s;
+}
+
+.player-tag {
+	pointer-events: all;
+	transform: translate(0,-50%);
+	transition-duration: 1s;
+	position: relative;
+	text-align: left;
+	padding: 0.2em 0.5em;
+	font-size: 0.9em;
+	margin: 0.5em 0em;
+	display: block;
+	//color: rgba(255,255,255,0.6);
+	//background-color: rgba(150,0,0,0.4);
+	color: rgba(255,255,255,1.0);
+	/*background-color: rgba(255,0,0,0.7);*/
+	opacity: 0.5;
+}
+
+.gov-tag {
+	background-color: rgba(0,0,255,0.7);
+}
+
+.ins-tag {
+	background-color: rgba(255,0,0,0.7);
+}
+
+.player-tag.selected-tag {
+	opacity: 1;
+	/*color: rgba(255,255,255,1.0);
+	background-color: rgba(255,0,0,0.7);*/
+}
+
+.player-tag:hover{
+	cursor: pointer;
 }
 
 .playerPopup {

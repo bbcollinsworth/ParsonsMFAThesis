@@ -181,7 +181,7 @@
 				hub['id'] = +i + 1;
 				hub['health'] = 100.0;
 				hub['hackRange'] = hubStats.hackRange;
-				hub['hackTime'] = hubStats.hackTime;//hubStats.getHackTime();
+				hub['hackTime'] = hubStats.hackTime; //hubStats.getHackTime();
 				hub['hackProgressInterval'] = hubStats.hackProgressInterval;
 				hub['decrement'] = 100.0 / hub.hackTime;
 				hub['alertState'] = 0;
@@ -192,13 +192,43 @@
 			} //);
 		},
 
-		playerCount: function() {
+		get playerCount() {
 			var numberOfPlayers = 0;
 			//for (var p in players) {
 			for (var p in state.players) {
 				numberOfPlayers++;
 			}
 			return numberOfPlayers;
+		},
+		// playerCount: function() {
+		// 	var numberOfPlayers = 0;
+		// 	//for (var p in players) {
+		// 	for (var p in state.players) {
+		// 		numberOfPlayers++;
+		// 	}
+		// 	return numberOfPlayers;
+		// },
+
+		getTeamSize: function(t) {
+			log("Get " +t +" team size called",colors.err);
+			var existingTeamMembers = 0;
+
+			//var players = state.players;
+			for (p in state.players) {
+				log("Team for " + state.players[p].userID + " is "+ state.players[p].team);
+				if (state.players[p].team == t) {
+					existingTeamMembers++;
+				}
+			}
+
+			// for (u in users) {
+			// 	if (users[u].team == t) {
+			// 		existingTeamMembers++;
+			// 	}
+			// }
+
+			log('Team size is ' + existingTeamMembers,colors.standout);
+			return existingTeamMembers;
 		},
 
 		liveHubCount: function() {

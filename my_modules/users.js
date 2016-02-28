@@ -8,21 +8,10 @@ module.exports = function(users, _socket) {
 	var colors = include('colors');
 	var log = include('log');
 	var gameState = include('gameState');
+	// log("GameState from userModule is: ");
+	// log(gameState);
 
 	var socket = _socket;
-
-	var getTeamSize = function(t) {
-		var existingTeamMembers = 0;
-
-		for (u in users) {
-			if (users[u].team == t) {
-				existingTeamMembers++;
-			}
-		}
-
-		log('Team size is ' + existingTeamMembers);
-		return existingTeamMembers;
-	};
 
 	var user = {
 		//stores properties of new user
@@ -38,7 +27,7 @@ module.exports = function(users, _socket) {
 				}
 			};
 
-			var teamNumber = getTeamSize() + 1;
+			var teamNumber = gameState.getTeamSize(team) + 1;
 
 			var userProps = {
 				'socketID': socket.id,
@@ -65,6 +54,7 @@ module.exports = function(users, _socket) {
 					//# of times enough agents to capture were in range
 					captureCount: 0
 				},
+				'goneDark': false,
 				'lockedOut': false,
 			};
 
@@ -73,7 +63,7 @@ module.exports = function(users, _socket) {
 			}
 
 			log('Created player: ', colors.green);
-			console.log(user);
+			log(user);
 
 		},
 		//switches user socket when reconnecting to server

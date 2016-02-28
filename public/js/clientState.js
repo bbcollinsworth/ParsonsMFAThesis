@@ -125,7 +125,8 @@ var clientState = {
 		};
 
 		newPlayer.marker.initPopup(popupData);
-		newPlayer.marker.addPopup(true);
+		//newPlayer.marker.addPopup(true);
+		newPlayer.marker.addTag(newPlayer.team);
 
 		if (newPlayer.team == 'ins') {
 			newPlayer.trail = viz.initTrail(newPlayer);

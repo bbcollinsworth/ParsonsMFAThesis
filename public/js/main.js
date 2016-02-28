@@ -16,43 +16,6 @@ var player = {
 
 var hubs = [];
 
-// var msg = function(text, styling) {
-
-// 	var msgHTML = "";
-
-// 	if (typeof text === 'string' || text instanceof String) {
-// 		msgHTML = '<p>' + text + '</p>';
-// 	} else {
-// 		for (line in text) {
-// 			msgHTML += '<p>' + text[line] + '</p>';
-// 		}
-// 	}
-
-// 	$('#alertBodyText').html(msgHTML);
-
-// 	for (s in viz.headerStyles) {
-// 		$('#alertBox .ui-collapsible-content').removeClass(viz.headerStyles[s]);
-// 	}
-
-// 	if (styling in viz.headerStyles) {
-// 		console.log("adding header styling! " + styling);
-// 		$('#alertBox .ui-collapsible-content').addClass(viz.headerStyles[styling]);
-// 	}
-// };
-
-// var footerMsg = function(text,styling){
-// 	var msgHTML = "";
-
-// 	if (typeof text === 'string' || text instanceof String) {
-// 		msgHTML = '<p>' + text + '</p>';
-// 	} else {
-// 		for (line in text) {
-// 			msgHTML += '<p>' + text[line] + '</p>';
-// 		}
-// 	}
-
-// 	$('#footerText').html(msgHTML);
-// }
 
 var attachEvents = function() {
 	$('#app').on('initialized', function() {
@@ -195,6 +158,7 @@ socket.on('serverMsg', function(res, err) {
 		//1sec for new/returning player + teamHash, uniqueID
 		playerTypeCheck: function() {
 			var storedUserFound = startup.storedUserCheck(res.userIDs);
+			console.log("Stored user found is: " + storedUserFound);
 
 			if (storedUserFound) { //send returning player
 				clientState.localID = localStorage.userID;

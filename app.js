@@ -106,17 +106,6 @@ io.on('connection', function(socket) {
 			timestamp: player.lastLocReqTime
 		});
 
-		// var timedLocationRequest = function(){
-		// 	emitTo.socket('getLocation', {
-		// 		timestamp: Date.now()
-		// 	});
-
-		// 	setTimeout()
-		// };
-
-		// tracking = setTimeout(sendLocationRequest,gameState.trackingInterval);
-
-
 		tracking = setInterval(function() {
 
 			player['lastLocRequest'] = gameState.newLocRequest();
@@ -126,6 +115,7 @@ io.on('connection', function(socket) {
 				if (!player.lastLocRequest.resReceived) {
 					log("No response to locRequest -", colors.red);
 					log("Player " + player.userID + " has gone dark.", colors.err);
+					player.goneDark = true;
 					player.trackActive = false;
 					clearInterval(tracking);
 				}
@@ -217,7 +207,8 @@ io.on('connection', function(socket) {
 				player.addToTeam(team);
 
 				players[player.userID] = player; //add player to playersObject
-				log("Total # of players: " + gameState.playerCount());
+				//log("Total # of players: " + gameState.playerCount());
+				log("Total # of players: " + gameState.playerCount);
 				log('Added player to database:');
 				log(players[player.userID]);
 
@@ -314,6 +305,7 @@ io.on('connection', function(socket) {
 							team: players[p].team,
 							type: players[p].type,
 							lockedOut: players[p].lockedOut,
+							goneDark: players[p].goneDark,
 							locData: locArray,
 							oldestTime: dataAgeLimit
 						};
@@ -475,7 +467,7 @@ io.on('connection', function(socket) {
 			log(err.stack, colors.err);
 		}
 
-		log('current players: ' + gameState.playerCount());
+		log('current players: ' + gameState.playerCount);
 		log('current connected users: ' + io.sockets.sockets.length);
 
 	});

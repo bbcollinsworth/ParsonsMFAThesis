@@ -46,6 +46,22 @@ var startup = {
 
 		};
 
+		window.reverseForIn = function(obj, f) {
+			var arr = [];
+			for (key in obj) {
+				// add hasOwnPropertyCheck if needed
+				//arr.push(key);
+				arr.unshift(key);
+			}
+
+			for (i in arr){
+				f.call(obj, arr[i]);
+			}
+			// for (var i = arr.length - 1; i >= 0; i--) {
+			// 	f.call(obj, arr[i]);
+			// }
+		};
+
 		window.msg = function(text, styling) {
 
 			var msgHTML = "";
@@ -223,6 +239,10 @@ var startup = {
 	},
 
 	storedUserCheck: function(allIDs) {
+		console.log("Checking for stored user. IDs from server are: ");
+		console.log(allIDs);
+		console.log("And locally stored ID is: ");
+		console.log(localStorage.userID);
 		var userFound = false;
 		//check for stored id matching existing player:
 		if (localStorage.userID !== undefined) {

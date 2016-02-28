@@ -140,6 +140,7 @@ var ins = {
 		var getAngleFromMapCenter = function(screenPos) {
 
 			var screenCenter = map.project(map.getCenter());
+			console.log("Map Center is " + screenCenter);
 
 			var vec = {
 				'x': screenPos.x - screenCenter.x,
@@ -286,6 +287,8 @@ var gov = {
 	},
 
 	renderUI: function() {
+		viz.addSuspectContainer();
+
 		var pingButton = viz.searchButton();
 		$('#mobileFooter').prepend(pingButton);
 
@@ -381,6 +384,11 @@ var gov = {
 	},
 
 	renderPlayers: function(pData) {
+
+		var players = clientState.allPlayers;
+		console.log("Current allPlayers before adding: ");
+		console.log(players);
+
 		$.each(pData, function(userID, playerData) {
 
 			console.log("Player ID: " + userID);
@@ -389,27 +397,58 @@ var gov = {
 			//if (userID = ownplayer's id)
 			// player.type = "self"
 
-			var players = clientState.allPlayers;
-			console.log(players);
-
 			if (!(userID in players)) {
 				players[userID] = clientState.addPlayer(playerData, userID);
 				players[userID].updateLocData(playerData);
-				//players[userID].trail.render(playerData);
 			} else {
-				players[userID].locData = playerData.locData;
-				players[userID].updateLocData(playerData);
-				players[userID].latestPos = playerData.locData[0];
 				players[userID].marker.updatePopup({
 					'text': {
-						ln1: "(As of " + convertTimestamp(players[userID].latestPos.time) + ")"
+						ln1: "(As of " + convertTimestamp(playerData.locData[0].time) + ")"
 					}
 				});
-
-				players[userID].marker.refresh(players[userID].latestPos);
+				players[userID].updateLocData(playerData);
 			}
 
 		});
+
+		var findToSelect = function() {
+			var toSelect;
+			// var liveSuspectFound = false;
+			// var darkSuspectFound = false;
+			var suspectFound = false;
+			//var agentFound = false;
+			reverseForIn(players, function(id) {
+				//var toSelect = {};
+				if (players[id].type == 'suspect' && !players[id].goneDark) {
+					toSelect = players[id];
+					console.log("Found live suspect to select");
+					//players[id].marker.setSelected();
+					return;
+				} else if (players[id].type == 'suspect' && !suspectFound) {
+					suspectFound = true;
+					console.log("Found suspect to select");
+					toSelect = players[id];
+				} else if (players[id].type == 'agent' && !suspectFound) {
+					toSelect = players[id];
+					console.log("Found agent to select");
+					//players[id].marker.setSelected();
+					//return;
+				}
+			});
+			if (toSelect !== undefined) {
+				toSelect.marker.setSelected();
+			}
+		};
+
+		findToSelect();
+
+		// for (id in players) {
+		// 	var latestSuspect = {};
+		// 	if (players[id].type == 'suspect' && !players[id].goneDark) {
+		// 		players[id].marker.setSelected();
+		// 	}
+
+		// }
 
 		gov.suspectRangeCheck();
 	}
