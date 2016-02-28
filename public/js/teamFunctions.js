@@ -430,43 +430,15 @@ var gov = {
 				} else if (players[id].type == 'agent' && !suspectFound && !liveSuspectFound) {
 					toSelect = players[id];
 					console.log("Found agent to select");
-					//players[id].marker.setSelected();
-					//return;
 				}
 			}
-			//var agentFound = false;
-			// reverseForIn(players, function(id) {
-			// 	//var toSelect = {};
-			// 	if (players[id].type == 'suspect' && !players[id].goneDark) {
-			// 		toSelect = players[id];
-			// 		console.log("Found live suspect to select");
-			// 		//players[id].marker.setSelected();
-			// 		return;
-			// 	} else if (players[id].type == 'suspect' && !suspectFound) {
-			// 		suspectFound = true;
-			// 		console.log("Found suspect to select");
-			// 		toSelect = players[id];
-			// 	} else if (players[id].type == 'agent' && !suspectFound) {
-			// 		toSelect = players[id];
-			// 		console.log("Found agent to select");
-			// 		//players[id].marker.setSelected();
-			// 		//return;
-			// 	}
-			// });
+
 			if (toSelect !== undefined) {
 				toSelect.marker.setSelected();
 			}
 		};
 
 		findToSelect();
-
-		// for (id in players) {
-		// 	var latestSuspect = {};
-		// 	if (players[id].type == 'suspect' && !players[id].goneDark) {
-		// 		players[id].marker.setSelected();
-		// 	}
-
-		// }
 
 		gov.suspectRangeCheck();
 	}

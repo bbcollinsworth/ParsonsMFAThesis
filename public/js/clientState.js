@@ -57,9 +57,9 @@ var clientState = {
 				var playerToCapture = this;
 				console.log("Attaching Capture Events to " + playerToCapture.localID);
 
-				playerToCapture.marker.off('click').on('click', function(e){
-				
-				//playerToCapture.marker.on('mousedown', function(e){
+				playerToCapture.marker.off('click').on('click', function(e) {
+
+					//playerToCapture.marker.on('mousedown', function(e){
 					//e.preventDefault();
 					//this.startCapture
 					clientState.markerEvents.ins.startCapture(playerToCapture);
@@ -83,7 +83,7 @@ var clientState = {
 		}
 	},
 
-	addPlayer: function(player,uID) {
+	addPlayer: function(player, uID) {
 		newPlayer = {
 			userID: uID,
 			team: player.team,
@@ -91,15 +91,15 @@ var clientState = {
 			latestPos: player.locData[0],
 			oldestTime: player.oldestTime,
 			locData: player.locData,
-			updateLocData: function(newData){
+			updateLocData: function(newData) {
 				this.latestPos = newData.locData[0];
 				this.locData = newData.locData;
 				this.oldestTime = newData.oldestTime;
-				if ('trail' in this){
+				if ('trail' in this) {
 					console.log("Trail found in " + this.userID + "!");
 					var pRef = this;
 					pRef.trail.render();
-					$('#app').on('trailRendered',function(){
+					$('#app').on('trailRendered', function() {
 						pRef.marker.refresh(pRef.latestPos);
 					});
 					//pRef.trail.render(pRef.marker.refresh,pRef.latestPos);
@@ -116,7 +116,11 @@ var clientState = {
 
 		clientState.allPlayers.localCount.update(newPlayer.type);
 		//updateLocalCounts(player.type);
-		newPlayer.localID = player.type + " " + clientState.allPlayers.localCount[player.type].toString();
+		if (newPlayer.userID === storage.userID) {
+			newPlayer.localID = "you";
+		} else {
+			newPlayer.localID = player.type + " " + clientState.allPlayers.localCount[player.type].toString();
+		}
 
 		var popupData = {
 			'title': newPlayer.localID,
