@@ -212,8 +212,13 @@ var startup = {
 
 			if (thisFeature.supported) {
 				var supportedMsg = feature + " supported.";
+
 				//$('#footerText').append('<p>' + supportedMsg + '</p>');
 				console.log(supportedMsg);
+				// if (feature == "localstorage"){
+				// 	console.log("localStorage on init is:");
+				// 	console.log(localStorage);
+				// }
 				//need to return feature variable
 				return thisFeature.setup;
 			} else {

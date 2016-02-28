@@ -207,10 +207,13 @@ var clientState = {
 			helpText: '',
 			noSupportText: 'Your browser does not support local storage.',
 			supported: false,
-			ready: true, //no prep required
+			ready: false, //no prep required
 			setup: localStorage,
 			readyTest: function() {
-				console.log('Ready test called for localStorage but no test.');
+				console.log("Current localStorage is: ");
+				console.log(localStorage);
+				this.ready = true;
+				//console.log('Ready test called for localStorage but no test.');
 			}
 		}
 	}

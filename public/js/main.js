@@ -2,7 +2,9 @@ var app = {};
 var socket;
 
 //for quick restting of localstorage
-var lsclear = localStorage.clear();
+var lsclear = function() {
+	localStorage.clear();
+};
 
 var player = {
 	localID: '',
@@ -80,12 +82,12 @@ var storeAndSendLocation = function(v1, v2) { //callback) {
 		player.pos = {
 			lat: position.coords.latitude,
 			lng: position.coords.longitude,
-			time: position.timestamp//Date.now()
+			time: position.timestamp //Date.now()
 		};
 
 		// console.log("Heading isNAN is " + isNaN(position.coords.heading));
 		// console.log(position.coords.heading);
-		if (position.coords.heading){
+		if (position.coords.heading) {
 			player.pos['heading'] = position.coords.heading;
 			footerMsg("Heading found: " + player.pos.heading);
 		}
