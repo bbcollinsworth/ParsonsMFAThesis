@@ -71,16 +71,16 @@ io.on('connection', function(socket) {
 	var checkPlayerType = function() {
 		var existingUserIDs = [];
 		for (p in players) {
-			console.log("Existing player: " + players[p].userID);
+			log("Existing player: " + players[p].userID);
 			existingUserIDs.push(players[p].userID);
 
 		}
 
-		console.log("ExistingIDs List length: " + existingUserIDs.length);
+		log("ExistingIDs List length: " + existingUserIDs.length);
 		emitTo.socket('playerTypeCheck', {
 			userIDs: existingUserIDs
 		});
-		console.log("Checking if new player...");
+		log("Checking if new player...");
 	};
 
 	var getTeam = function(hash) {
@@ -123,13 +123,13 @@ io.on('connection', function(socket) {
 			emitTo.socket('getLocation', player.lastLocRequest);
 
 			timeout = setTimeout(function() {
-				if (!player.lastLocRequest.resReceived){
-					log("No response to locRequest -",colors.red);
-					log("Player " + player.userID + " has gone dark.",colors.err);
+				if (!player.lastLocRequest.resReceived) {
+					log("No response to locRequest -", colors.red);
+					log("Player " + player.userID + " has gone dark.", colors.err);
 					player.trackActive = false;
 					clearInterval(tracking);
 				}
-			},gameState.trackingInterval);
+			}, gameState.trackingInterval);
 
 		}, gameState.trackingInterval); //10000);
 	};
@@ -165,7 +165,7 @@ io.on('connection', function(socket) {
 		}
 
 		log("Sorted hubs by distance: ");
-		console.log(sortedHubs);
+		log(sortedHubs);
 
 		return sortedHubs;
 
@@ -235,7 +235,7 @@ io.on('connection', function(socket) {
 				player = players[res.userID];
 				player.addToTeam(player.team);
 				log("'Player' for socket " + socket.id + " is now:", colors.yellow.inverse);
-				console.log(player);
+				log(player);
 
 				player.connected = true;
 
@@ -272,16 +272,14 @@ io.on('connection', function(socket) {
 
 			locationUpdate: function() {
 				var elapsed = (Date.now() - res.reqTimestamp) / 1000;
-				console.log("Response received " + elapsed + "sec after req sent");
+				log("Response received " + elapsed + "sec after req sent");
 
 				var storeLocation = function() {
 					//clearInterval(timeout);
 					player.locationData.unshift(res.locData);
 					log('Latest location data for ' + player.userID + ":");
-					console.log(player.locationData[0]);
+					log(player.locationData[0]);
 				};
-
-
 
 				if (res.timestamp - player.lastLocReqTime < gameState.trackingInterval) {
 					storeLocation();
@@ -300,22 +298,31 @@ io.on('connection', function(socket) {
 
 				for (p in players) {
 					//if (!players[p].lockedOut) { //will still show players, just gray on client side
-					var locArray = players[p].getLocationData();
+
+					var dataAgeLimit = Date.now() - gameState.suspectTrailDuration;
+
+					var locArray = players[p].getLocationData(dataAgeLimit);
 
 					if (locArray.length > 0) {
-						//var setType = 
+
+						//Truncate location data for gov players & lockedOut players
+						if (players[p].team == 'gov' || players[p].lockedOut) {
+							locArray = [locArray[0]];
+						}
+						
 						newLocData[players[p].userID] = {
 							team: players[p].team,
 							type: players[p].type,
 							lockedOut: players[p].lockedOut,
-							locData: locArray
+							locData: locArray,
+							oldestTime: dataAgeLimit
 						};
 					}
 					//}
 				}
 
 				log('Data to be sent to ' + socket.id + ":");
-				console.log(newLocData);
+				log(newLocData);
 				emitTo.socket('suspectData', {
 					locData: newLocData
 				});
@@ -341,7 +348,7 @@ io.on('connection', function(socket) {
 
 			capturedPlayer: function() {
 				var lockedPlayer = players[res.userID];
-				console.log("Lockout request received for " + lockedPlayer.userID);
+				log("Lockout request received for " + lockedPlayer.userID);
 				//	this might be better in separate fn with emits as callbacks
 				lockedPlayer.lockout();
 				emitTo.user(lockedPlayer, 'lockoutAlert', {
@@ -365,10 +372,10 @@ io.on('connection', function(socket) {
 				var attackedHub = hubs[res.hubIndex];
 
 				var decr = attackedHub.hackTime / attackedHub.hackProgressInterval;
-				console.log("Decrements are: " + decr);
+				log("Decrements are: " + decr);
 				//...then divide 100 by that to get health decrement:
 				attackedHub.health -= (100 / decr);
-				console.log("Hub " + attackedHub.id + " health decreased to " + attackedHub.health);
+				log("Hub " + attackedHub.id + " health decreased to " + attackedHub.health);
 
 
 				if (attackedHub.health <= 0) {
@@ -468,8 +475,8 @@ io.on('connection', function(socket) {
 			log(err.stack, colors.err);
 		}
 
-		console.log('current players: ' + gameState.playerCount());
-		console.log('current connected users: ' + io.sockets.sockets.length);
+		log('current players: ' + gameState.playerCount());
+		log('current connected users: ' + io.sockets.sockets.length);
 
 	});
 

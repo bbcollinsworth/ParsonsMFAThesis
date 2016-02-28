@@ -5,6 +5,12 @@
 	var colors = include('colors');
 	var log = include('log');
 
+	var playSettings = {
+		trackIntervalS: 10,
+		hackTimeM: 1,
+		trailDurationM: 4
+	};
+
 	// var colors = include('colors');
 	// var log = include('log');
 
@@ -75,9 +81,13 @@
 		hackTimeInMinutes: 1,
 		hackProgressInterval: 2000,
 		attackingPlayers: [],
-		getHackTime: function() {
-			return hubStats.hackTimeInMinutes * 60000;
-		}, //in milliseconds
+		get hackTime() {
+			return state.settings.hackTimeM * 60000;
+			//return hubStats.hackTimeInMinutes * 60000;
+		},
+		// getHackTime: function() {
+		// 	return hubStats.hackTimeInMinutes * 60000;
+		// }, //in milliseconds
 		setAlertState: function() {
 			var h = this;
 
@@ -106,20 +116,30 @@
 
 	var state = {
 
-		'trackIntervalInSeconds': 10,
+		settings: playSettings,
+
+		//'trackIntervalInSeconds': 10,
 
 		get trackingInterval() {
-			return this.trackIntervalInSeconds * 1000;
+			return this.settings.trackIntervalS * 1000;
+			//return this.trackIntervalInSeconds * 1000;
 		},
 
-		newLocRequest: function(){
+		//'trailDurationInMinutes': 1,
+
+		get suspectTrailDuration() {
+			return this.settings.trailDurationM * 60000;
+			//return this.trailDurationInMinutes * 60 * 1000;
+		},
+
+		newLocRequest: function() {
 			var lReq = {
 				timestamp: Date.now(),
-				resReceived: false//,
+				resReceived: false //,
 				// send: function(){
-				// 	emitTo.socket('getLocation', this);
+				// emitTo.socket('getLocation', this);
 				// }
-			}
+			};
 
 			return lReq;
 		},
@@ -161,7 +181,7 @@
 				hub['id'] = +i + 1;
 				hub['health'] = 100.0;
 				hub['hackRange'] = hubStats.hackRange;
-				hub['hackTime'] = hubStats.getHackTime();
+				hub['hackTime'] = hubStats.hackTime;//hubStats.getHackTime();
 				hub['hackProgressInterval'] = hubStats.hackProgressInterval;
 				hub['decrement'] = 100.0 / hub.hackTime;
 				hub['alertState'] = 0;

@@ -47,7 +47,7 @@ module.exports = function(users, _socket) {
 				'team': team,
 				//var teamNumber = getTeamSize(team) + 1,
 				'numberOnTeam': teamNumber,
-				'type': setTypeFromTeam(user.team),
+				'type': setTypeFromTeam(team),
 				'userID': team + teamNumber.toString(),
 				'connected': false,
 				'trackActive': false,
@@ -93,19 +93,32 @@ module.exports = function(users, _socket) {
 			log('User ' + user.userID + ' removed from ' + teamName, colors.orange);
 		},
 
-		getLocationData: function(limit) {
+		getLocationData: function(sinceTime) { //limit) {
 			var locArray = [];
-			if (limit !== undefined) {
+			if (sinceTime !== undefined) {
 				for (i in user.locationData) {
-					if (i < limit) {
+					log(user.locationData);
+					if (user.locationData[i].time > sinceTime) {
 						locArray.push(user.locationData[i]);
 					} else {
-						break;
+						//break;
 					}
 				}
 			} else {
 				locArray = user.locationData;
 			}
+			// if (limit !== undefined) {
+			// 	for (i in user.locationData) {
+			// 		if (i < limit) {
+			// 			locArray.push(user.locationData[i]);
+			// 		} else {
+			// 			break;
+			// 		}
+			// 	}
+			// } else {
+			// 	locArray = user.locationData;
+			// }
+			log(locArray.length + " of " + user.locationData.length + " LocDataPoints being sent to Gov",colors.standout);
 
 			return locArray;
 		},

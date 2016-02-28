@@ -127,11 +127,7 @@ var initLeafletExtensions = function() {
 	//PLAYER MARKER INIT
 	//=================================
 
-	var pathMarkerExt = {
-
-		icon: L.divIcon({
-			className: 'path-marker'
-		}),
+	var trailMarkerExt = {
 
 		refresh: function(posObj, options) {
 			this.setLatLng([posObj.lat, posObj.lng]);
@@ -160,13 +156,13 @@ var initLeafletExtensions = function() {
 
 	};
 
-	L.PathMarker = L.Marker.extend(pathMarkerExt);
+	L.TrailMarker = L.Marker.extend(trailMarkerExt);
 
-	L.pathMarker = function(position, options) {
-		return new L.PathMarker(position, options);
+	L.trailMarker = function(position, options) {
+		return new L.TrailMarker(position, options);
 	};
 
-	console.log("Custom pathMarker class created");
+	console.log("Custom trailMarker class created");
 
 	//=================================
 	//PING CIRCLE INIT

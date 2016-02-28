@@ -16,6 +16,7 @@ var clientState = {
 				var typeCount = 0;
 				for (id in clientState.allPlayers) {
 					if (type in clientState.allPlayers[id]) {
+						console.log(type + " found in allPlayers. Adding to count");
 						typeCount++;
 					}
 				}
@@ -88,11 +89,25 @@ var clientState = {
 			team: player.team,
 			type: player.type,
 			latestPos: player.locData[0],
-			locData: player.locData
+			oldestTime: player.oldestTime,
+			locData: player.locData,
+			updateLocData: function(newData){
+				this.latestPos = newData.locData[0];
+				this.locData = newData.locData;
+				this.oldestTime = newData.oldestTime;
+				if ('trail' in this){
+					console.log("Trail found in " + this.userID + "!");
+					var pRef = this;
+					pRef.trail.render();
+					$('#app').on('trailRendered',function(){
+						pRef.marker.refresh(pRef.latestPos);
+					});
+					//pRef.trail.render(pRef.marker.refresh,pRef.latestPos);
+				}
+			}
 		};
 
 		newPlayer.marker = viz.marker(player.type, newPlayer.latestPos).addTo(map);
-		newPlayer.path = viz.path;
 
 		console.log("ALL PLAYERS: ");
 		console.log(clientState.allPlayers);
@@ -113,6 +128,7 @@ var clientState = {
 		newPlayer.marker.addPopup(true);
 
 		if (newPlayer.team == 'ins') {
+			newPlayer.trail = viz.initTrail(newPlayer);
 			$.extend(true, newPlayer, clientState.markerEvents.ins);
 		}
 

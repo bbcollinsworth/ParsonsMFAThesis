@@ -394,10 +394,11 @@ var gov = {
 
 			if (!(userID in players)) {
 				players[userID] = clientState.addPlayer(playerData, userID);
-				players[userID].path.render(players[userID].locData);
+				players[userID].updateLocData(playerData);
+				//players[userID].trail.render(playerData);
 			} else {
 				players[userID].locData = playerData.locData;
-				players[userID].path.render(players[userID].locData);
+				players[userID].updateLocData(playerData);
 				players[userID].latestPos = playerData.locData[0];
 				players[userID].marker.updatePopup({
 					'text': {
@@ -405,10 +406,6 @@ var gov = {
 					}
 				});
 
-				// if (playerData.lockedOut) {
-				// 	players[userID]['lockedOut'] = true;
-				// 	players[userID].marker.renderLockout();
-				// }
 				players[userID].marker.refresh(players[userID].latestPos);
 			}
 

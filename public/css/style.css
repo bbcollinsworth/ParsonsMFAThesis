@@ -47,8 +47,8 @@
 
 #mobileFooter {
 	background-color: rgba(255,255,255,0.5);
-    box-shadow: 3px 3px 3px 3px rgba(100,100,100,0.5);
-    transition-duration: 1s;
+	box-shadow: 3px 3px 3px 3px rgba(100,100,100,0.5);
+	transition-duration: 1s;
 }
 
 #alertPopoutText {
@@ -78,6 +78,7 @@
 	background-color: rgba(255,255,255,0.7);
 	box-shadow: 10px 0px 30px 0px rgba(0,0,0,0.3);
 	text-shadow: none;
+	border: 0px;
 }
 
 #alertBox .ui-collapsible-content.urgent-alert {
@@ -123,7 +124,6 @@
 	border-radius: 0px;
 	width: 100%;
 }
-
 
 #map {
 	position: margin;
@@ -346,6 +346,11 @@
 	position: absolute;
 }
 
+.suspect-marker {
+	transition-delay: 2s;
+	transition-duration: 0.5s;
+}
+
 .playerPopup {
 	text-align: center;
 }
@@ -356,9 +361,12 @@
 	line-height: 1.5em;
 }
 
-.leaflet-marker-icon .path-marker {
-	background-color: red;
-    border-radius: 50%;
+.leaflet-marker-icon.trail-marker {
+	background-color: rgb(255,0,0);
+	border-radius: 50%;
+	//-webkit-filter: blur(4px);
+	//filter: blur(4px);
+	transition-duration: 0.5s;
 }
 
 

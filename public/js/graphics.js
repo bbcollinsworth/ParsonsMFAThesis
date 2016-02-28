@@ -21,12 +21,14 @@ var viz = {
 		suspect: {
 			'marker-size': 'large',
 			'marker-symbol': 'pitch',
-			'marker-color': '#ff0000'
+			'marker-color': '#ff0000',
+			'className': 'suspect-marker'
 		},
 		agent: {
 			'marker-size': 'medium',
 			'marker-symbol': 'police',
-			'marker-color': '#0000ff'
+			'marker-color': '#0000ff',
+			'className': 'agent-marker'
 		}
 	},
 
@@ -61,41 +63,107 @@ var viz = {
 		}
 	},
 
-	path: {
-		markerOptions: {
-			icon: L.divIcon({
-				className: 'path-marker'
-			}),
-			interactive: false
-		},
-		markers: [],
-		render: function(posData) {
-			var p = this;
+	initTrail: function(player) {
+		var newTrail = $.extend(true, {
+			playerRef: player,
+		}, viz.trail);
+		return newTrail;
+	},
 
-			if (p.markers.length > 0) {
-				for (n in p.markers) {
-					p.markers[n].remove();
+	trail: {
+		settings: {
+			maxSize: 15
+		},
+		// markerOptions: {
+		// 	icon: L.divIcon({
+		// 		className: 'trail-marker'
+		// 	}),
+		// 	interactive: false,
+		// 	opacity: 0.5
+		// },
+		markers: [],
+		generateTrailMarker: function(pos, oldest) {
+			//var oldestTime = t.playerRef.oldestTime;
+			var mappedToTime = Math.map(pos.time, oldest, Date.now(), 0.1, 1);
+			var mappedSize = viz.trail.settings.maxSize * mappedToTime;
+			var iconOptions = {
+				className: 'trail-marker ' + pos.time,
+				iconSize: [mappedSize, mappedSize]
+			};
+			var markerOptions = {
+				icon: L.divIcon(iconOptions),
+				interactive: false,
+				opacity: 0 //1.0*mappedToTime
+			};
+
+			var thisMarker = L.trailMarker([pos.lat, pos.lng], markerOptions);
+			//thisMarker['time'] = pos.time;
+			var uniqueClass = "." + pos.time.toString();
+			thisMarker['mappedToTime'] = mappedToTime;
+			thisMarker['uniqueClass'] = uniqueClass;
+			console.log("Unique class for this marker is " + uniqueClass);
+			thisMarker.setCSS = function(updatesObject) {
+				$(thisMarker.uniqueClass).css(updatesObject);
+			};
+			thisMarker.animate = function(isLastMarker) {
+				setTimeout(function() {
+					$(thisMarker.uniqueClass).css({
+						'opacity': 1.0 * mappedToTime
+					});
+					if (isLastMarker){
+						$('#app').trigger('trailRendered');
+					}
+				}, 1.0 * mappedToTime * 1000);
+			};
+			return thisMarker;
+		},
+		render: function(callback, args) {
+			var t = this;
+			var posData = t.playerRef.locData;
+			var oldestTime = posData[posData.length - 1].time;
+			// var oldestTime = t.playerRef.oldestTime;
+			console.log("rendering trail");
+
+			if (t.markers.length > 0) {
+				for (n in t.markers) {
+					map.removeLayer(t.markers[n]); //.remove();
 				}
 			}
-			p.markers = [];
-			for (var i = posData.length; i>0;i--) {
-				var pathMarker = L.pathMarker([posData[i].lat, posData[i].lng], p.markerOptions);
-				pathMarker['time'] = posData.time;
-				pathMarker['domID'] = "path"+i;
-				p.markers.push(pathMarker);
-				p.markers[i].addTo(map);
+			t.markers = [];
+			for (var i = posData.length - 1; i >= 0; i--) {
+				var tMarker = t.generateTrailMarker(posData[i], oldestTime);
+				t.markers.push(tMarker);
+				var tM = t.markers[(posData.length - 1) - i];
+				tM.addTo(map);
+				var tDelay = 2.0 * tM.mappedToTime;
+				var blur = 1 + 4 * tM.mappedToTime;
+				tM.setCSS({
+					//'transition-delay': tDelay.toString() + "s",
+					'-webkit-filter': "blur(" + blur + "px)",
+					'filter': "blur(" + blur + "px)"
+				});
+				if (i === 0) {
+					tM.animate(true);
+				} else {
+					tM.animate();
+				}
 			}
 
-			var markerEls = map.getElementsByClassName('path-marker');
-			console.log("LOGGING MARKER ELEMENTS");
-			markerEls.forEach(function(m){
-				console.log(m);
-				// m.css({
+			//var markerEls = document.getElementsByClassName('trail-marker');
+			//console.log("LOGGING MARKER ELEMENTS");
+			//console.log(markerEls);
+			// markerEls.forEach(function(m){
+			// 	console.log(m);
+			// 	// m.css({
 
-				// });
-			})
+			// 	// });
+			// });
 			console.log("Last path marker is: ");
-			console.log(p.markers[0]);
+			console.log(t.markers[0]);
+
+			if (callback) callback(args);
+
+			// $('#app').trigger('trailRendered');
 		}
 	},
 
