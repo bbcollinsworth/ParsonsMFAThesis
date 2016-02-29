@@ -11,8 +11,8 @@ var player = {
 	team: '',
 	pos: {
 		'heading': undefined,
-		update: function(newData){
-			for (key in newData){
+		update: function(newData) {
+			for (key in newData) {
 				this[key] = newData[key];
 			}
 		}
@@ -70,6 +70,45 @@ var centerOnPlayer = function() {
 	map.panTo([player.pos.lat, player.pos.lng]);
 };
 
+
+var stopTracking;
+
+var posUpdateHandler = function(position) {
+	console.log('Latest Position: ' + position.coords.latitude + ', ' + position.coords.longitude);
+	footerMsg('Orientation Modernizr is ' + Modernizr['deviceorientation'] + '<br/>Latest Watched Position: <br />' + position.coords.latitude + ', ' + position.coords.longitude + '<br />Heading: ' + player.pos.heading + '<br />' + convertTimestamp(Date.now(), true));
+
+	var newPos = {
+		lat: position.coords.latitude,
+		lng: position.coords.longitude,
+		time: position.timestamp //Date.now()
+	};
+
+	player.pos.update(newPos);
+	console.log("Playerpos updated: ");
+	console.log(player);
+
+	if (player.team == 'ins') {
+		centerOnPlayer();
+	}
+
+	console.log("Time since server response:");
+	console.log(Date.now() - (+clientState.lastServerResTime + 10000));
+	if (Date.now() < (+clientState.lastServerResTime + 10000)) {
+		emit('locationUpdate', {
+			//will this work or will it reset to latest for all?
+			//reqTimestamp: serverReqTime,
+			locData: player.pos
+		});
+	} else {
+		//geo.clearWatch(clientState.trackID);
+	}
+	// clearTimeout(stopTracking);
+	// stopTracking = setTimeout(function(){
+	// 	geo.clearWatch(clientState.trackID);
+	// 	console.log("Clearing watchLoc as of "+ convertTimestamp(Date.now()));
+	// },5000);
+};
+
 var storeAndSendLocation = function(v1, v2) { //callback) {
 	var callback;
 	var serverReqTime;
@@ -114,45 +153,17 @@ var storeAndSendLocation = function(v1, v2) { //callback) {
 	//}
 };
 
-var runIntro = function(team) {
-	var intro = {
-		'gov': {
-			'screen1': {
-				1: "The U.S. Government needs your help to stop cyberterrorism.",
-				2: "At this moment, hackers are trying to disable government security systems in your area.",
-				3: "If they succeed, millions of lives will be endangered.",
-				4: '<div id="nextButton">OK</div>'
-			},
-			'screen2': {
-				1: "Use this app to detect the mobile activity of suspected hackers nearby.",
-				2: "Sensitive security sites are marked in blue. We need you to intercept the hackers before they disable these sites.",
-				3: "If you can get within 20 meters of a suspected hacker, you can lock their device and stop their attacks!",
-				4: '<div id="nextButton">GO</div>'
-			}
-		},
-		'ins': {
-			'screen1': {
-				1: "The government is tracking you.",
-				2: "It's time to fight back.",
-				3: '<div id="nextButton">OK</div>'
-			},
-			'screen2': {
-				1: "This app enables you to detect nearby surveillance sites with your mobile phone.",
-				2: "If you get close enough, you can hack these sites to disrupt government data collection.",
-				3: "Be careful, though: the more you use your phone, the better State Agents can track you...",
-				4: '<div id="nextButton">START</div>'
-			}
-		}
-	};
+// var runIntro = function(team) {
+// 	var intro = clientState.intro;
 
-	msg(intro[team].screen1);
-	$('#nextButton').off('click').on('click', function() {
-		msg(intro[team].screen2);
-		$('#nextButton').off('click').on('click', function() {
-			$('#app').trigger('introComplete');
-		});
-	});
-};
+// 	msg(intro[team].screen1);
+// 	$('#nextButton').off('click').on('click', function() {
+// 		msg(intro[team].screen2);
+// 		$('#nextButton').off('click').on('click', function() {
+// 			$('#app').trigger('introComplete');
+// 		});
+// 	});
+// };
 
 //INCOMING SOCKET FUNCTIONS
 socket.on('serverMsg', function(res, err) {
@@ -212,6 +223,7 @@ socket.on('serverMsg', function(res, err) {
 		},
 
 		getLocation: function() {
+
 			clientState['lastLocReqTime'] = res.timestamp;
 			//if now - res.timestamp less than tracking interval
 			var timeElapsed = Date.now() - res.timestamp;
@@ -231,41 +243,16 @@ socket.on('serverMsg', function(res, err) {
 
 		trackLocation: function() {
 
-			var getOrientation = function() {
-
-			};
-
-			var watchPosHandler = function(position) {
-				console.log('Latest Watched Position: ' + position.coords.latitude + ', ' + position.coords.longitude);
-				footerMsg('Orientation Modernizr is ' + Modernizr['deviceorientation'] + '<br/>Latest Watched Position: <br />' + position.coords.latitude + ', ' + position.coords.longitude + '<br />Heading: ' + player.pos.heading + '<br />' + convertTimestamp(Date.now(), true));
-
-				var newPos = {
-					lat: position.coords.latitude,
-					lng: position.coords.longitude,
-					time: position.timestamp //Date.now()
-				};
-
-				player.pos.update(newPos);
-				console.log("Playerpos updated: ");
-				console.log(player);
-
-				if (player.team == 'ins') {
-					centerOnPlayer();
-				}
-
-				emit('locationUpdate', {
-					//will this work or will it reset to latest for all?
-					//reqTimestamp: serverReqTime,
-					locData: player.pos
-				});
-			};
 			watchPosError = function(error) {
 				console.log("Watch position error: ");
 				console.log(error);
 			};
 
-			clientState.trackID = geo.watchPosition(
-				watchPosHandler,
+			clientState['trackInterval'] = res.trackingInterval;
+			clientState['lastServerResTime'] = Date.now();
+
+			clientState['trackID'] = geo.watchPosition(
+				posUpdateHandler,
 				// Optional settings below
 				watchPosError, {
 					//timeout: 0,
@@ -279,9 +266,19 @@ socket.on('serverMsg', function(res, err) {
 			//});
 		},
 
+		serverRcvdLocUpdate: function() {
+			console.log("Server got update - continuing tracking");
+			console.log(res.rcvdTimestamp);
+			clientState['lastServerResTime'] = res.rcvdTimestamp;
+			clearTimeout(stopTracking);
+		},
+
 		insStartData: function() {
+			clientState.intro.content = res.introContent;
+			//clientState['intro'] = res.introContent;
 			if (!res.playStarted) {
-				runIntro('ins');
+				clientState.intro.run('ins');
+				//runIntro('ins');
 
 				$('#app').on('introComplete', function() {
 					emit('introCompleted', {});
@@ -295,10 +292,12 @@ socket.on('serverMsg', function(res, err) {
 		},
 
 		govStartData: function() {
+			clientState.intro.content = res.introContent;
+			//clientState['intro'] = res.introContent;
 			gov.renderHubs(res.hubs);
 
 			if (!res.playStarted) {
-				runIntro('gov');
+				clientState.intro.run('gov');
 
 				$('#app').on('introComplete', function() {
 					emit('introCompleted', {});

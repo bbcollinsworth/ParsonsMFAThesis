@@ -261,10 +261,7 @@ var startup = {
 		heading = initialize('deviceorientation');
 		//this should add the following function as a window event handler
 		heading(function(event) {
-			//window.addEventListener('deviceorientation', function(event) {
 			window.player.pos['heading'] = event.alpha;
-			console.log("ORIENTATION EVENT HANDLER ADDED");
-			footerMsg("ORIENTATION EVENT HANDLER ADDED");
 		});
 		console.log("Location Svcs initialized");
 

@@ -8,6 +8,20 @@ var clientState = {
 		lng: 0
 	},
 	localID: '',
+	intro: {
+		content: {},
+		run: function() { //team) {
+			var intro = this.content;//clientState.intro.content;
+			var team = player.team;
+			msg(intro[team].screen1);
+			$('#nextButton').off('click').on('click', function() {
+				msg(intro[team].screen2);
+				$('#nextButton').off('click').on('click', function() {
+					$('#app').trigger('introComplete');
+				});
+			});
+		}
+	},
 	allPlayers: {
 		localCount: {
 			'agent': 0,
@@ -196,7 +210,7 @@ var clientState = {
 			ready: true,
 			setup: function(orientEventHandler) {
 				window.addEventListener('deviceorientation', orientEventHandler, false);
-				console.log("ORIENTATION EVENT HANDLER ADDED");
+				console.log("From Setup: ORIENTATION EVENT HANDLER ADDED");
 				footerMsg("ORIENTATION EVENT HANDLER ADDED");
 			},
 			readyTest: function() {

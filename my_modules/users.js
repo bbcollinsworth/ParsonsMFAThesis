@@ -108,9 +108,22 @@ module.exports = function(users, _socket) {
 			// } else {
 			// 	locArray = user.locationData;
 			// }
-			log(locArray.length + " of " + user.locationData.length + " LocDataPoints being sent to Gov",colors.standout);
+			log(locArray.length + " of " + user.locationData.length + " LocDataPoints being sent to Gov", colors.standout);
 
 			return locArray;
+		},
+
+		setDark: function() {
+			log("No locUpdate from client " + user.userID, colors.red);
+			log("Player " + user.userID + " has gone dark.", colors.err);
+			user.goneDark = true;
+			user.trackActive = false;
+		},
+
+		clearDark: function(){
+			log("Player " + user.userID + " active again.", colors.bgGreen);
+			user.goneDark = false;
+			user.trackActive = true;
 		},
 
 		lockout: function() {
