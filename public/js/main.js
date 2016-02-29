@@ -237,7 +237,7 @@ socket.on('serverMsg', function(res, err) {
 
 			var watchPosHandler = function(position) {
 				console.log('Latest Watched Position: ' + position.coords.latitude + ', ' + position.coords.longitude);
-				footerMsg('Latest Watched Position: <br />' + position.coords.latitude + ', ' + position.coords.longitude + '<br />Heading: ' + player.pos.heading + '<br />' + convertTimestamp(Date.now(), true));
+				footerMsg('Orientation Modernizr is ' + Modernizr['deviceorientation'] + '<br/>Latest Watched Position: <br />' + position.coords.latitude + ', ' + position.coords.longitude + '<br />Heading: ' + player.pos.heading + '<br />' + convertTimestamp(Date.now(), true));
 
 				var newPos = {
 					lat: position.coords.latitude,
@@ -263,6 +263,7 @@ socket.on('serverMsg', function(res, err) {
 				console.log("Watch position error: ");
 				console.log(error);
 			};
+
 			clientState.trackID = geo.watchPosition(
 				watchPosHandler,
 				// Optional settings below

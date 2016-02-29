@@ -92,7 +92,7 @@ var clientState = {
 			oldestTime: player.oldestTime,
 			locData: player.locData,
 			updateLocData: function(newData) {
-				for (itemKey in newData){
+				for (itemKey in newData) {
 					this[itemKey] = newData[itemKey];
 					console.log("Updated " + itemKey + " for player " + this.userID);
 				}
@@ -135,7 +135,7 @@ var clientState = {
 
 		newPlayer.marker.initPopup(popupData);
 		//newPlayer.marker.addPopup(true);
-		newPlayer.marker.addTag();//(newPlayer.team);
+		newPlayer.marker.addTag(); //(newPlayer.team);
 
 		if (newPlayer.team == 'ins') {
 			newPlayer.trail = viz.initTrail(newPlayer);
@@ -196,6 +196,8 @@ var clientState = {
 			ready: true,
 			setup: function(orientEventHandler) {
 				window.addEventListener('deviceorientation', orientEventHandler, false);
+				console.log("ORIENTATION EVENT HANDLER ADDED");
+				footerMsg("ORIENTATION EVENT HANDLER ADDED");
 			},
 			readyTest: function() {
 				console.log('Ready test called for vibration but no test.');

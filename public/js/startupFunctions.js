@@ -8,7 +8,7 @@ var startup = {
 	setup: function() {
 
 		initLeafletExtensions();
-		
+
 		//custom map function
 		Math.map = function(varToMap, varMin, varMax, mapToMin, mapToMax, clamp) {
 
@@ -30,10 +30,10 @@ var startup = {
 			return this + "<br />";
 		};
 
-		window.myExtend = function(originalObj,propsToUpdateObj){
+		window.myExtend = function(originalObj, propsToUpdateObj) {
 			for (key in propsToUpdateObj) {
-					originalObj[key] = propsToUpdateObj[key];
-				}
+				originalObj[key] = propsToUpdateObj[key];
+			}
 		};
 
 		window.convertTimestamp = function(t, withSeconds) {
@@ -111,12 +111,12 @@ var startup = {
 		}
 
 		//if (window.DeviceOrientationEvent) {
-			window.addEventListener('deviceorientation', function(event) {
-				window.player.pos['heading'] = event.alpha;
+		// window.addEventListener('deviceorientation', function(event) {
+		// 	window.player.pos['heading'] = event.alpha;
 
-			}, false);
-			console.log("ORIENTATION EVENT HANDLER ADDED");
-			footerMsg("ORIENTATION EVENT HANDLER ADDED");
+		// }, false);
+		// console.log("ORIENTATION EVENT HANDLER ADDED");
+		// footerMsg("ORIENTATION EVENT HANDLER ADDED");
 		// } else {
 		// 	footerMsg("NO ORIENTATION EVENT LISTENER FOUND");
 		// }
@@ -260,8 +260,9 @@ var startup = {
 		geo = initialize('geolocation');
 		heading = initialize('deviceorientation');
 		//this should add the following function as a window event handler
-		heading(function(eventData) {
-			player.pos['heading'] = eventData.alpha;
+		heading(function(event) {
+			//window.addEventListener('deviceorientation', function(event) {
+			window.player.pos['heading'] = event.alpha;
 			console.log("ORIENTATION EVENT HANDLER ADDED");
 			footerMsg("ORIENTATION EVENT HANDLER ADDED");
 		});
