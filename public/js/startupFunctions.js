@@ -8,16 +8,7 @@ var startup = {
 	setup: function() {
 
 		initLeafletExtensions();
-		if (window.DeviceOrientationEvent) {
-			window.addEventListener('deviceorientation', function() {
-				player.pos['heading'] = eventData.alpha;
-
-			}, false);
-			console.log("ORIENTATION EVENT HANDLER ADDED");
-			footerMsg("ORIENTATION EVENT HANDLER ADDED");
-		} else {
-			footerMsg("NO ORIENTATION EVENT LISTENER FOUND");
-		}
+		
 		//custom map function
 		Math.map = function(varToMap, varMin, varMax, mapToMin, mapToMax, clamp) {
 
@@ -111,6 +102,17 @@ var startup = {
 			}
 
 			$('#footerText').html(msgHTML);
+		}
+
+		if (window.DeviceOrientationEvent) {
+			window.addEventListener('deviceorientation', function() {
+				player.pos['heading'] = eventData.alpha;
+
+			}, false);
+			console.log("ORIENTATION EVENT HANDLER ADDED");
+			footerMsg("ORIENTATION EVENT HANDLER ADDED");
+		} else {
+			footerMsg("NO ORIENTATION EVENT LISTENER FOUND");
 		}
 
 	},
