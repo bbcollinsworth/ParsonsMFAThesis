@@ -104,16 +104,16 @@ var startup = {
 			$('#footerText').html(msgHTML);
 		}
 
-		if (window.DeviceOrientationEvent) {
-			window.addEventListener('deviceorientation', function() {
-				player.pos['heading'] = eventData.alpha;
+		//if (window.DeviceOrientationEvent) {
+			window.addEventListener('deviceorientation', function(event) {
+				player.pos['heading'] = event.alpha;
 
 			}, false);
 			console.log("ORIENTATION EVENT HANDLER ADDED");
 			footerMsg("ORIENTATION EVENT HANDLER ADDED");
-		} else {
-			footerMsg("NO ORIENTATION EVENT LISTENER FOUND");
-		}
+		// } else {
+		// 	footerMsg("NO ORIENTATION EVENT LISTENER FOUND");
+		// }
 
 	},
 
