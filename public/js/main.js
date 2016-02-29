@@ -221,20 +221,27 @@ socket.on('serverMsg', function(res, err) {
 		},
 
 		trackLocation: function() {
-			geo.watchPosition(function(position) {
+
+			var getOrientation = function() {
+
+			};
+
+			var watchPosHandler = function(position) {
 				console.log('Latest Watched Position: ' + position.coords.latitude + ', ' + position.coords.longitude);
-				footerMsg('Latest Watched Position: <br />' + position.coords.latitude + ', ' + position.coords.longitude + '<br />' + convertTimestamp(Date.now(),true));
+				footerMsg('Latest Watched Position: <br />' + position.coords.latitude + ', ' + position.coords.longitude + '<br />Heading: ' + player.pos.heading + '<br />' + convertTimestamp(Date.now(), true));
 				player.pos = {
 					lat: position.coords.latitude,
 					lng: position.coords.longitude,
 					time: position.timestamp //Date.now()
 				};
 
-				// console.log("Heading isNAN is " + isNaN(position.coords.heading));
-				// console.log(position.coords.heading);
 				if (position.coords.heading) {
 					player.pos['heading'] = position.coords.heading;
-					footerMsg("Heading found: " + player.pos.heading);
+					//footerMsg("Heading found: " + player.pos.heading);
+				}
+
+				if (player.team == 'ins') {
+					centerOnPlayer();
 				}
 
 				emit('locationUpdate', {
@@ -242,8 +249,24 @@ socket.on('serverMsg', function(res, err) {
 					//reqTimestamp: serverReqTime,
 					locData: player.pos
 				});
-				//storeAndSendLocation(res.timestamp);
-			});
+			};
+			watchPosError = function(error) {
+				console.log("Watch position error: ");
+				console.log(error);
+			};
+			clientState.trackID = geo.watchPosition(
+				watchPosHandler,
+				// Optional settings below
+				watchPosError, {
+					//timeout: 0,
+					enableHighAccuracy: true //,
+					// maximumAge: Infinity
+				}
+			);
+			//watchPosition(function(position) {
+
+			//storeAndSendLocation(res.timestamp);
+			//});
 		},
 
 		insStartData: function() {

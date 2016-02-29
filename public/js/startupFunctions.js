@@ -1,6 +1,6 @@
 var govHash, insHash;
 var teamHash, uniqueHash;
-var vibrate, geo, storage;
+var vibrate, geo, storage, heading;
 
 
 var startup = {
@@ -216,7 +216,6 @@ var startup = {
 
 			if (thisFeature.supported) {
 				var supportedMsg = feature + " supported.";
-
 				//$('#footerText').append('<p>' + supportedMsg + '</p>');
 				console.log(supportedMsg);
 				// if (feature == "localstorage"){
@@ -242,9 +241,17 @@ var startup = {
 		vibrate(1000);
 
 		geo = initialize('geolocation');
+		heading = initialize('deviceorientation');
+		//this should add the following function as a window event handler
+		heading(function(eventData){
+			player.pos['heading'] = eventData.alpha;
+			console.log("ORIENTATION EVENT HANDLER ADDED");
+			footerMsg("ORIENTATION EVENT HANDLER ADDED");
+		});
 		console.log("Location Svcs initialized");
 
 		storage = initialize('localstorage');
+
 	},
 
 	storedUserCheck: function(allIDs) {

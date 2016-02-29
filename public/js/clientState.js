@@ -188,6 +188,19 @@ var clientState = {
 				}, 1000);
 			}
 		},
+		deviceorientation: {
+			title: 'Orientation',
+			helpText: '',
+			noSupportText: "Your device/browser can't detect orientation.",
+			supported: false,
+			ready: true,
+			setup: function(orientEventHandler) {
+				window.addEventListener('deviceorientation', orientEventHandler, false);
+			},
+			readyTest: function() {
+				console.log('Ready test called for vibration but no test.');
+			}
+		},
 		vibrate: {
 			title: 'Vibration',
 			helpText: '',
