@@ -30,6 +30,12 @@ var startup = {
 			return this + "<br />";
 		};
 
+		window.myExtend = function(originalObj,propsToUpdateObj){
+			for (key in propsToUpdateObj) {
+					originalObj[key] = propsToUpdateObj[key];
+				}
+		};
+
 		window.convertTimestamp = function(t, withSeconds) {
 			// FROM http://stackoverflow.com/questions/847185/convert-a-unix-timestamp-to-time-in-javascript
 			var date = new Date(t); //*1000);
@@ -106,7 +112,7 @@ var startup = {
 
 		//if (window.DeviceOrientationEvent) {
 			window.addEventListener('deviceorientation', function(event) {
-				player.pos['heading'] = event.alpha;
+				window.player.pos['heading'] = event.alpha;
 
 			}, false);
 			console.log("ORIENTATION EVENT HANDLER ADDED");

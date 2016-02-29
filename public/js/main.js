@@ -9,7 +9,14 @@ var lsclear = function() {
 var player = {
 	localID: '',
 	team: '',
-	pos: {},
+	pos: {
+		'heading': undefined,
+		update: function(newData){
+			for (key in newData){
+				this[key] = newData[key];
+			}
+		}
+	},
 	distanceTo: function(otherPos) {
 		var d = L.latLng(player.pos.lat, player.pos.lng).distanceTo([otherPos.lat, otherPos.lng]);
 		return d;
@@ -79,11 +86,13 @@ var storeAndSendLocation = function(v1, v2) { //callback) {
 		console.log('Position: ' + position.coords.latitude + ', ' + position.coords.longitude);
 		console.log(position);
 
-		player.pos = {
+		var newPos = {
 			lat: position.coords.latitude,
 			lng: position.coords.longitude,
 			time: position.timestamp //Date.now()
 		};
+
+		player.pos.update(newPos);
 
 		// console.log("Heading isNAN is " + isNaN(position.coords.heading));
 		// console.log(position.coords.heading);
@@ -229,16 +238,16 @@ socket.on('serverMsg', function(res, err) {
 			var watchPosHandler = function(position) {
 				console.log('Latest Watched Position: ' + position.coords.latitude + ', ' + position.coords.longitude);
 				footerMsg('Latest Watched Position: <br />' + position.coords.latitude + ', ' + position.coords.longitude + '<br />Heading: ' + player.pos.heading + '<br />' + convertTimestamp(Date.now(), true));
-				player.pos = {
+
+				var newPos = {
 					lat: position.coords.latitude,
 					lng: position.coords.longitude,
 					time: position.timestamp //Date.now()
 				};
 
-				if (position.coords.heading) {
-					player.pos['heading'] = position.coords.heading;
-					//footerMsg("Heading found: " + player.pos.heading);
-				}
+				player.pos.update(newPos);
+				console.log("Playerpos updated: ");
+				console.log(player);
 
 				if (player.team == 'ins') {
 					centerOnPlayer();
