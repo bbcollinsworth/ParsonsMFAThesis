@@ -277,7 +277,8 @@ io.on('connection', function(socket) {
 				} else if (res.reqTimestamp === player.lastLocRequest.timestamp) {
 					player.lastLocRequest.resReceived = true;
 					storeLocation();
-					if (!player.trackActive) {
+					if (!player.trackActive || player.goneDark) {
+						player.goneDark = false;
 						startTracking();
 					}
 

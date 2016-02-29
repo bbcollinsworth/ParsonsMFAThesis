@@ -8,13 +8,48 @@ var initLeafletExtensions = function() {
 
 	var playerMarkerExt = {
 
-		refresh: function(posObj, options) {
-			this.setLatLng([posObj.lat, posObj.lng]);
+		icons: {
+			get suspect() {
+				return L.mapbox.marker.icon({
+					'marker-size': 'large',
+					'marker-symbol': 'pitch',
+					'marker-color': '#ff0000',
+					'className': 'suspect-marker'
+				});
+			},
+			get dark() {
+				return L.mapbox.marker.icon({
+					'marker-size': 'large',
+					'marker-symbol': 'pitch',
+					'marker-color': '#666666',
+					'className': 'dark-marker'
+				});
+			},
+			get lockedOut() {
+				return L.mapbox.marker.icon({
+					'marker-size': 'large',
+					'marker-symbol': 'cross',
+					'marker-color': '#000000',
+					'className': 'locked-marker'
+				});
+			}
+		},
+
+		refresh: function(options) { //posObj, options) {
+			if ('latestPos' in this.playerRef) {
+				this.setLatLng([this.playerRef.latestPos.lat, this.playerRef.latestPos.lng]);
+			} else {
+				console.log("ERROR: LatestPos not found");
+			}
+
+			this.goneDarkCheck();
+			//this.updateTag();
+			//this.setLatLng([posObj.lat, posObj.lng]);
 			if (options !== undefined) {
 				this.setStyle(options);
 			}
 
-			console.log("Marker refreshed to: " + posObj.lat + ", " + posObj.lng);
+			console.log("Marker refreshed to: " + this.playerRef.latestPos.lat + ", " + this.playerRef.latestPos.lng);
 		},
 
 		makePopupHTML: function() {
@@ -36,7 +71,7 @@ var initLeafletExtensions = function() {
 			}
 		},
 
-		setSelected: function(_tag){
+		setSelected: function(_tag) {
 			var thisMarker = this;
 			var tag;
 			if (!_tag) {
@@ -45,64 +80,124 @@ var initLeafletExtensions = function() {
 				tag = _tag;
 			}
 			$('.player-tag').removeClass('selected-tag');
-				var markerPos = thisMarker.getLatLng();
-				map.panTo(markerPos);
-				//NEED TO DO THIS BUT REVERT SOMEHOW
-				//thisMarker.setZIndexOffset(1000);
-				var tagPos = tag.offset();
-				var tagHeight = tag.height();
-				var mapCenterPoint = map.latLngToContainerPoint(markerPos);
-				console.log("Map Center is " + mapCenterPoint);
-				console.log("Tag Pos Top is: " + tagPos.top);
-				var currOffset = $('#suspect-container').offset();
-				// console.log("Current offset is: ");
-				// console.log(currOffset);
-				var pixelVOffset = currOffset.top + (mapCenterPoint.y - tagPos.top) - tagHeight*0.5;
-				
-				$('#suspect-container').css({
-					'transform': "translate(0," + pixelVOffset + "px)"
-				}); 
-				tag.addClass('selected-tag');
-				console.log("Amt to translate is " + pixelVOffset);
+			$('.player-tag').children('.tag-pointer').removeClass('selected-pointer');
+			var markerPos = thisMarker.getLatLng();
+			map.panTo(markerPos);
+			//NEED TO DO THIS BUT REVERT SOMEHOW
+			//thisMarker.setZIndexOffset(1000);
+			var tagPos = tag.offset();
+			var tagHeight = tag.height();
+			var mapCenterPoint = map.latLngToContainerPoint(markerPos);
+			console.log("Map Center is " + mapCenterPoint);
+			console.log("Tag Pos Top is: " + tagPos.top);
+			var currOffset = $('#suspect-container').offset();
+			// console.log("Current offset is: ");
+			// console.log(currOffset);
+			var pixelVOffset = currOffset.top + (mapCenterPoint.y - tagPos.top) - tagHeight * 0.5;
+
+			$('#suspect-container').css({
+				'transform': "translate(0," + pixelVOffset + "px)"
+			});
+			tag.addClass('selected-tag');
+			tag.children('.tag-pointer').addClass('selected-pointer');
+			console.log("Amt to translate is " + pixelVOffset);
 		},
 
 		//tag: 
-
-		addTag: function(team){
+		goneDarkCheck: function() {
 			var thisMarker = this;
+			var classType = '';
+			var icon;
+			var opacity;
+
+			if (thisMarker.playerRef.goneDark) {
+				classType = 'dark';
+				var icon = this.icons.dark;
+				opacity = 0.5;
+				thisMarker['tag'].removeClass('ins-tag');
+			} else {
+				classType = thisMarker.playerRef.team;
+				var icon = this.icons.suspect;
+				opacity = 0.8;
+				thisMarker['tag'].removeClass('dark-tag');
+			}
+
+			thisMarker['tag'].addClass(classType + '-tag');
+
+			
+			//var zIndexOffset = -100;
+			//var opacity = 0.5; //,
+
+			thisMarker.setIcon(icon);
+			//this.setZIndexOffset(zIndexOffset);
+			thisMarker.setOpacity(opacity);
+		},
+
+		// updateTag: function() {
+		// 	var thisMarker = this;
+		// 	//var pHTML = thisMarker.makePopupHTML();
+		// 	var team = thisMarker.playerRef.team;
+		// 	// console.log('team for tag is: '+ team);
+		// 	if (thisMarker.playerRef.goneDark) {
+		// 		team = 'dark';
+		// 		thisMarker['tag'].removeClass('ins-tag');
+		// 	} else {
+		// 		thisMarker['tag'].removeClass('dark-tag');
+		// 	}
+		// 	// if (team == 'ins' && thisMarker.playerRef.goneDark){
+		// 	// 	console.log('gone dark is: ' + thisMarker.playerRef.goneDark);
+		// 	// 	team = 'dark';
+		// 	// }
+		// 	// var tag = $("<div />",{
+
+		// 	thisMarker['tag'].addClass(team + '-tag');
+		// 	// = $("<div />",{
+		// 	// 	'id': this.title + "-tag",
+		// 	// 	'class': 'player-tag ' + team + '-tag',
+		// 	// 	'html': pHTML 
+		// 	// });
+		// },
+
+		addTag: function() { //team){
+			var thisMarker = this;
+
+			//thisMarker.updateTag();
 			var pHTML = thisMarker.makePopupHTML();
+			var team = thisMarker.playerRef.team;
+			console.log('team for tag is: ' + team);
+
 			// var tag = $("<div />",{
-			thisMarker['tag'] = $("<div />",{
+			thisMarker['tag'] = $("<div />", {
 				'id': this.title + "-tag",
 				'class': 'player-tag ' + team + '-tag',
-				'html': pHTML 
-			});
+				'html': pHTML
+			}).append($("<div />",{
+				'id': this.title + "-pointer",
+				'class': 'tag-pointer'//,
+				// 'css': {
+				// 	'border-left': '0px solid ' + 
+				// }
+			}));
 			$('#suspect-container').append(thisMarker.tag);
-			
-			thisMarker.tag.on('click',function(){
-				thisMarker.setSelected($(this));
-				// $('.player-tag').removeClass('selected-tag');
-				// var markerPos = thisMarker.getLatLng();
-				// map.panTo(markerPos);
-				// //NEED TO DO THIS BUT REVERT SOMEHOW
-				// //thisMarker.setZIndexOffset(1000);
-				// var tagPos = $(this).offset();
-				// var tagHeight = $(this).height();
-				// var mapCenterPoint = map.latLngToContainerPoint(markerPos);
-				// console.log("Map Center is " + mapCenterPoint);
-				// console.log("Tag Pos Top is: " + tagPos.top);
-				// var currOffset = $('#suspect-container').offset();
-				// // console.log("Current offset is: ");
-				// // console.log(currOffset);
-				// var pixelVOffset = currOffset.top + (mapCenterPoint.y - tagPos.top) - tagHeight*0.5;
-				
-				// $('#suspect-container').css({
-				// 	'transform': "translate(0," + pixelVOffset + "px)"
-				// }); 
-				// $(this).addClass('selected-tag');
-				// console.log("Amt to translate is " + pixelVOffset);
 
+			if (team == 'ins') {
+				console.log('Gone dark is: ' + thisMarker.playerRef.goneDark);
+				//thisMarker.updateTag();
+				thisMarker.goneDarkCheck();
+			}
+
+			thisMarker.tag.on('click', function() {
+				thisMarker.setSelected($(this));
 			});
+		},
+
+		updateTagInfo: function(data){
+			//set new title and text properties
+			for (key in data) {
+				this[key] = data[key];
+			}
+			var pHTML = this.makePopupHTML();
+			this.tag.html(pHTML);
 		},
 
 		addPopup: function(shouldOpen) {
@@ -134,11 +229,12 @@ var initLeafletExtensions = function() {
 
 		renderLockout: function(data) {
 
-			var icon = L.mapbox.marker.icon({
-				'marker-size': 'large',
-				'marker-symbol': 'cross',
-				'marker-color': '#000000'
-			});
+			var icon = this.icons.lockedOut;
+			// var icon = L.mapbox.marker.icon({
+			// 	'marker-size': 'large',
+			// 	'marker-symbol': 'cross',
+			// 	'marker-color': '#000000'
+			// });
 			var zIndexOffset = -100;
 			var opacity = 0.5; //,
 

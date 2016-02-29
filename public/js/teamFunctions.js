@@ -393,12 +393,7 @@ var gov = {
 
 			console.log("Player ID: " + userID);
 
-			//ADD CHECK FOR OWN PLAYER
-			//if (userID = ownplayer's id)
-			// player.type = "self"
-
 			if (!(userID in players)) {
-				//players[userID] = clientState.addPlayer(playerData, userID);
 				clientState.addPlayer(playerData, userID);
 				players[userID].updateLocData(playerData);
 			} else {

@@ -92,17 +92,19 @@ var clientState = {
 			oldestTime: player.oldestTime,
 			locData: player.locData,
 			updateLocData: function(newData) {
-				this.latestPos = newData.locData[0];
-				this.locData = newData.locData;
-				this.oldestTime = newData.oldestTime;
+				for (itemKey in newData){
+					this[itemKey] = newData[itemKey];
+					console.log("Updated " + itemKey + " for player " + this.userID);
+				}
 				if ('trail' in this) {
 					console.log("Trail found in " + this.userID + "!");
 					var pRef = this;
+					pRef.marker.refresh();
 					pRef.trail.render();
 					$('#app').on('trailRendered', function() {
-						pRef.marker.refresh(pRef.latestPos);
+						pRef.marker.refresh();
+						//pRef.marker.refresh(pRef.latestPos);
 					});
-					//pRef.trail.render(pRef.marker.refresh,pRef.latestPos);
 				}
 			}
 		};
@@ -110,6 +112,7 @@ var clientState = {
 		clientState.allPlayers[uID] = newPlayer;
 
 		newPlayer.marker = viz.marker(player.type, newPlayer.latestPos).addTo(map);
+		newPlayer.marker['playerRef'] = newPlayer;
 
 		console.log("ALL PLAYERS: ");
 		console.log(clientState.allPlayers);
@@ -132,7 +135,7 @@ var clientState = {
 
 		newPlayer.marker.initPopup(popupData);
 		//newPlayer.marker.addPopup(true);
-		newPlayer.marker.addTag(newPlayer.team);
+		newPlayer.marker.addTag();//(newPlayer.team);
 
 		if (newPlayer.team == 'ins') {
 			newPlayer.trail = viz.initTrail(newPlayer);

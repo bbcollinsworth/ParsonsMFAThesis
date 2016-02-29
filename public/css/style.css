@@ -376,20 +376,57 @@
 	color: rgba(255,255,255,1.0);
 	/*background-color: rgba(255,0,0,0.7);*/
 	opacity: 0.5;
+	border-right: 0em solid transparent;
 }
 
 .gov-tag {
 	background-color: rgba(0,0,255,0.7);
+	border-color: rgba(0,0,255,0.7);
 }
 
 .ins-tag {
 	background-color: rgba(255,0,0,0.7);
+	border-color: rgba(255,0,0,0.7);
+}
+
+.dark-tag {
+	background-color: rgba(120,120,120,0.7);
+	border-color: rgba(120,120,120,0.7);
 }
 
 .player-tag.selected-tag {
 	opacity: 1;
+	width: 100%;
+	border-right: 0.5em solid transparent;
+    /*border-radius: 0% 1em 1em 0%;*/
 	/*color: rgba(255,255,255,1.0);
 	background-color: rgba(255,0,0,0.7);*/
+}
+
+.tag-pointer {
+	position: absolute;
+	/*transition-duration: inherit;*/
+	float: right;
+	right: 0px;//5px;
+	top: 0.7em;
+	width: 0;
+	height: 0;
+	border-top: 0.8em solid transparent;
+	border-bottom: 0.8em solid transparent;
+	/*border-left: 0em solid white;*/
+	border-left: 1em solid white;
+	opacity: 0;
+}
+
+.tag-pointer.selected-pointer {
+	/*transition-delay: 1s;*/
+	transition-duration: 1s;
+	opacity: 1;
+	/*border-left: 1em solid white;*/
+}
+
+.player-tag.selected-tag:last-child {
+
 }
 
 .player-tag:hover{

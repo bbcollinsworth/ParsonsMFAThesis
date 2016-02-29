@@ -105,10 +105,11 @@ var viz = {
 					$(thisMarker.uniqueClass).css({
 						'opacity': viz.trail.settings.maxOpacity * mappedToTime
 					});
-					if (isLastMarker){
-						$('#app').trigger('trailRendered');
-					}
-				}, 1.0 * mappedToTime * 1000);
+					//FOR IF YOU WANT MARKER TO REFRESH AFTER TRAIL
+					// if (isLastMarker){
+					// 	$('#app').trigger('trailRendered');
+					// }
+				}, 1.0 * (1-mappedToTime) * 1000);
 			};
 			return thisMarker;
 		},
@@ -131,7 +132,7 @@ var viz = {
 				var tM = t.markers[(posData.length - 1) - i];
 				tM.addTo(map);
 				var tDelay = 2.0 * tM.mappedToTime;
-				var blur = 1 + viz.trail.settings.maxSize * tM.mappedToTime;
+				var blur = 1 + viz.trail.settings.maxBlur * tM.mappedToTime;
 				tM.setCSS({
 					//'transition-delay': tDelay.toString() + "s",
 					'-webkit-filter': "blur(" + blur + "px)",
