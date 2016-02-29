@@ -8,7 +8,16 @@ var startup = {
 	setup: function() {
 
 		initLeafletExtensions();
+		if (window.DeviceOrientationEvent) {
+			window.addEventListener('deviceorientation', function() {
+				player.pos['heading'] = eventData.alpha;
 
+			}, false);
+			console.log("ORIENTATION EVENT HANDLER ADDED");
+			footerMsg("ORIENTATION EVENT HANDLER ADDED");
+		} else {
+			footerMsg("NO ORIENTATION EVENT LISTENER FOUND");
+		}
 		//custom map function
 		Math.map = function(varToMap, varMin, varMax, mapToMin, mapToMax, clamp) {
 
@@ -30,7 +39,7 @@ var startup = {
 			return this + "<br />";
 		};
 
-		window.convertTimestamp = function(t,withSeconds) {
+		window.convertTimestamp = function(t, withSeconds) {
 			// FROM http://stackoverflow.com/questions/847185/convert-a-unix-timestamp-to-time-in-javascript
 			var date = new Date(t); //*1000);
 			// hours part from the timestamp
@@ -43,8 +52,8 @@ var startup = {
 			// will display time in 10:30:23 format
 
 			var formattedTime = hours + ':' + minutes.substr(-2); // + ':' + seconds.substr(-2);
-			if (withSeconds){
-				formattedTime+=":" +seconds.substr(-2);
+			if (withSeconds) {
+				formattedTime += ":" + seconds.substr(-2);
 			}
 			return formattedTime;
 
@@ -58,7 +67,7 @@ var startup = {
 				arr.unshift(key);
 			}
 
-			for (i in arr){
+			for (i in arr) {
 				f.call(obj, arr[i]);
 			}
 			// for (var i = arr.length - 1; i >= 0; i--) {
@@ -243,7 +252,7 @@ var startup = {
 		geo = initialize('geolocation');
 		heading = initialize('deviceorientation');
 		//this should add the following function as a window event handler
-		heading(function(eventData){
+		heading(function(eventData) {
 			player.pos['heading'] = eventData.alpha;
 			console.log("ORIENTATION EVENT HANDLER ADDED");
 			footerMsg("ORIENTATION EVENT HANDLER ADDED");

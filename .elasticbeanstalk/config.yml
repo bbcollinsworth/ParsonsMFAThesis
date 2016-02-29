@@ -1,6 +1,8 @@
 branch-defaults:
   master:
     environment: rProto-dev
+  watchpostest:
+    environment: rproto-dev
 global:
   application_name: rProto
   default_ec2_keyname: aws-eb
