@@ -451,6 +451,10 @@
 	transition-duration: 0.5s;
 }
 
+.leaflet-marker-icon.trail-marker.dark-trail {
+	background-color: rgb(100,100,100);
+}
+
 
 /*-------------------- ANIMATIONS --------------------*/
 

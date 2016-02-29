@@ -62,6 +62,7 @@ var initLeafletExtensions = function() {
 					newHTML += this.text[line].addBreak();
 				}
 			}
+
 			return newHTML;
 		},
 
@@ -124,7 +125,7 @@ var initLeafletExtensions = function() {
 
 			thisMarker['tag'].addClass(classType + '-tag');
 
-			
+
 			//var zIndexOffset = -100;
 			//var opacity = 0.5; //,
 
@@ -132,31 +133,6 @@ var initLeafletExtensions = function() {
 			//this.setZIndexOffset(zIndexOffset);
 			thisMarker.setOpacity(opacity);
 		},
-
-		// updateTag: function() {
-		// 	var thisMarker = this;
-		// 	//var pHTML = thisMarker.makePopupHTML();
-		// 	var team = thisMarker.playerRef.team;
-		// 	// console.log('team for tag is: '+ team);
-		// 	if (thisMarker.playerRef.goneDark) {
-		// 		team = 'dark';
-		// 		thisMarker['tag'].removeClass('ins-tag');
-		// 	} else {
-		// 		thisMarker['tag'].removeClass('dark-tag');
-		// 	}
-		// 	// if (team == 'ins' && thisMarker.playerRef.goneDark){
-		// 	// 	console.log('gone dark is: ' + thisMarker.playerRef.goneDark);
-		// 	// 	team = 'dark';
-		// 	// }
-		// 	// var tag = $("<div />",{
-
-		// 	thisMarker['tag'].addClass(team + '-tag');
-		// 	// = $("<div />",{
-		// 	// 	'id': this.title + "-tag",
-		// 	// 	'class': 'player-tag ' + team + '-tag',
-		// 	// 	'html': pHTML 
-		// 	// });
-		// },
 
 		addTag: function() { //team){
 			var thisMarker = this;
@@ -171,12 +147,9 @@ var initLeafletExtensions = function() {
 				'id': this.title + "-tag",
 				'class': 'player-tag ' + team + '-tag',
 				'html': pHTML
-			}).append($("<div />",{
+			}).append($("<div />", {
 				'id': this.title + "-pointer",
-				'class': 'tag-pointer'//,
-				// 'css': {
-				// 	'border-left': '0px solid ' + 
-				// }
+				'class': 'tag-pointer' //,
 			}));
 			$('#suspect-container').append(thisMarker.tag);
 
@@ -191,13 +164,18 @@ var initLeafletExtensions = function() {
 			});
 		},
 
-		updateTagInfo: function(data){
+		updateTagText: function(data) {
 			//set new title and text properties
 			for (key in data) {
 				this[key] = data[key];
 			}
 			var pHTML = this.makePopupHTML();
 			this.tag.html(pHTML);
+			//gotta reattach arrow:
+			this.tag.append($("<div />", {
+				'id': this.title + "-pointer",
+				'class': 'tag-pointer' //,
+			}));
 		},
 
 		addPopup: function(shouldOpen) {

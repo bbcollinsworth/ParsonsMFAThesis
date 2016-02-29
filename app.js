@@ -456,9 +456,9 @@ io.on('connection', function(socket) {
 	socket.on('disconnect', function() {
 		log('User ' + socket.id + ' just disconnected.', colors.orange);
 
-		if (player.trackActive) {
-			clearInterval(tracking);
-		}
+		// if (player.trackActive) {
+		// 	clearInterval(tracking);
+		// }
 
 		try {
 			//player.removeFromTeam(player.team);

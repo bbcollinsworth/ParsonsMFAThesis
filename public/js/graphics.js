@@ -78,11 +78,16 @@ var viz = {
 		},
 		markers: [],
 		generateTrailMarker: function(pos, oldest) {
+			var classesToAdd = 'trail-marker ' + pos.time;
+			if (this.playerRef.goneDark){
+				console.log("Gone Dark is " + this.playerRef.goneDark);
+				classesToAdd += ' dark-trail';
+			}
 			//var oldestTime = t.playerRef.oldestTime;
 			var mappedToTime = Math.map(pos.time, oldest, Date.now(), 0.1, 1);
 			var mappedSize = viz.trail.settings.maxSize * mappedToTime;
 			var iconOptions = {
-				className: 'trail-marker ' + pos.time,
+				className: classesToAdd,
 				iconSize: [mappedSize, mappedSize]
 			};
 			var markerOptions = {
@@ -109,7 +114,7 @@ var viz = {
 					// if (isLastMarker){
 					// 	$('#app').trigger('trailRendered');
 					// }
-				}, 1.0 * (1-mappedToTime) * 1000);
+				}, 1.0 * (1 - mappedToTime) * 1000);
 			};
 			return thisMarker;
 		},
@@ -145,6 +150,10 @@ var viz = {
 				}
 			}
 
+			// if (t.playerRef.goneDark){
+			// 	$('trail-marker').addClass('dark-trail');
+			// }
+
 			//var markerEls = document.getElementsByClassName('trail-marker');
 			//console.log("LOGGING MARKER ELEMENTS");
 			//console.log(markerEls);
@@ -163,8 +172,8 @@ var viz = {
 		}
 	},
 
-	addSuspectContainer: function(){
-		var c = $('<div />',{
+	addSuspectContainer: function() {
+		var c = $('<div />', {
 			'id': 'suspect-container',
 			'class': 'tag-container'
 		});

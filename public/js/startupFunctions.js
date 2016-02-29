@@ -30,7 +30,7 @@ var startup = {
 			return this + "<br />";
 		};
 
-		window.convertTimestamp = function(t) {
+		window.convertTimestamp = function(t,withSeconds) {
 			// FROM http://stackoverflow.com/questions/847185/convert-a-unix-timestamp-to-time-in-javascript
 			var date = new Date(t); //*1000);
 			// hours part from the timestamp
@@ -41,7 +41,11 @@ var startup = {
 			// seconds part from the timestamp
 			var seconds = "0" + date.getSeconds();
 			// will display time in 10:30:23 format
+
 			var formattedTime = hours + ':' + minutes.substr(-2); // + ':' + seconds.substr(-2);
+			if (withSeconds){
+				formattedTime+=":" +seconds.substr(-2);
+			}
 			return formattedTime;
 
 		};

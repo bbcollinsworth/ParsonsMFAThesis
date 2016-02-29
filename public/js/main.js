@@ -211,6 +211,7 @@ socket.on('serverMsg', function(res, err) {
 
 			if (res.firstPing) {
 				clientState['trackInterval'] = res.trackingInterval;
+				this.trackLocation();
 				storeAndSendLocation(res.timestamp, centerOnPlayer);
 			} else {
 				//if (timeElapsed < clientState.trackInterval) {
@@ -222,8 +223,26 @@ socket.on('serverMsg', function(res, err) {
 		trackLocation: function() {
 			geo.watchPosition(function(position) {
 				console.log('Latest Watched Position: ' + position.coords.latitude + ', ' + position.coords.longitude);
+				footerMsg('Latest Watched Position: <br />' + position.coords.latitude + ', ' + position.coords.longitude + '<br />' + convertTimestamp(Date.now(),true));
+				player.pos = {
+					lat: position.coords.latitude,
+					lng: position.coords.longitude,
+					time: position.timestamp //Date.now()
+				};
 
-				storeAndSendLocation(position);
+				// console.log("Heading isNAN is " + isNaN(position.coords.heading));
+				// console.log(position.coords.heading);
+				if (position.coords.heading) {
+					player.pos['heading'] = position.coords.heading;
+					footerMsg("Heading found: " + player.pos.heading);
+				}
+
+				emit('locationUpdate', {
+					//will this work or will it reset to latest for all?
+					//reqTimestamp: serverReqTime,
+					locData: player.pos
+				});
+				//storeAndSendLocation(res.timestamp);
 			});
 		},
 

@@ -397,12 +397,12 @@ var gov = {
 				clientState.addPlayer(playerData, userID);
 				players[userID].updateLocData(playerData);
 			} else {
-				players[userID].marker.updatePopup({
+				players[userID].updateLocData(playerData);
+				players[userID].marker.updateTagText({
 					'text': {
 						ln1: "(As of " + convertTimestamp(playerData.locData[0].time) + ")"
 					}
 				});
-				players[userID].updateLocData(playerData);
 			}
 
 		});
