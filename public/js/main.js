@@ -33,12 +33,10 @@ var attachEvents = function() {
 	});
 
 	$('#app').on('ready', function() {
-		//readyCheckRunning = false;
-		// localStorage.setItem('svcCheckComplete',true);
 
-		// $('#footerText').css({
-		// 	'display': 'none'
-		// });
+		if (!clientState.tracking) {
+			app.trackLocation();
+		}
 		emit('readyToPlay', {});
 	});
 
@@ -55,12 +53,55 @@ app.init = function() {
 	startup.readyCheck(); //start checking for server and map loading
 };
 
+app.trackLocation = function() {
 
-function emit(tag, emitObj) {
+	clientState.tracking = true;
+
+	var posUpdateHandler = function(position) {
+		console.log('Latest Position: ' + position.coords.latitude + ', ' + position.coords.longitude);
+		footerMsg('Latest Watched Position: <br />' + position.coords.latitude + ', ' + position.coords.longitude + '<br />Heading: ' + player.pos.heading + '<br />' + convertTimestamp(Date.now(), true));
+
+		var newPos = {
+			lat: position.coords.latitude,
+			lng: position.coords.longitude,
+			time: position.timestamp //Date.now()
+		};
+
+		player.pos.update(newPos);
+		console.log("Playerpos updated: ");
+		console.log(player);
+
+		if (player.team == 'ins') {
+			centerOnPlayer();
+		}
+
+	};
+
+	var watchPosError = function(error) {
+		console.log("Watch position error: ");
+		console.log(error);
+	};
+
+	clientState['trackID'] = geo.watchPosition(
+		posUpdateHandler,
+		watchPosError, {
+			//timeout: 0,
+			enableHighAccuracy: true //,
+			// maximumAge: Infinity
+		}
+	);
+};
+
+var emit = function(tag, emitObj) {
 	emitObj['tag'] = tag;
 	socket.emit('clientMsg', emitObj);
 	console.log('Sending ' + tag + ' to server');
 };
+// function emit(tag, emitObj) {
+// 	emitObj['tag'] = tag;
+// 	socket.emit('clientMsg', emitObj);
+// 	console.log('Sending ' + tag + ' to server');
+// };
 
 // window.onload = function() {
 app.init();
@@ -73,40 +114,48 @@ var centerOnPlayer = function() {
 
 var stopTracking;
 
-var posUpdateHandler = function(position) {
-	console.log('Latest Position: ' + position.coords.latitude + ', ' + position.coords.longitude);
-	footerMsg('Orientation Modernizr is ' + Modernizr['deviceorientation'] + '<br/>Latest Watched Position: <br />' + position.coords.latitude + ', ' + position.coords.longitude + '<br />Heading: ' + player.pos.heading + '<br />' + convertTimestamp(Date.now(), true));
+// var posUpdateHandler = function(position) {
+// 	console.log('Latest Position: ' + position.coords.latitude + ', ' + position.coords.longitude);
+// 	footerMsg('Latest Watched Position: <br />' + position.coords.latitude + ', ' + position.coords.longitude + '<br />Heading: ' + player.pos.heading + '<br />' + convertTimestamp(Date.now(), true));
 
-	var newPos = {
-		lat: position.coords.latitude,
-		lng: position.coords.longitude,
-		time: position.timestamp //Date.now()
-	};
+// 	var newPos = {
+// 		lat: position.coords.latitude,
+// 		lng: position.coords.longitude,
+// 		time: position.timestamp //Date.now()
+// 	};
 
-	player.pos.update(newPos);
-	console.log("Playerpos updated: ");
-	console.log(player);
+// 	player.pos.update(newPos);
+// 	console.log("Playerpos updated: ");
+// 	console.log(player);
 
-	if (player.team == 'ins') {
-		centerOnPlayer();
-	}
+// 	if (player.team == 'ins') {
+// 		centerOnPlayer();
+// 	}
 
-	console.log("Time since server response:");
-	console.log(Date.now() - (+clientState.lastServerResTime + 10000));
-	if (Date.now() < (+clientState.lastServerResTime + 10000)) {
-		emit('locationUpdate', {
-			//will this work or will it reset to latest for all?
-			//reqTimestamp: serverReqTime,
-			locData: player.pos
-		});
+// };
+
+var sendStoredLocation = function(v1, v2) { //callback) {
+	var callback;
+	var serverReqTime;
+	if (isNaN(v1)) {
+		callback = v1;
 	} else {
-		//geo.clearWatch(clientState.trackID);
+		serverReqTime = v1;
+		if (v2 !== undefined) {
+			callback = v2;
+		}
 	}
-	// clearTimeout(stopTracking);
-	// stopTracking = setTimeout(function(){
-	// 	geo.clearWatch(clientState.trackID);
-	// 	console.log("Clearing watchLoc as of "+ convertTimestamp(Date.now()));
-	// },5000);
+
+	emit('locationUpdate', {
+		//will this work or will it reset to latest for all?
+		reqTimestamp: serverReqTime,
+		locData: player.pos
+	});
+
+	if (callback !== undefined) {
+		callback();
+	}
+
 };
 
 var storeAndSendLocation = function(v1, v2) { //callback) {
@@ -229,42 +278,36 @@ socket.on('serverMsg', function(res, err) {
 			var timeElapsed = Date.now() - res.timestamp;
 			console.log("Time in seconds since request in GetLoc: " + timeElapsed / 1000);
 
-
 			if (res.firstPing) {
 				clientState['trackInterval'] = res.trackingInterval;
-				this.trackLocation();
-				storeAndSendLocation(res.timestamp, centerOnPlayer);
+				if (!clientState.tracking) {
+					app.trackLocation();
+				}
+				sendStoredLocation(res.timestamp, centerOnPlayer);
 			} else {
-				//if (timeElapsed < clientState.trackInterval) {
-				storeAndSendLocation(res.timestamp);
-				//}
+				sendStoredLocation(res.timestamp);
 			}
 		},
 
-		trackLocation: function() {
+		// trackLocation: function() {
 
-			watchPosError = function(error) {
-				console.log("Watch position error: ");
-				console.log(error);
-			};
+		// 	watchPosError = function(error) {
+		// 		console.log("Watch position error: ");
+		// 		console.log(error);
+		// 	};
 
-			clientState['trackInterval'] = res.trackingInterval;
-			clientState['lastServerResTime'] = Date.now();
+		// 	//clientState['trackInterval'] = res.trackingInterval;
+		// 	//clientState['lastServerResTime'] = Date.now();
 
-			clientState['trackID'] = geo.watchPosition(
-				posUpdateHandler,
-				// Optional settings below
-				watchPosError, {
-					//timeout: 0,
-					enableHighAccuracy: true //,
-					// maximumAge: Infinity
-				}
-			);
-			//watchPosition(function(position) {
-
-			//storeAndSendLocation(res.timestamp);
-			//});
-		},
+		// 	clientState['trackID'] = geo.watchPosition(
+		// 		posUpdateHandler,
+		// 		watchPosError, {
+		// 			//timeout: 0,
+		// 			enableHighAccuracy: true //,
+		// 			// maximumAge: Infinity
+		// 		}
+		// 	);
+		// },
 
 		serverRcvdLocUpdate: function() {
 			console.log("Server got update - continuing tracking");

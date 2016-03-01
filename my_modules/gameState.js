@@ -6,9 +6,10 @@
 	var log = include('log');
 
 	var playSettings = {
-		trackIntervalS: 10,
+		trackIntervalS: 3,
 		hackTimeM: 1,
 		trailDurationM: 4,
+		dataSkipInterval: 3,
 		introContent: {
 			'gov': {
 				'screen1': {

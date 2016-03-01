@@ -3,6 +3,7 @@ var clientState = {
 	mapLoaded: false,
 	readyCheckRunning: false,
 	ready: false,
+	tracking: false,
 	playerPos: {
 		lat: 0,
 		lng: 0
@@ -11,7 +12,7 @@ var clientState = {
 	intro: {
 		content: {},
 		run: function() { //team) {
-			var intro = this.content;//clientState.intro.content;
+			var intro = this.content; //clientState.intro.content;
 			var team = player.team;
 			msg(intro[team].screen1);
 			$('#nextButton').off('click').on('click', function() {
@@ -172,6 +173,11 @@ var clientState = {
 				setTimeout(function() {
 					navigator.geolocation.getCurrentPosition(function(position) {
 						console.log('Position: ' + position.coords.latitude + ', ' + position.coords.longitude);
+						window.player.pos.update({
+							lat: position.coords.latitude,
+							lng: position.coords.longitude,
+							time: position.timestamp
+						});
 						clientState.features.geolocation.ready = true;
 						console.log('Geoloc test successful');
 

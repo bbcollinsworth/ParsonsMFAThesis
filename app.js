@@ -101,34 +101,33 @@ io.on('connection', function(socket) {
 		player.trackActive = true;
 		log('Started tracking ' + player.userID, colors.green);
 		player['lastLocReqTime'] = Date.now();
-		emitTo.socket('trackLocation', {
+		player['lastReqResRcvd'] = false;
+
+		emitTo.socket('getLocation', {
 			firstPing: true,
 			trackingInterval: gameState.trackingInterval,
-			// timestamp: player.lastLocReqTime
-			timestamp: Date.now()
+			timestamp: player.lastLocReqTime
 		});
-		// emitTo.socket('getLocation', {
-		// 	firstPing: true,
-		// 	trackingInterval: gameState.trackingInterval,
-		// 	timestamp: player.lastLocReqTime
-		// });
 
-		// tracking = setInterval(function() {
+		tracking = setInterval(function() {
 
-		// 	player['lastLocRequest'] = gameState.newLocRequest();
-		// 	emitTo.socket('getLocation', player.lastLocRequest);
+			player['lastLocRequest'] = gameState.newLocRequest();
+			player['lastReqResRcvd'] = false;
+			emitTo.socket('getLocation', player.lastLocRequest);
 
-		// 	timeout = setTimeout(function() {
-		// 		if (!player.lastLocRequest.resReceived) {
-		// 			log("No response to locRequest -", colors.red);
-		// 			log("Player " + player.userID + " has gone dark.", colors.err);
-		// 			player.goneDark = true;
-		// 			player.trackActive = false;
-		// 			clearInterval(tracking);
-		// 		}
-		// 	}, gameState.trackingInterval);
+			//timeout = setTimeout(function() {
+			// if (!player.lastLocRequest.resReceived) {
+			setTimeout(function() {
+				if (!player.lastReqResRcvd && !player.goneDark) {
+					// log("No response from client", colors.red);
+					// log("Player " + player.userID + " has gone dark.", colors.err);
+					player.setDark();
+					//player.trackActive = false;
+					clearInterval(tracking);
+				}
+			}, 6000);//gameState.trackingInterval);
 
-		// }, gameState.trackingInterval); //10000);
+		}, gameState.trackingInterval);
 	};
 
 	var getHubsByDistance = function() {
@@ -273,102 +272,52 @@ io.on('connection', function(socket) {
 			locationUpdate: function() {
 				// var elapsed = (Date.now() - res.reqTimestamp) / 1000;
 				// log("Response received " + elapsed + "sec after req sent");
+				player.lastReqResRcvd = true;
+
+				var elapsed = (Date.now() - res.reqTimestamp) / 1000;
+				log("Response received " + elapsed + "sec after req sent");
 
 				var storeLocation = function() {
 					//clearInterval(timeout);
-					try {
-						player.locationData.unshift(res.locData);
-						log('Latest location data for ' + player.userID + ":");
-						log(player.locationData[0]);
-						emitTo.socket('serverRcvdLocUpdate', {
-							updateTimestamp: res.locData.time,
-							rcvdTimestamp: Date.now().toString()
-						});
-						clearTimeout(trackUpdate);
-						trackUpdate = setTimeout(function() {
-							//try {
-							player.setDark();
-							//socket.disconnect();
-						}, gameState.trackingInterval);
-
-						if (!player.trackActive || player.goneDark) {
-							player.clearDark();
-							startTracking();
-						}
-					} catch (error) {
-						log("Player probably not recognized", colors.bgYellow);
-						log(error);
-						socket.disconnect();
-					}
-
+					player.locationData.unshift(res.locData);
+					log('Latest location data for ' + player.userID + ":");
+					log(player.locationData[0]);
 				};
 
 				storeLocation();
 
-				// clearTimeout(trackUpdate);
-				// trackUpdate = setTimeout(function() {
-				// 	//try {
-				// 		player.setDark();
-				// 		socket.disconnect();
-				// 	// } catch (error) {
-				// 	// 	log("Error on set dark:");
-				// 	// 	log(error);
-				// 	// }
-				// }, gameState.trackingInterval);
-
-				// // if (res.timestamp - player.lastLocReqTime < gameState.trackingInterval) {
-				// // 	storeLocation();
-				// // } else if (res.reqTimestamp === player.lastLocRequest.timestamp) {
-				// // 	player.lastLocRequest.resReceived = true;
-				// // 	storeLocation();
-				// if (!player.trackActive || player.goneDark) {
-				// 	player.clearDark();
-				// 	startTracking();
-				// }
+				if (!player.trackActive || player.goneDark) {
+					player.clearDark();
+					startTracking();
+				}
+				// if (res.timestamp - player.lastLocReqTime < gameState.trackingInterval) {
+				// 	storeLocation();
+				// } else if (res.reqTimestamp === player.lastLocRequest.timestamp) {
+				// 	player.lastLocRequest.resReceived = true;
+				// 	storeLocation();
+				// 	if (!player.trackActive || player.goneDark) {
+				// 		player.goneDark = false;
+				// 		startTracking();
+				// 	}
 
 				// }
+
 			},
-
-			// locationUpdate: function() {
-			// 	var elapsed = (Date.now() - res.reqTimestamp) / 1000;
-			// 	log("Response received " + elapsed + "sec after req sent");
-
-			// 	var storeLocation = function() {
-			// 		//clearInterval(timeout);
-			// 		player.locationData.unshift(res.locData);
-			// 		log('Latest location data for ' + player.userID + ":");
-			// 		log(player.locationData[0]);
-			// 	};
-
-			// 	if (res.timestamp - player.lastLocReqTime < gameState.trackingInterval) {
-			// 		storeLocation();
-			// 	} else if (res.reqTimestamp === player.lastLocRequest.timestamp) {
-			// 		player.lastLocRequest.resReceived = true;
-			// 		storeLocation();
-			// 		if (!player.trackActive || player.goneDark) {
-			// 			player.goneDark = false;
-			// 			startTracking();
-			// 		}
-
-			// 	}
-			// },
 
 			findSuspects: function() {
 				newLocData = {}; //getInsLocData();
 
 				for (p in players) {
-					//if (!players[p].lockedOut) { //will still show players, just gray on client side
-
 					var dataAgeLimit = Date.now() - gameState.suspectTrailDuration;
 
-					var locArray = players[p].getLocationData(dataAgeLimit);
+					var locArray = [];
+					if (players[p].team == 'ins' && !players[p].lockedOut) {
+						locArray = players[p].getLocationData(dataAgeLimit);
+					} else {
+						locArray = [players[p].getLastLocation()];
+					}
 
 					if (locArray.length > 0) {
-
-						//Truncate location data for gov players & lockedOut players
-						if (players[p].team == 'gov' || players[p].lockedOut) {
-							locArray = [locArray[0]];
-						}
 
 						newLocData[players[p].userID] = {
 							team: players[p].team,
@@ -522,7 +471,7 @@ io.on('connection', function(socket) {
 
 	// when a client disconnects
 	socket.on('disconnect', function() {
-		log('User ' + socket.id + ' just disconnected.', colors.orange);
+		log('User ' + socket.id + ' just disconnected.', colors.yellow);
 
 		// if (player.trackActive) {
 		// 	clearInterval(tracking);
@@ -530,6 +479,7 @@ io.on('connection', function(socket) {
 
 		try {
 			//player.removeFromTeam(player.team);
+			clearInterval(tracking);
 			player.disconnect();
 		} catch (err) {
 			//err.stackTraceLimit = 2;

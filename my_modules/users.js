@@ -1,5 +1,3 @@
-// var colors = require('colors');
-// var log = require('./logWithColor.js');
 
 module.exports = function(users, _socket) {
 
@@ -83,10 +81,19 @@ module.exports = function(users, _socket) {
 			log('User ' + user.userID + ' removed from ' + teamName, colors.orange);
 		},
 
+		getLastLocation: function() {
+			if (user.locationData.length > 0) {
+				return user.locationData[0];
+			} else {
+				return;
+			}
+		},
+
 		getLocationData: function(sinceTime) { //limit) {
 			var locArray = [];
 			if (sinceTime !== undefined) {
-				for (i in user.locationData) {
+				// for (i in user.locationData) {
+				for (var i = 0; i < user.locationData.length; i += gameState.settings.dataSkipInterval) {
 					log(user.locationData);
 					if (user.locationData[i].time > sinceTime) {
 						locArray.push(user.locationData[i]);
@@ -95,19 +102,10 @@ module.exports = function(users, _socket) {
 					}
 				}
 			} else {
+				//*****NOTE: NO SKIP HERE
 				locArray = user.locationData;
 			}
-			// if (limit !== undefined) {
-			// 	for (i in user.locationData) {
-			// 		if (i < limit) {
-			// 			locArray.push(user.locationData[i]);
-			// 		} else {
-			// 			break;
-			// 		}
-			// 	}
-			// } else {
-			// 	locArray = user.locationData;
-			// }
+			
 			log(locArray.length + " of " + user.locationData.length + " LocDataPoints being sent to Gov", colors.standout);
 
 			return locArray;
@@ -120,7 +118,7 @@ module.exports = function(users, _socket) {
 			user.trackActive = false;
 		},
 
-		clearDark: function(){
+		clearDark: function() {
 			log("Player " + user.userID + " active again.", colors.bgGreen);
 			user.goneDark = false;
 			user.trackActive = true;
@@ -134,7 +132,8 @@ module.exports = function(users, _socket) {
 		disconnect: function() {
 			user.socketID = '';
 			user.connected = false;
-			log(user.userID + ' has gone dark', colors.orange);
+			user.setDark();
+			//log(user.userID + ' has gone dark', colors.orange);
 		}
 
 	};
