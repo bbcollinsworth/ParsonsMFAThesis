@@ -269,14 +269,14 @@ socket.on('serverMsg', function(res, err) {
 		returningReadyCheck: function() {
 
 			player.team = res.team;
-			if (res.introComplete || storage.svcCheckComplete) {
+			//if (res.introComplete || storage.svcCheckComplete) {
 				// 	$('#app').trigger('ready');
 				// } else if (storage.svcCheckComplete) {
 				$('#footerText').html('');
 				$('#app').trigger('ready');
-			} else {
-				startup.svcCheck();
-			}
+			// } else {
+			// 	startup.svcCheck();
+			// }
 		},
 
 		getLocation: function() {
