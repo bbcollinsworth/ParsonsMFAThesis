@@ -242,11 +242,11 @@ var gov = {
 	ui: {
 		text: {
 			'ping': {
-				1: "Press the button below for latest locations of tracked suspects and allies.",
+				1: "Press the button below for latest locations of tracked suspects and fellow agents.",
 				2: "(NOTE: Locations will only update when targets are using their mobile devices.)"
 			},
-			'inRange': "Suspect in range! Click suspect marker to initiate device lockout.",
-			'inRangeButDark': "Suspect may be in range, but has gone dark. Suspect's device must be active to initiate lockout."
+			'inRange': "Active suspect in range! Click their marker to disable/lock their mobile device.",
+			'inRangeButDark': "Suspect may be in range, but has gone dark. A device can only be disabled when suspect is using it."
 
 		},
 		attachPingEvents: function() {

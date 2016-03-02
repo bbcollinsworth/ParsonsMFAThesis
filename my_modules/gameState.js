@@ -16,26 +16,26 @@
 				'screen1': {
 					1: "The U.S. Government needs your help to stop cyberterrorism.",
 					2: "At this moment, hackers are trying to disable government security systems in your area.",
-					3: "If they succeed, millions of lives will be endangered.",
+					3: "If they succeed, millions of lives could be at risk.",
 					4: '<div id="nextButton">OK</div>'
 				},
 				'screen2': {
 					1: "Use this app to detect the mobile activity of suspected hackers nearby.",
-					2: "Sensitive security sites are marked in blue. We need you to intercept the hackers before they disable these sites.",
-					3: "If you can get within 20 meters of a suspected hacker, you can lock their device and stop their attacks!",
+					2: "Sensitive security sites are marked in blue. We need you to intercept hackers before they disable these sites.",
+					3: "If you can get within 20 meters of an active hacker, you can disable their device and stop their attacks.",
 					4: '<div id="nextButton">GO</div>'
 				}
 			},
 			'ins': {
 				'screen1': {
-					1: "The government is tracking you.",
-					2: "It's time to fight back.",
-					3: '<div id="nextButton">OK</div>'
+					1: "The State is tracking you.",
+					2: "Countless government surveillance systems constantly collect data on the most intimate details of our lives.",
+					3: '<div id="nextButton">It\'s time to fight back.</div>'
 				},
 				'screen2': {
-					1: "This app enables you to detect nearby surveillance sites with your mobile phone.",
-					2: "If you get close enough, you can hack these sites to disrupt government data collection.",
-					3: "Be careful, though: the more you use your phone, the better State Agents can track you...",
+					1: "This app enables you to detect nearby surveillance sites with your mobile device.",
+					2: "If you get close enough, you can hack these sites and disrupt government data collection.",
+					3: "Be careful, though: using your phone may enable Government Agents to track you down.",
 					4: '<div id="nextButton">START</div>'
 				}
 			}
