@@ -32,6 +32,15 @@ var initLeafletExtensions = function() {
 					'marker-color': '#000000',
 					'className': 'locked-marker'
 				});
+			},
+			get agent() {
+				return L.mapbox.marker.icon({
+					'marker-size': 'medium',
+					'marker-symbol': 'police',
+					'marker-color': '#0000ff',
+					'className': 'agent-marker'
+
+				});
 			}
 		},
 
@@ -42,13 +51,18 @@ var initLeafletExtensions = function() {
 				console.log("ERROR: LatestPos not found");
 			}
 
+			//if (this.playerRef.team == 'ins') {
 			this.goneDarkCheck();
+			//}
 			//this.updateTag();
 			//this.setLatLng([posObj.lat, posObj.lng]);
 			if (options !== undefined) {
 				this.setStyle(options);
 			}
 
+			if (!this.playerRef.goneDark) {
+				this.bounce(3);
+			}
 			console.log("Marker refreshed to: " + this.playerRef.latestPos.lat + ", " + this.playerRef.latestPos.lng);
 		},
 
@@ -113,12 +127,12 @@ var initLeafletExtensions = function() {
 
 			if (thisMarker.playerRef.goneDark) {
 				classType = 'dark';
-				var icon = this.icons.dark;
+				icon = thisMarker.icons.dark;
 				opacity = 0.5;
 				thisMarker['tag'].removeClass('ins-tag');
 			} else {
 				classType = thisMarker.playerRef.team;
-				var icon = this.icons.suspect;
+				icon = thisMarker.icons[thisMarker.playerRef.type];
 				opacity = 0.8;
 				thisMarker['tag'].removeClass('dark-tag');
 			}
@@ -132,6 +146,7 @@ var initLeafletExtensions = function() {
 			thisMarker.setIcon(icon);
 			//this.setZIndexOffset(zIndexOffset);
 			thisMarker.setOpacity(opacity);
+
 		},
 
 		addTag: function() { //team){

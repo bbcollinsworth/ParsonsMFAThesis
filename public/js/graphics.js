@@ -489,8 +489,8 @@ var viz = {
 
 			var mapDistToColor = function(opacity) {
 				var r = Math.floor(Math.map(ptr.distanceReading, 75, ptr.maxDistance, 255, 170));
-				var g = Math.floor(Math.map(ptr.distanceReading, 75, ptr.maxDistance, 255, 120)); //Math.floor(Math.map(ptr.distanceReading, 50, ptr.maxDistance - ptr.maxDistance * 0.5, 255, 0));
-				var b = 0; //Math.floor(Math.map(ptr.distanceReading, 50, ptr.maxDistance, 0, 100));
+				var g = Math.floor(Math.map(ptr.distanceReading, 75, ptr.maxDistance, 218, 120)); //Math.floor(Math.map(ptr.distanceReading, 50, ptr.maxDistance - ptr.maxDistance * 0.5, 255, 0));
+				var b = 68; //Math.floor(Math.map(ptr.distanceReading, 50, ptr.maxDistance, 0, 100));
 
 				return "rgba(" + r + "," + g + "," + b + "," + opacity + ")";
 			};

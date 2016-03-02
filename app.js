@@ -98,7 +98,8 @@ io.on('connection', function(socket) {
 	};
 
 	var startTracking = function() {
-		player.trackActive = true;
+		player.clearDark();
+		//player.trackActive = true;
 		log('Started tracking ' + player.userID, colors.green);
 		player['lastLocReqTime'] = Date.now();
 		player['lastReqResRcvd'] = false;
@@ -280,8 +281,8 @@ io.on('connection', function(socket) {
 				var storeLocation = function() {
 					//clearInterval(timeout);
 					player.locationData.unshift(res.locData);
-					log('Latest location data for ' + player.userID + ":");
-					log(player.locationData[0]);
+					//log('Latest location data for ' + player.userID + ":");
+					//log(player.locationData[0]);
 				};
 
 				storeLocation();
@@ -331,8 +332,8 @@ io.on('connection', function(socket) {
 					//}
 				}
 
-				log('Data to be sent to ' + socket.id + ":");
-				log(newLocData);
+				//log('First bit of data to be sent to ' + socket.id + ":");
+				//log(newLocData);
 				emitTo.socket('suspectData', {
 					locData: newLocData
 				});
@@ -392,8 +393,12 @@ io.on('connection', function(socket) {
 					attackedHub.health = 0;
 					attackedHub.live = false;
 					var hubsLeft = gameState.liveHubCount();
-					log("Live hubs remaining: " + hubsLeft, colors.yellow.inverse);
-
+					log("Live hubs remaining: " + hubsLeft + " / " + hubs.length, colors.yellow.inverse);
+					log("Downed Hub is now:",colors.err);
+					log(attackedHub);
+					log("All hubs are:");
+					log(hubs);
+					
 					emitTo.socket('hackComplete', {
 						hubName: attackedHub.name
 					});

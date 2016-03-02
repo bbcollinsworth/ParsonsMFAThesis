@@ -6,6 +6,7 @@ module.exports = function(users, _socket) {
 	var colors = include('colors');
 	var log = include('log');
 	var gameState = include('gameState');
+	var util = include('util');
 	// log("GameState from userModule is: ");
 	// log(gameState);
 
@@ -56,9 +57,10 @@ module.exports = function(users, _socket) {
 				'lockedOut': false,
 			};
 
-			for (prop in userProps) {
-				user[prop] = userProps[prop];
-			}
+			util.myExtend(user,userProps);
+			// for (prop in userProps) {
+			// 	user[prop] = userProps[prop];
+			// }
 
 			log('Created player: ', colors.green);
 			log(user);

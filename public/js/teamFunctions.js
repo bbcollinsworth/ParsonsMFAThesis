@@ -24,7 +24,9 @@ var ins = {
 					});
 				};
 
-				storeAndSendLocation(scanFunction);
+				sendStoredLocation(scanFunction);
+
+				//storeAndSendLocation(scanFunction);
 
 				if (!ins.ui.scanButton.animRunning) {
 					console.log("calling scan animation");
@@ -62,6 +64,7 @@ var ins = {
 
 		hackSuccess: function() {
 			$('#scanButton').html("")
+				.off('click')
 				.removeClass('hackReady')
 				.removeClass('uploadProgress')
 				.removeClass('hackAnim')
@@ -246,7 +249,8 @@ var gov = {
 					});
 				};
 
-				storeAndSendLocation(pingFunction);
+				sendStoredLocation(pingFunction);
+				//storeAndSendLocation(pingFunction);
 
 				if (!gov.ui.pingCircle.animRunning) {
 					console.log("calling ping animation");
@@ -327,6 +331,7 @@ var gov = {
 
 	},
 
+	//GETTING BIG... Move server-side?
 	suspectRangeCheck: function() {
 		var otherPlayers = clientState.allPlayers;
 
@@ -337,12 +342,21 @@ var gov = {
 				var dist = player.distanceTo(otherPlayers[id].latestPos);
 				console.log("Distance to " + otherPlayers[id].localID + " is " + dist + "m");
 
-				if (dist <= gov.captureRange) {
+				if (dist <= gov.captureRange && !otherPlayers[id].goneDark) {
 					otherPlayers[id].inCaptureRange = true;
 					//otherPlayers[id].marker.attachCaptureEvents();
 					otherPlayers[id].attachCaptureEvents();
 					msg("Suspect in capture range! Click and hold on suspect marker to lock out device.", 'urgent');
 
+				} else if (dist <= gov.captureRange && otherPlayers[id].goneDark) {
+					//msg("Suspect may be in range, but has gone dark. Suspect must be using device to successfully initiate lockout");
+					if (otherPlayers[id].inCaptureRange) {
+						otherPlayers[id].inCaptureRange = false;
+						//otherPlayers[id].marker.clearCaptureEvents();
+						otherPlayers[id].clearCaptureEvents();
+						gov.ui.attachPingEvents();
+					}
+					msg("Suspect may be in range, but has gone dark. Suspect's device must be active to initiate lockout.");
 				} else if (otherPlayers[id].inCaptureRange) {
 
 					//} else if (otherPlayers[id].captureEventsAttached) {
@@ -398,9 +412,14 @@ var gov = {
 				players[userID].updateLocData(playerData);
 			} else {
 				players[userID].updateLocData(playerData);
+				var tagText = convertTimestamp(playerData.locData[0].time);
+				//if (players[userID].team == 'ins' && !players[userID].goneDark){
+				if (!players[userID].goneDark) {
+					tagText = "now";
+				}
 				players[userID].marker.updateTagText({
 					'text': {
-						ln1: "(As of " + convertTimestamp(playerData.locData[0].time) + ")"
+						ln1: "(As of " + tagText + ")"
 					}
 				});
 			}
@@ -413,7 +432,7 @@ var gov = {
 			//var darkSuspectFound = false;
 			var suspectFound = false;
 
-			for (id in players){
+			for (id in players) {
 				if (players[id].type == 'suspect' && !players[id].goneDark) {
 					liveSuspectFound = true;
 					toSelect = players[id];

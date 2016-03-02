@@ -153,6 +153,8 @@ var sendStoredLocation = function(v1, v2) { //callback) {
 	});
 
 	if (callback !== undefined) {
+		console.log("Callback is: ");
+		console.log(callback);
 		callback();
 	}
 
@@ -309,12 +311,12 @@ socket.on('serverMsg', function(res, err) {
 		// 	);
 		// },
 
-		serverRcvdLocUpdate: function() {
-			console.log("Server got update - continuing tracking");
-			console.log(res.rcvdTimestamp);
-			clientState['lastServerResTime'] = res.rcvdTimestamp;
-			clearTimeout(stopTracking);
-		},
+		// serverRcvdLocUpdate: function() {
+		// 	console.log("Server got update - continuing tracking");
+		// 	console.log(res.rcvdTimestamp);
+		// 	clientState['lastServerResTime'] = res.rcvdTimestamp;
+		// 	clearTimeout(stopTracking);
+		// },
 
 		insStartData: function() {
 			clientState.intro.content = res.introContent;
@@ -399,7 +401,7 @@ socket.on('serverMsg', function(res, err) {
 			console.log("Hubs by distance received: ");
 			console.log(res.hubsByDistance);
 
-			$('#app').on('scanComplete', function() {
+			$('#app').off('scanComplete').on('scanComplete', function() {
 				centerOnPlayer();
 				ins.runHubRangeCheck(res.hubsByDistance);
 				// ins.pointToHubs(res.hubsByDistance,ins.popPointers);

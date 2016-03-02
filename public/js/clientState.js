@@ -116,10 +116,12 @@ var clientState = {
 					var pRef = this;
 					pRef.marker.refresh();
 					pRef.trail.render();
-					$('#app').on('trailRendered', function() {
+					$('#app').off('trailRendered').on('trailRendered', function() {
 						pRef.marker.refresh();
 						//pRef.marker.refresh(pRef.latestPos);
 					});
+				} else {
+					this.marker.refresh();
 				}
 			}
 		};
