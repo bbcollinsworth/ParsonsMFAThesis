@@ -155,7 +155,7 @@ var clientState = {
 		newPlayer.marker.addTag(); //(newPlayer.team);
 
 		if (newPlayer.team == 'ins') {
-			newPlayer.trail = viz.initTrail(newPlayer);
+			//newPlayer['trail'] = viz.initTrail(newPlayer);
 			$.extend(true, newPlayer, clientState.markerEvents.ins);
 		}
 
@@ -255,11 +255,22 @@ var clientState = {
 			supported: false,
 			ready: false, //no prep required
 			setup: localStorage,
+			// setup: localStorage,
 			readyTest: function() {
 				console.log("Current localStorage is: ");
 				console.log(localStorage);
 				this.ready = true;
 				//console.log('Ready test called for localStorage but no test.');
+			},
+			errorReturn: {
+				set: function(key, val) {
+					try {
+						localStorage.set(key, value);
+					} catch (error) {
+						console.log("Local Storage error: ");
+						console.log(error);
+					}
+				}
 			}
 		}
 	}

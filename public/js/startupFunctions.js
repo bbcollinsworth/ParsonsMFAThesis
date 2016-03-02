@@ -245,10 +245,16 @@ var startup = {
 				var unsupportedMsg = feature + " not supported.";
 				//$('#footerText').append('<p>' + unsupportedMsg + '</p>');
 				console.log(unsupportedMsg);
-				return function() {
-					console.log("Error: " + feature + " not supported. skipping...");
-					return;
-				};
+				if ('errorReturn' in thisFeature) {
+					console.log("Special error return found for " + thisFeature.title);
+					console.log(thisFeature.errorReturn);
+					return thisFeature.errorReturn;
+				} else {
+					return function() {
+						console.log("Error: " + feature + " not supported. skipping...");
+						//return;
+					};
+				}
 			}
 		};
 
@@ -365,9 +371,11 @@ var startup = {
 				//$('#svcCheckList').append("<h3>Ready!</h3>");
 				msg("Ready!");
 
-				if (clientState.features.localstorage.supported) {
-					localStorage.setItem('svcCheckComplete', true);
-				}
+				//localStorage.setItem('svcCheckComplete', true);
+				//if (clientState.features.localstorage.supported) {
+				storage.setItem('svcCheckComplete', true);
+				console.log("Local value of SvcCheckComplete stored as: " + storage.svcCheckComplete);
+				//}
 
 				$('#footerText').html('');
 

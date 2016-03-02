@@ -61,7 +61,7 @@ var initLeafletExtensions = function() {
 			}
 
 			if (!this.playerRef.goneDark) {
-				this.bounce(3);
+				this.bounce(1);
 			}
 			console.log("Marker refreshed to: " + this.playerRef.latestPos.lat + ", " + this.playerRef.latestPos.lng);
 		},

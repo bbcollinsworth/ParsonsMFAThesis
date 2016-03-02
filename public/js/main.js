@@ -264,8 +264,11 @@ socket.on('serverMsg', function(res, err) {
 		},
 
 		returningReadyCheck: function() {
+
 			player.team = res.team;
-			if (localStorage.svcCheckComplete) {
+			if (res.introComplete || storage.svcCheckComplete) {
+			// 	$('#app').trigger('ready');
+			// } else if (storage.svcCheckComplete) {
 				$('#footerText').html('');
 				$('#app').trigger('ready');
 			} else {
@@ -325,7 +328,7 @@ socket.on('serverMsg', function(res, err) {
 				clientState.intro.run('ins');
 				//runIntro('ins');
 
-				$('#app').on('introComplete', function() {
+				$('#app').off('introComplete').on('introComplete', function() {
 					emit('introCompleted', {});
 					ins.renderUI();
 					attachEvents();
@@ -344,7 +347,7 @@ socket.on('serverMsg', function(res, err) {
 			if (!res.playStarted) {
 				clientState.intro.run('gov');
 
-				$('#app').on('introComplete', function() {
+				$('#app').off('introComplete').on('introComplete', function() {
 					emit('introCompleted', {});
 					gov.renderUI();
 					attachEvents();
@@ -434,7 +437,7 @@ socket.on('serverMsg', function(res, err) {
 
 			// hubs[i].flash(flashSpeed);
 
-			switch (res.alertState) {
+			switch (hubs[i].alertState) {
 				case 3:
 					if (!hubs[i].alerts.lvl3) {
 						window.alert("WARNING: Security hub attack 50% complete.");
