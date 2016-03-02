@@ -219,7 +219,7 @@ var clientState = {
 			setup: function(orientEventHandler) {
 				window.addEventListener('deviceorientation', orientEventHandler, false);
 				console.log("From Setup: ORIENTATION EVENT HANDLER ADDED");
-				footerMsg("ORIENTATION EVENT HANDLER ADDED");
+				//footerMsg("ORIENTATION EVENT HANDLER ADDED");
 			},
 			readyTest: function() {
 				console.log('Ready test called for vibration but no test.');

@@ -2,9 +2,22 @@ var ins = {
 	ui: {
 		'hubPointers': [],
 		'maxHubsDetected': 3,
+		'text': {
+			'scan': "Press the button below to scan for active surveillance sites nearby.",
+			'canHack': {
+				1: "Surveillence site in range!",
+				2: "<b>Press below to begin hacking.</b>"
+			},
+			'hacking': {
+				1: "UPLOADING VIRUS. (Note: More hackers will increase upload speed.)",
+				2: " Stay in range with device active or upload will be interrupted."
+			},
+			'hackSuccess': "Hack Complete",
+			'lockedOut': "Compromised"
+		},
 
 		attachScanEvents: function() {
-			msg("Press the button below to scan for active surveillance sites nearby.");
+			msg(ins.ui.text.scan);
 
 			$('#scanButton').removeClass('hackReady')
 				.removeClass('uploadProgress')
@@ -42,10 +55,7 @@ var ins = {
 
 			btn.removeClass('scanIcon').addClass('hackReady');
 			btn.off('click').on('click', function() {
-				msg({
-					1: "Uploading virus.",
-					2: " Stay in range with phone active or upload will halt."
-				}, 'urgent');
+				msg(ins.ui.text.hacking, 'urgent');
 
 				ins.ui.refreshHackProgress();
 
@@ -72,7 +82,7 @@ var ins = {
 
 			ins.clearTargetHub();
 
-			msg("Hack Complete", 'success');
+			msg(ins.ui.text.hackSuccess, 'success');
 			setTimeout(function() {
 				console.log("resetting scan");
 				ins.ui.attachScanEvents();
@@ -127,11 +137,7 @@ var ins = {
 	},
 
 	enableHack: function(targetHub) {
-		msg({
-			1: "Surveillence site in range!",
-			2: "<b>Press below to begin hacking.</b>",
-			3: "(NOTE: More hackers will increase hack speed.)"
-		}, 'urgent');
+		msg(ins.ui.text.canHack, 'urgent');
 
 		ins.targetHub = targetHub;
 
@@ -223,7 +229,7 @@ var ins = {
 	},
 
 	renderLockout: function() {
-		msg("Compromised", 'lockout');
+		msg(ins.ui.text.lockedOut, 'lockout');
 		$('#container').addClass('lockScreen');
 		$('#scanButton').off('click');
 		//$('#scanButton').addClass('lockClass');
@@ -234,11 +240,17 @@ var ins = {
 var gov = {
 
 	ui: {
-		attachPingEvents: function() {
-			msg({
+		text: {
+			'ping': {
 				1: "Press the button below for latest locations of tracked suspects and allies.",
 				2: "(NOTE: Locations will only update when targets are using their mobile devices.)"
-			});
+			},
+			'inRange': "Suspect in range! Click suspect marker to initiate device lockout.",
+			'inRangeButDark': "Suspect may be in range, but has gone dark. Suspect's device must be active to initiate lockout."
+
+		},
+		attachPingEvents: function() {
+			msg(gov.ui.text.ping);
 
 			$('#searchButton').off('click').on('click', function() {
 				//msg('Ping button clicked');
@@ -346,7 +358,7 @@ var gov = {
 					otherPlayers[id].inCaptureRange = true;
 					//otherPlayers[id].marker.attachCaptureEvents();
 					otherPlayers[id].attachCaptureEvents();
-					msg("Suspect in range! Click suspect marker to initiate device lockout.", 'urgent');
+					msg(gov.ui.text.inRange, 'urgent');
 
 				} else if (dist <= gov.captureRange && otherPlayers[id].goneDark) {
 					//msg("Suspect may be in range, but has gone dark. Suspect must be using device to successfully initiate lockout");
@@ -356,7 +368,7 @@ var gov = {
 						otherPlayers[id].clearCaptureEvents();
 						gov.ui.attachPingEvents();
 					}
-					msg("Suspect may be in range, but has gone dark. Suspect's device must be active to initiate lockout.");
+					msg(gov.ui.text.inRangeButDark);
 				} else if (otherPlayers[id].inCaptureRange) {
 
 					//} else if (otherPlayers[id].captureEventsAttached) {

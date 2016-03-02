@@ -33,7 +33,9 @@ var attachEvents = function() {
 	});
 
 	$('#app').on('ready', function() {
-		$('#mobileFooter').css({'display': 'none'});
+		$('#footerText').css({
+			'display': 'none'
+		});
 
 		if (!clientState.tracking) {
 			app.trackLocation();
@@ -268,8 +270,8 @@ socket.on('serverMsg', function(res, err) {
 
 			player.team = res.team;
 			if (res.introComplete || storage.svcCheckComplete) {
-			// 	$('#app').trigger('ready');
-			// } else if (storage.svcCheckComplete) {
+				// 	$('#app').trigger('ready');
+				// } else if (storage.svcCheckComplete) {
 				$('#footerText').html('');
 				$('#app').trigger('ready');
 			} else {
@@ -324,8 +326,14 @@ socket.on('serverMsg', function(res, err) {
 
 		insStartData: function() {
 			clientState.intro.content = res.introContent;
+
+			console.log("My lockout State is: " + res.playerLockedOut);
 			//clientState['intro'] = res.introContent;
-			if (!res.playStarted) {
+			if (res.playerLockedOut) {
+				console.log('lockout Alert received');
+				//window.alert("FAILURE: State Agents have locked your device!");
+				ins.renderLockout();
+			} else if (!res.playStarted) {
 				clientState.intro.run('ins');
 				//runIntro('ins');
 

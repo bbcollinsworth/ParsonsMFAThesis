@@ -238,7 +238,8 @@ io.on('connection', function(socket) {
 				player.connected = true;
 
 				emitTo.socket('returningReadyCheck', {
-					team: player.team
+					team: player.team,
+					introComplete: player.playStarted
 				});
 			},
 
@@ -259,6 +260,7 @@ io.on('connection', function(socket) {
 					default:
 						emitTo.socket('insStartData', {
 							playStarted: player.playStarted,
+							playerLockedOut: player.lockedOut,
 							hubs: hubs,
 							introContent: gameState.settings.introContent
 						});
