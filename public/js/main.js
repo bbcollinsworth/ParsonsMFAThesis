@@ -33,6 +33,7 @@ var attachEvents = function() {
 	});
 
 	$('#app').on('ready', function() {
+		$('#mobileFooter').css({'display': 'none'});
 
 		if (!clientState.tracking) {
 			app.trackLocation();
@@ -58,8 +59,8 @@ app.trackLocation = function() {
 	clientState.tracking = true;
 
 	var posUpdateHandler = function(position) {
-		console.log('Latest Position: ' + position.coords.latitude + ', ' + position.coords.longitude);
-		footerMsg('Latest Watched Position: <br />' + position.coords.latitude + ', ' + position.coords.longitude + '<br />Heading: ' + player.pos.heading + '<br />' + convertTimestamp(Date.now(), true));
+		console.log('Latest Watched Position: <br />' + position.coords.latitude + ', ' + position.coords.longitude + '<br />Heading: ' + player.pos.heading + '<br />' + convertTimestamp(Date.now(), true));
+		//footerMsg('Latest Watched Position: <br />' + position.coords.latitude + ', ' + position.coords.longitude + '<br />Heading: ' + player.pos.heading + '<br />' + convertTimestamp(Date.now(), true));
 
 		var newPos = {
 			lat: position.coords.latitude,

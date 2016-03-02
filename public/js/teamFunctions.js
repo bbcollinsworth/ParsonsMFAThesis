@@ -346,7 +346,7 @@ var gov = {
 					otherPlayers[id].inCaptureRange = true;
 					//otherPlayers[id].marker.attachCaptureEvents();
 					otherPlayers[id].attachCaptureEvents();
-					msg("Suspect in capture range! Click and hold on suspect marker to lock out device.", 'urgent');
+					msg("Suspect in range! Click suspect marker to initiate device lockout.", 'urgent');
 
 				} else if (dist <= gov.captureRange && otherPlayers[id].goneDark) {
 					//msg("Suspect may be in range, but has gone dark. Suspect must be using device to successfully initiate lockout");
