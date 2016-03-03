@@ -180,6 +180,7 @@ var startup = {
 			$('#app').trigger('initialized');
 			// emit('clientReady', {});
 		} else {
+			// emit('connectedCheck',{});
 			var readyCounter = 60;
 			//mobileAlert("CONNECTING...");
 
@@ -195,6 +196,7 @@ var startup = {
 					readyCounter--;
 					if (!clientState.connected) {
 						console.log("Waiting for connection.");
+						emit('connectedCheck',{});
 					}
 					if (!clientState.mapLoaded) {
 						console.log("Waiting for map.");

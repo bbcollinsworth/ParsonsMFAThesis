@@ -14,7 +14,6 @@ module.exports = function(io, socket) {
 			emitObj['tag'] = tag;
 			//io.to(socket.id).emit('serverMsg', emitObj);
 			socket.emit('serverMsg', emitObj);
-			//console.
 			log('Sending ' + tag + ' to ' + socket.id, colors.sendingMsg);
 		},
 

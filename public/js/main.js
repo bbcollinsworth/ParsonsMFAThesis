@@ -155,10 +155,16 @@ var sendStoredLocation = function(v1, v2) { //callback) {
 		locData: player.pos
 	});
 
+	//to catch server requestion location before it's been stored
 	if (callback !== undefined) {
 		console.log("Callback is: ");
 		console.log(callback);
-		callback();
+		try {
+			callback();
+		} catch (error) {
+			console.log("Send location callback error: ");
+			console.log(error);
+		}
 	}
 
 };
@@ -270,10 +276,10 @@ socket.on('serverMsg', function(res, err) {
 
 			player.team = res.team;
 			//if (res.introComplete || storage.svcCheckComplete) {
-				// 	$('#app').trigger('ready');
-				// } else if (storage.svcCheckComplete) {
-				$('#footerText').html('');
-				$('#app').trigger('ready');
+			// 	$('#app').trigger('ready');
+			// } else if (storage.svcCheckComplete) {
+			$('#footerText').html('');
+			$('#app').trigger('ready');
 			// } else {
 			// 	startup.svcCheck();
 			// }

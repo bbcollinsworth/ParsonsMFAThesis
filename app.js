@@ -126,7 +126,7 @@ io.on('connection', function(socket) {
 					//player.trackActive = false;
 					clearInterval(tracking);
 				}
-			}, 6000);//gameState.trackingInterval);
+			}, 6000); //gameState.trackingInterval);
 
 		}, gameState.trackingInterval);
 	};
@@ -204,6 +204,11 @@ io.on('connection', function(socket) {
 			clientInitialized: function() {
 				log(socket.id + " is initialized!", colors.yellow);
 				checkPlayerType();
+			},
+
+			connectedCheck: function() {
+				log('The user ' + player.userID + " / " + socket.id + ' pinged to see if still connected.', colors.yellow);
+				emitTo.socket('connected', {});
 			},
 
 			newPlayer: function() {
@@ -396,11 +401,11 @@ io.on('connection', function(socket) {
 					attackedHub.live = false;
 					var hubsLeft = gameState.liveHubCount();
 					log("Live hubs remaining: " + hubsLeft + " / " + hubs.length, colors.yellow.inverse);
-					log("Downed Hub is now:",colors.err);
+					log("Downed Hub is now:", colors.err);
 					log(attackedHub);
 					log("All hubs are:");
 					log(hubs);
-					
+
 					emitTo.socket('hackComplete', {
 						hubName: attackedHub.name
 					});
