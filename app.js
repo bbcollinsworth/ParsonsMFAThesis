@@ -63,7 +63,8 @@ io.on('connection', function(socket) {
 	var trackUpdate; //will hold tracking timeout interval
 
 	log('The user ' + socket.id + ' just connected!', colors.yellow);
-	emitTo.socket('connected', {});
+	//emitTo.socket('connected', {});
+	socket.emit('connected');
 
 	//=================================
 	//SESSION/PLAYER-SCOPED FUNCTIONS:
@@ -201,14 +202,19 @@ io.on('connection', function(socket) {
 
 		var handleClientMsg = {
 
+			clientListening: function(){
+				//NEED SOMETHING THAT ONLY ALLOWS INITIALIZED EMIT ONCE LISTENING IS ACTIVE
+				checkPlayerType();
+			},
+
 			clientInitialized: function() {
 				log(socket.id + " is initialized!", colors.yellow);
-				checkPlayerType();
+				//checkPlayerType();
 			},
 
 			connectedCheck: function() {
 				log('The user ' + player.userID + " / " + socket.id + ' pinged to see if still connected.', colors.yellow);
-				emitTo.socket('connected', {});
+				emitTo.socket('stillConnected', {});
 			},
 
 			newPlayer: function() {
@@ -485,9 +491,6 @@ io.on('connection', function(socket) {
 	socket.on('disconnect', function() {
 		log('User ' + socket.id + ' just disconnected.', colors.yellow);
 
-		// if (player.trackActive) {
-		// 	clearInterval(tracking);
-		// }
 
 		try {
 			//player.removeFromTeam(player.team);

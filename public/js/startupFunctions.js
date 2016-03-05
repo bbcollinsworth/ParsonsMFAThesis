@@ -72,6 +72,8 @@ var startup = {
 			// }
 		};
 
+		$('#mobileHeader').trigger('create');
+
 		window.msg = function(text, styling) {
 
 			var msgHTML = "";
@@ -85,10 +87,15 @@ var startup = {
 			}
 
 			$('#alertBodyText').html(msgHTML);
+			$('#alertBox').find('.ui-collapsible-content').attr({
+				'aria-hidden': false
+			});
 			$('#alertBox').attr({
 				'data-collapsed': false
-			})
-				.collapsible("refresh");
+			});
+			$('#alertBox').removeClass('ui-collapsible-collapsed');
+			$('#alertPopoutText').removeClass('ui-collapsible-heading-collapsed');
+			$('#mobileHeader').trigger("refresh");
 
 			for (s in viz.headerStyles) {
 				$('#alertBox .ui-collapsible-content').removeClass(viz.headerStyles[s]);
@@ -114,17 +121,6 @@ var startup = {
 			$('#footerText').html(msgHTML);
 		}
 
-		//if (window.DeviceOrientationEvent) {
-		// window.addEventListener('deviceorientation', function(event) {
-		// 	window.player.pos['heading'] = event.alpha;
-
-		// }, false);
-		// console.log("ORIENTATION EVENT HANDLER ADDED");
-		// footerMsg("ORIENTATION EVENT HANDLER ADDED");
-		// } else {
-		// 	footerMsg("NO ORIENTATION EVENT LISTENER FOUND");
-		// }
-
 	},
 
 	parseHash: function() {
@@ -148,7 +144,8 @@ var startup = {
 	},
 
 	initMap: function() {
-		msg("Initializing map");
+		console.log("Initializing map");
+		//msg("Initializing map");
 		//initializing mapbox.js / leaflet map
 		L.mapbox.accessToken = 'pk.eyJ1IjoiZnVja3lvdXJhcGkiLCJhIjoiZEdYS2ZmbyJ9.6vnDgXe3K0iWoNtZ4pKvqA';
 
@@ -173,6 +170,13 @@ var startup = {
 	connectToServer: function() {
 		socket = io.connect();
 		msg("Initializing socket");
+		socket.on('connected', function(res, err) {
+			clientState.connected = true;
+			console.log("Connected to server");
+			app.attachSocketEvents();
+			emit('clientListening',{});
+		});
+		
 	},
 
 	readyCheck: function() {
@@ -215,6 +219,26 @@ var startup = {
 			}, 500);
 
 		}
+	},
+
+	storedUserCheck: function(allIDs) {
+		console.log("Checking for stored user. IDs from server are: ");
+		console.log(allIDs);
+		console.log("And locally stored ID is: ");
+		console.log(localStorage.userID);
+		var userFound = false;
+		//check for stored id matching existing player:
+		if (localStorage.userID !== undefined) {
+			for (var i in allIDs) {
+				if (localStorage.userID == allIDs[i]) {
+					console.log("Stored User Found!:" + allIDs[i]);
+					userFound = true;
+					break;
+				}
+			}
+		}
+
+		return userFound;
 	},
 
 	initServices: function() {
@@ -279,26 +303,6 @@ var startup = {
 
 		storage = initialize('localstorage');
 
-	},
-
-	storedUserCheck: function(allIDs) {
-		console.log("Checking for stored user. IDs from server are: ");
-		console.log(allIDs);
-		console.log("And locally stored ID is: ");
-		console.log(localStorage.userID);
-		var userFound = false;
-		//check for stored id matching existing player:
-		if (localStorage.userID !== undefined) {
-			for (var i in allIDs) {
-				if (localStorage.userID == allIDs[i]) {
-					console.log("Stored User Found!:" + allIDs[i]);
-					userFound = true;
-					break;
-				}
-			}
-		}
-
-		return userFound;
 	},
 
 	svcCheck: function() {
