@@ -55,7 +55,7 @@ var ins = {
 
 			btn.removeClass('scanIcon').addClass('hackReady');
 			btn.off('click').on('click', function() {
-				msg(ins.ui.text.hacking, 'urgent');
+				msg(ins.ui.text.hacking, 'ins-urgent');
 
 				ins.ui.refreshHackProgress();
 
@@ -137,7 +137,7 @@ var ins = {
 	},
 
 	enableHack: function(targetHub) {
-		msg(ins.ui.text.canHack, 'urgent');
+		msg(ins.ui.text.canHack, 'ins-urgent');
 
 		ins.targetHub = targetHub;
 

@@ -37,6 +37,8 @@ var attachEvents = function() {
 			'display': 'none'
 		});
 
+		app.addStyling[player.team]();
+
 		if (!clientState.tracking) {
 			app.trackLocation();
 		}
@@ -54,6 +56,17 @@ app.init = function() {
 	startup.connectToServer(); //connect to socket server
 	attachEvents(); //attach event listeners
 	startup.readyCheck(); //start checking for server and map loading
+};
+
+app.addStyling = {
+	gov: function(){
+
+	},
+	ins: function(){
+		$('#app').addClass('ins-app-styling');
+		$('.ui-collapsible-content').addClass('ins-alert-styling');
+	}
+
 };
 
 app.trackLocation = function() {

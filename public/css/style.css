@@ -18,6 +18,19 @@
 	overflow: hidden;
 }
 
+/*body {
+	text-shadow: none;
+}*/
+
+#app p, div, h1, h2, h3, h4, h5, h6 {
+	text-shadow: none;
+}
+
+#app.ins-app-styling {
+	font-family: 'Special Elite',sans-serif;
+	color: white;
+}
+
 #container {
 	position: absolute;
 	pointer-events: none;
@@ -73,8 +86,8 @@
 	border-radius: 0px 20px 20px 0px;
 }
 
-#alertBox .ui-collapsible-content {
-	font-family: 'Open Sans',sans-serif;
+#alertBox.ui-collapsible-content {
+	//font-family: 'Open Sans',sans-serif;
 	font-weight: 400;
 	background-color: rgba(255,255,255,0.7);
 	box-shadow: 10px 0px 30px 0px rgba(0,0,0,0.3);
@@ -82,9 +95,19 @@
 	border: 0px;
 }
 
+#alertBox .ui-collapsible-content.ins-alert-styling {
+	color: white;
+	background-color: rgba(0,0,0,0.8);
+	font-weight: 100;
+}
+
 #alertBox .ui-collapsible-content.urgent-alert {
 	color: white;
 	background-color: rgba(255,0,0,0.7);
+}
+
+#alertBox .ui-collapsible-content.ins-urgent-alert{
+	color: #FD2D2D;
 }
 
 #alertBox .ui-collapsible-content.success-alert {

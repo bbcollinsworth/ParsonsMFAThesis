@@ -2,6 +2,7 @@ var viz = {
 
 	headerStyles: {
 		'urgent': 'urgent-alert',
+		'ins-urgent': 'ins-urgent-alert',
 		'success': 'success-alert',
 		'lockout': 'lockout-alert' //,
 		//'normal': 'normal-alert'

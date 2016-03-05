@@ -28,8 +28,8 @@
 			},
 			'ins': {
 				'screen1': {
-					1: "The State is tracking you.",
-					2: "Countless government surveillance systems constantly collect data on the most intimate details of our lives.",
+					1: "Big Data is Watching You.",
+					2: "Government and corporate surveillance systems constantly monitor the most intimate details of our lives.",
 					3: '<div id="nextButton">It\'s time to fight back.</div>'
 				},
 				'screen2': {

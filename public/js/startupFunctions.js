@@ -85,6 +85,10 @@ var startup = {
 			}
 
 			$('#alertBodyText').html(msgHTML);
+			$('#alertBox').attr({
+				'data-collapsed': false
+			})
+				.collapsible("refresh");
 
 			for (s in viz.headerStyles) {
 				$('#alertBox .ui-collapsible-content').removeClass(viz.headerStyles[s]);
@@ -196,7 +200,7 @@ var startup = {
 					readyCounter--;
 					if (!clientState.connected) {
 						console.log("Waiting for connection.");
-						emit('connectedCheck',{});
+						emit('connectedCheck', {});
 					}
 					if (!clientState.mapLoaded) {
 						console.log("Waiting for map.");
