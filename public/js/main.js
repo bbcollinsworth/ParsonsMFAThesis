@@ -25,26 +25,24 @@ var player = {
 
 var hubs = [];
 
+app.initialized = function() {
+	clientState.initialized = true;
+	//clientState.readyCheckRunning = false;
+	msg("Server and map initialized.");
+	emit('clientInitialized', {});
+};
 
-var attachEvents = function() {
-	$('#app').on('initialized', function() {
-		readyCheckRunning = false;
-		emit('clientInitialized', {});
+app.ready = function() {
+	$('#footerText').css({
+		'display': 'none'
 	});
 
-	$('#app').on('ready', function() {
-		$('#footerText').css({
-			'display': 'none'
-		});
+	app.trackLocation();
+	app.addStyling[player.team]();
 
-		app.addStyling[player.team]();
-
-		if (!clientState.tracking) {
-			app.trackLocation();
-		}
-		emit('readyToPlay', {});
+	emit('readyToPlay', {
+		svcCheckComplete: true
 	});
-
 };
 
 app.init = function() {
@@ -52,10 +50,7 @@ app.init = function() {
 	msg('Connecting...');
 	startup.initServices();
 	startup.parseHash(); //check URL hash for team and playerID data
-	// startup.initMap(); //initialize map
 	startup.connectToServer(); //connect to socket server
-	attachEvents(); //attach event listeners
-	startup.readyCheck(); //start checking for server and map loading
 };
 
 app.addStyling = {
@@ -71,41 +66,44 @@ app.addStyling = {
 
 app.trackLocation = function() {
 
-	clientState.tracking = true;
+	if (!clientState.tracking) {
 
-	var posUpdateHandler = function(position) {
-		console.log('Latest Watched Position: <br />' + position.coords.latitude + ', ' + position.coords.longitude + '<br />Heading: ' + player.pos.heading + '<br />' + convertTimestamp(Date.now(), true));
-		//footerMsg('Latest Watched Position: <br />' + position.coords.latitude + ', ' + position.coords.longitude + '<br />Heading: ' + player.pos.heading + '<br />' + convertTimestamp(Date.now(), true));
+		clientState.tracking = true;
 
-		var newPos = {
-			lat: position.coords.latitude,
-			lng: position.coords.longitude,
-			time: position.timestamp //Date.now()
+		var posUpdateHandler = function(position) {
+			console.log('Latest Watched Position: <br />' + position.coords.latitude + ', ' + position.coords.longitude + '<br />Heading: ' + player.pos.heading + '<br />' + convertTimestamp(Date.now(), true));
+			//footerMsg('Latest Watched Position: <br />' + position.coords.latitude + ', ' + position.coords.longitude + '<br />Heading: ' + player.pos.heading + '<br />' + convertTimestamp(Date.now(), true));
+
+			var newPos = {
+				lat: position.coords.latitude,
+				lng: position.coords.longitude,
+				time: position.timestamp //Date.now()
+			};
+
+			player.pos.update(newPos);
+			console.log("Playerpos updated: ");
+			console.log(player);
+
+			if (player.team == 'ins') {
+				centerOnPlayer();
+			}
+
 		};
 
-		player.pos.update(newPos);
-		console.log("Playerpos updated: ");
-		console.log(player);
+		var watchPosError = function(error) {
+			console.log("Watch position error: ");
+			console.log(error);
+		};
 
-		if (player.team == 'ins') {
-			centerOnPlayer();
-		}
-
-	};
-
-	var watchPosError = function(error) {
-		console.log("Watch position error: ");
-		console.log(error);
-	};
-
-	clientState['trackID'] = geo.watchPosition(
-		posUpdateHandler,
-		watchPosError, {
-			//timeout: 0,
-			enableHighAccuracy: true //,
-			// maximumAge: Infinity
-		}
-	);
+		clientState['trackID'] = geo.watchPosition(
+			posUpdateHandler,
+			watchPosError, {
+				//timeout: 0,
+				enableHighAccuracy: true //,
+				// maximumAge: Infinity
+			}
+		);
+	}
 };
 
 var emit = function(tag, emitObj) {
@@ -113,38 +111,12 @@ var emit = function(tag, emitObj) {
 	socket.emit('clientMsg', emitObj);
 	console.log('Sending ' + tag + ' to server');
 };
-// function emit(tag, emitObj) {
-// 	emitObj['tag'] = tag;
-// 	socket.emit('clientMsg', emitObj);
-// 	console.log('Sending ' + tag + ' to server');
-// };
 
 var centerOnPlayer = function() {
 	map.panTo([player.pos.lat, player.pos.lng]);
 };
 
-
 var stopTracking;
-
-// var posUpdateHandler = function(position) {
-// 	console.log('Latest Position: ' + position.coords.latitude + ', ' + position.coords.longitude);
-// 	footerMsg('Latest Watched Position: <br />' + position.coords.latitude + ', ' + position.coords.longitude + '<br />Heading: ' + player.pos.heading + '<br />' + convertTimestamp(Date.now(), true));
-
-// 	var newPos = {
-// 		lat: position.coords.latitude,
-// 		lng: position.coords.longitude,
-// 		time: position.timestamp //Date.now()
-// 	};
-
-// 	player.pos.update(newPos);
-// 	console.log("Playerpos updated: ");
-// 	console.log(player);
-
-// 	if (player.team == 'ins') {
-// 		centerOnPlayer();
-// 	}
-
-// };
 
 var sendStoredLocation = function(v1, v2) { //callback) {
 	var callback;
@@ -178,62 +150,8 @@ var sendStoredLocation = function(v1, v2) { //callback) {
 
 };
 
-var storeAndSendLocation = function(v1, v2) { //callback) {
-	var callback;
-	var serverReqTime;
-	if (isNaN(v1)) {
-		callback = v1;
-	} else {
-		serverReqTime = v1;
-		if (v2 !== undefined) {
-			callback = v2;
-		}
-	}
 
-	geo.getCurrentPosition(function(position) {
-		console.log('Position: ' + position.coords.latitude + ', ' + position.coords.longitude);
-		console.log(position);
-
-		var newPos = {
-			lat: position.coords.latitude,
-			lng: position.coords.longitude,
-			time: position.timestamp //Date.now()
-		};
-
-		player.pos.update(newPos);
-
-		// console.log("Heading isNAN is " + isNaN(position.coords.heading));
-		// console.log(position.coords.heading);
-		if (position.coords.heading) {
-			player.pos['heading'] = position.coords.heading;
-			footerMsg("Heading found: " + player.pos.heading);
-		}
-
-		emit('locationUpdate', {
-			//will this work or will it reset to latest for all?
-			reqTimestamp: serverReqTime,
-			locData: player.pos
-		});
-
-		if (callback !== undefined) {
-			callback();
-		}
-	});
-	//}
-};
-
-// var runIntro = function(team) {
-// 	var intro = clientState.intro;
-
-// 	msg(intro[team].screen1);
-// 	$('#nextButton').off('click').on('click', function() {
-// 		msg(intro[team].screen2);
-// 		$('#nextButton').off('click').on('click', function() {
-// 			$('#app').trigger('introComplete');
-// 		});
-// 	});
-// };
-app.attachSocketEvents = function(callback) {
+app.attachSocketEvents = function() { //callback) {
 	//INCOMING SOCKET FUNCTIONS
 	socket.on('serverMsg', function(res, err) {
 
@@ -242,8 +160,10 @@ app.attachSocketEvents = function(callback) {
 			stillConnected: function() {
 				clientState.connected = true;
 				console.log("Still connected to server");
-				//msg('Connected to server.');
-				//vibrate(1000); // vibrate for check
+			},
+
+			mapInitCheck: function() {
+				startup.initCheck();
 			},
 
 			//1sec for new/returning player + teamHash, uniqueID
@@ -266,16 +186,11 @@ app.attachSocketEvents = function(callback) {
 			},
 
 			newUserID: function() {
-				if (supported('localstorage')) {
-					localStorage.setItem("userID", res.newID);
-					//not sure this one is used...
-					clientState.localID = localStorage.userID;
-					player.localID = localStorage.userID;
-					player.team = res.team;
-					console.log("UserID stored locally as: " + localStorage.userID);
-				} else {
-					console.log("Warning: localStorage unsupported. ID not stored.");
-				}
+				storage.setItem("userID", res.newID);
+				storage.setItem("idStoredTimestamp", Date.now());
+				player.localID = storage.userID;
+				player.team = res.team;
+				console.log("UserID stored locally as: " + storage.userID);
 				msg('Hello Player ' + res.newID + '!');
 
 				startup.svcCheck();
@@ -284,14 +199,15 @@ app.attachSocketEvents = function(callback) {
 			returningReadyCheck: function() {
 
 				player.team = res.team;
-				//if (res.introComplete || storage.svcCheckComplete) {
-				// 	$('#app').trigger('ready');
-				// } else if (storage.svcCheckComplete) {
-				$('#footerText').html('');
-				$('#app').trigger('ready');
-				// } else {
-				// 	startup.svcCheck();
-				// }
+				if (res.introComplete || res.svcCheckComplete) {
+					// 	$('#app').trigger('ready');
+					// } else if (storage.svcCheckComplete) {
+					$('#footerText').html('');
+					app.ready();
+					//$('#app').trigger('ready');
+				} else {
+					startup.svcCheck();
+				}
 			},
 
 			getLocation: function() {
@@ -303,9 +219,9 @@ app.attachSocketEvents = function(callback) {
 
 				if (res.firstPing) {
 					clientState['trackInterval'] = res.trackingInterval;
-					if (!clientState.tracking) {
-						app.trackLocation();
-					}
+					// if (!clientState.tracking) {
+					// 	app.trackLocation();
+					// }
 					sendStoredLocation(res.timestamp, centerOnPlayer);
 				} else {
 					sendStoredLocation(res.timestamp);
@@ -316,7 +232,6 @@ app.attachSocketEvents = function(callback) {
 				clientState.intro.content = res.introContent;
 
 				console.log("My lockout State is: " + res.playerLockedOut);
-				//clientState['intro'] = res.introContent;
 				if (res.playerLockedOut) {
 					console.log('lockout Alert received');
 					//window.alert("FAILURE: State Agents have locked your device!");
@@ -328,17 +243,14 @@ app.attachSocketEvents = function(callback) {
 					$('#app').off('introComplete').on('introComplete', function() {
 						emit('introCompleted', {});
 						ins.renderUI();
-						attachEvents();
 					});
 				} else {
 					ins.renderUI();
-					attachEvents();
 				}
 			},
 
 			govStartData: function() {
 				clientState.intro.content = res.introContent;
-				//clientState['intro'] = res.introContent;
 				gov.renderHubs(res.hubs);
 
 				if (!res.playStarted) {
@@ -347,11 +259,11 @@ app.attachSocketEvents = function(callback) {
 					$('#app').off('introComplete').on('introComplete', function() {
 						emit('introCompleted', {});
 						gov.renderUI();
-						attachEvents();
+						//attachEvents();
 					});
 				} else {
 					gov.renderUI();
-					attachEvents();
+					//attachEvents();
 				}
 
 			},
@@ -476,8 +388,8 @@ app.attachSocketEvents = function(callback) {
 
 	});
 
-	//ONE EVENTS ATTACKED, TELL SERVER WE'RE LISTENING
-	emit('clientListening',{});
+	//ONCE EVENTS ATTACKED, TELL SERVER WE'RE LISTENING
+	emit('clientListening', {});
 	//
 	//if (callback) callback();
 };

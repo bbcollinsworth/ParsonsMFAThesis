@@ -5,15 +5,35 @@ var vibrate, geo, storage, heading;
 
 var startup = {
 
+	// attachEvents: function() {
+	// 	$('#app').off('initialized').on('initialized', function() {
+	// 		readyCheckRunning = false;
+	// 		msg("Server and map initialized.");
+	// 		emit('clientInitialized', {});
+	// 	});
+
+	// 	$('#app').off('ready').on('ready', function() {
+	// 		$('#footerText').css({
+	// 			'display': 'none'
+	// 		});
+
+	// 		app.trackLocation();
+	// 		app.addStyling[player.team]();
+
+	// 		emit('readyToPlay', {
+	// 			svcCheckComplete: true
+	// 		});
+	// 	});
+	// },
+
 	setup: function() {
 
 		initLeafletExtensions();
+		// startup.attachEvents();
 
 		//custom map function
 		Math.map = function(varToMap, varMin, varMax, mapToMin, mapToMax, clamp) {
-
 			var mappedValue = mapToMin + (mapToMax - mapToMin) * ((varToMap - varMin) / (varMax - varMin));
-
 			if (clamp) {
 				return Math.min(Math.max(mappedValue, mapToMin), mapToMax);
 			} else {
@@ -39,37 +59,28 @@ var startup = {
 		window.convertTimestamp = function(t, withSeconds) {
 			// FROM http://stackoverflow.com/questions/847185/convert-a-unix-timestamp-to-time-in-javascript
 			var date = new Date(t); //*1000);
-			// hours part from the timestamp
-			var hours = date.getHours();
+
+			var hours = date.getHours(); // hours part from the timestamp
 			hours = (hours % 12 === 0) ? 12 : hours % 12;
-			// minutes part from the timestamp
-			var minutes = "0" + date.getMinutes();
-			// seconds part from the timestamp
-			var seconds = "0" + date.getSeconds();
-			// will display time in 10:30:23 format
+			var minutes = "0" + date.getMinutes(); // minutes part from the timestamp
+			var seconds = "0" + date.getSeconds(); // seconds part from the timestamp
 
 			var formattedTime = hours + ':' + minutes.substr(-2); // + ':' + seconds.substr(-2);
 			if (withSeconds) {
 				formattedTime += ":" + seconds.substr(-2);
 			}
 			return formattedTime;
-
 		};
 
 		window.reverseForIn = function(obj, f) {
 			var arr = [];
 			for (key in obj) {
-				// add hasOwnPropertyCheck if needed
-				//arr.push(key);
 				arr.unshift(key);
 			}
 
 			for (i in arr) {
 				f.call(obj, arr[i]);
 			}
-			// for (var i = arr.length - 1; i >= 0; i--) {
-			// 	f.call(obj, arr[i]);
-			// }
 		};
 
 		$('#mobileHeader').trigger('create');
@@ -171,50 +182,51 @@ var startup = {
 		socket = io.connect();
 		msg("Initializing socket");
 
+		var seconds = 0;
+		var serverWait = setInterval(function() {
+			seconds++;
+			console.log("Waiting for server connection... " + seconds + "s");
+		}, 1000);
+
 		socket.on('connected', function(res, err) {
 			clientState.connected = true;
+			clearInterval(serverWait);
 			console.log("Connected to server");
-			//MOVED TO END OF ATTACHSOCKETEVENTS
-			// var cb = function(){
-			// 	emit('clientListening',{});
-			// };
-			app.attachSocketEvents();//(cb);
+			app.attachSocketEvents(); //(cb);
 
 		});
-		
+
 	},
 
-	readyCheck: function() {
-		clientState.readyCheckRunning = true;
+	initCheck: function() {
+		//clientState.readyCheckRunning = true;
 
-		msg("Checking if initialized");
-		if (clientState.connected && clientState.mapLoaded) {
-			clientState.ready = true;
-			$('#app').trigger('initialized');
-			// emit('clientReady', {});
+		// var triggerInit = function() {
+		// 	app.initialized();
+		// 	// clientState.initialized = true;
+		// 	// $('#app').trigger('initialized');
+		// };
+
+		msg("Checking if map initialized");
+		if (clientState.mapLoaded) {
+			app.initialized();
+			// triggerInit();
 		} else {
-			// emit('connectedCheck',{});
 			var readyCounter = 60;
-			//mobileAlert("CONNECTING...");
 
 			var waitForReady = setInterval(function() {
 
 				console.log("Waiting for ready state...");
-				if (clientState.connected && clientState.mapLoaded) {
-					clientState.ready = true;
-					$('#app').trigger('initialized');
-
+				if (clientState.mapLoaded) {
 					clearInterval(waitForReady);
+					app.initialized();
+					//triggerInit();
+					
 				} else if (readyCounter > 0) {
-					readyCounter--;
-					if (!clientState.connected) {
-						console.log("Waiting for connection.");
-						emit('connectedCheck', {});
-					}
-					if (!clientState.mapLoaded) {
+					//if (!clientState.mapLoaded) {
 						console.log("Waiting for map.");
-					}
-
+					//}
+					readyCounter--;
 					console.log(readyCounter * 0.5 + "seconds");
 				} else {
 					console.log("Not ready. Reloading");
@@ -230,16 +242,22 @@ var startup = {
 		console.log("Checking for stored user. IDs from server are: ");
 		console.log(allIDs);
 		console.log("And locally stored ID is: ");
-		console.log(localStorage.userID);
+		console.log(storage.userID);
 		var userFound = false;
 		//check for stored id matching existing player:
-		if (localStorage.userID !== undefined) {
+		if (storage.userID !== undefined) {
 			for (var i in allIDs) {
-				if (localStorage.userID == allIDs[i]) {
+				if (storage.userID == allIDs[i]) {
 					console.log("Stored User Found!:" + allIDs[i]);
 					userFound = true;
 					break;
 				}
+			}
+			//if there's a local user but it wasn't matched, clear it
+			if (!userFound){
+				console.log("ERROR: Locally stored user not matched to server, probably due to server restart.");
+				console.log("Clearing local storage.");
+				storage.clear();
 			}
 		}
 
@@ -270,31 +288,20 @@ var startup = {
 				var supportedMsg = feature + " supported.";
 				//$('#footerText').append('<p>' + supportedMsg + '</p>');
 				console.log(supportedMsg);
-				// if (feature == "localstorage"){
-				// 	console.log("localStorage on init is:");
-				// 	console.log(localStorage);
-				// }
-				//need to return feature variable
 				return thisFeature.setup;
+			} else if ('errorReturn' in thisFeature) {
+				console.log("Special error return found for " + thisFeature.title);
+				console.log(thisFeature.errorReturn);
+				return thisFeature.errorReturn;
 			} else {
-				var unsupportedMsg = feature + " not supported.";
-				//$('#footerText').append('<p>' + unsupportedMsg + '</p>');
-				console.log(unsupportedMsg);
-				if ('errorReturn' in thisFeature) {
-					console.log("Special error return found for " + thisFeature.title);
-					console.log(thisFeature.errorReturn);
-					return thisFeature.errorReturn;
-				} else {
-					return function() {
-						console.log("Error: " + feature + " not supported. skipping...");
-						//return;
-					};
-				}
+				return function() {
+					console.log("Error: " + feature + " not supported. skipping...");
+					//return;
+				};
 			}
 		};
 
 		vibrate = initialize('vibrate');
-		//initialize('vibrate');
 		console.log(vibrate);
 		vibrate(1000);
 
@@ -311,17 +318,13 @@ var startup = {
 	},
 
 	svcCheck: function() {
-
 		//render service checklist and run any activation tests
-
 		var list = $('<ul />', {
 			'data-role': "listview", //collapsibleset",
 			'id': "svcCheckList"
 		});
 
 		var alertBody = $('#alertBodyText');
-
-		//alertBody.html('');
 		alertBody.html(list);
 		alertBody.trigger('create');
 
@@ -343,11 +346,9 @@ var startup = {
 			}
 
 			var listItem = $('<li />', {
-				//'data-role': "collapsible",
 				'data-inset': "false",
 				'data-iconpos': "right",
 				'class': "feature-list ui-corner-all " + icon + " ui-btn-icon-right" //,
-				//'html': itemName + itemHelpText
 			});
 
 			$('#svcCheckList').append(listItem);
@@ -363,9 +364,6 @@ var startup = {
 			});
 
 			listItem.append(itemName, itemHelpText);
-			//listItem.append(itemHelpText);
-
-			//return listItem;
 		};
 
 		var createList = function(featuresList) {
@@ -382,28 +380,23 @@ var startup = {
 				}
 			});
 
-			if (allServicesReady) {
-				//$('#svcCheckList').append("<h3>Ready!</h3>");
-				msg("Ready!");
+			$('#svcCheckList').listview("refresh");
 
-				//localStorage.setItem('svcCheckComplete', true);
-				//if (clientState.features.localstorage.supported) {
+			if (allServicesReady) {
+
+				msg("Ready!");
 				storage.setItem('svcCheckComplete', true);
 				console.log("Local value of SvcCheckComplete stored as: " + storage.svcCheckComplete);
-				//}
 
 				$('#footerText').html('');
 
-				$('#app').trigger('ready');
+				app.ready();
 
+				//$('#app').trigger('ready');
 			}
-
-			$('#svcCheckList').listview("refresh");
-			//$('#svcCheckList').collapsibleset("refresh");
 		};
 
 		createList(clientState.features);
-
 	}
 };
 

@@ -55,6 +55,7 @@
 }
 
 #mobileHeader {
+	font-weight: 400;
 	border-width: 0px;
 	background-color: rgba(0,0,0,0);
 }

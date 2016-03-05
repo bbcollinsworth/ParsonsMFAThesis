@@ -2,13 +2,14 @@ var clientState = {
 	connected: false,
 	mapLoaded: false,
 	readyCheckRunning: false,
-	ready: false,
+	initialized: false,
+	//ready: false,
 	tracking: false,
-	playerPos: {
-		lat: 0,
-		lng: 0
-	},
-	localID: '',
+	// playerPos: {
+	// 	lat: 0,
+	// 	lng: 0
+	// },
+	// localID: '',
 	intro: {
 		content: {},
 		run: function() { //team) {
@@ -20,6 +21,10 @@ var clientState = {
 				$('#nextButton').off('click').on('click', function() {
 					$('#app').trigger('introComplete');
 				});
+
+				// if (team == 'gov'){
+				// 	gov.renderHubs();
+				// }
 			});
 		}
 	},
@@ -174,7 +179,7 @@ var clientState = {
 			readyTest: function() {
 				setTimeout(function() {
 					navigator.geolocation.getCurrentPosition(function(position) {
-						console.log('Position: ' + position.coords.latitude + ', ' + position.coords.longitude);
+						console.log('ReadyTest Position is: ' + position.coords.latitude + ', ' + position.coords.longitude);
 						window.player.pos.update({
 							lat: position.coords.latitude,
 							lng: position.coords.longitude,

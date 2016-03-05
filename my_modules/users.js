@@ -39,6 +39,7 @@ module.exports = function(users, _socket) {
 				'userID': team + teamNumber.toString(),
 				'connected': false,
 				'trackActive': false,
+				'svcCheckComplete': false,
 				'playStarted': false,
 				'warned': {
 					'50': false,
@@ -96,7 +97,7 @@ module.exports = function(users, _socket) {
 			if (sinceTime !== undefined) {
 				// for (i in user.locationData) {
 				for (var i = 0; i < user.locationData.length; i += gameState.settings.dataSkipInterval) {
-					log(user.locationData);
+					//log(user.locationData);
 					if (user.locationData[i].time > sinceTime) {
 						locArray.push(user.locationData[i]);
 					} else {

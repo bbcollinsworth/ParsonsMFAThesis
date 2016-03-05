@@ -192,10 +192,6 @@ io.on('connection', function(socket) {
 
 	};
 
-	// log('The user ' + socket.id + ' just connected!', colors.yellow);
-	// emitTo.socket('connected', {});
-	//var mapInitCheck = function()
-
 	//=================================
 	//CLIENT MESSAGE HANDLER:
 	//=================================
@@ -204,15 +200,16 @@ io.on('connection', function(socket) {
 		var handleClientMsg = {
 
 			clientListening: function(){
-				emitTo.socket('mapInitCheck');
+				player.connected = true;
+				emitTo.socket('mapInitCheck',{});
 				//mapInitCheck();
 				//NEED SOMETHING THAT ONLY ALLOWS INITIALIZED EMIT ONCE LISTENING IS ACTIVE
-				checkPlayerType();
+				//checkPlayerType();
 			},
 
 			clientInitialized: function() {
-				log(socket.id + " is initialized!", colors.yellow);
-				//checkPlayerType();
+				log(socket.id + " server and map are initialized!", colors.yellow);
+				checkPlayerType();
 			},
 
 			connectedCheck: function() {
@@ -249,17 +246,16 @@ io.on('connection', function(socket) {
 				log("'Player' for socket " + socket.id + " is now:", colors.yellow.inverse);
 				log(player);
 
-				player.connected = true;
-
 				emitTo.socket('returningReadyCheck', {
 					team: player.team,
-					introComplete: player.playStarted
+					introComplete: player.playStarted,
+					svcCheckComplete: player.svcCheckComplete
 				});
 			},
 
 			readyToPlay: function() {
-				player.connected = true;
-				startTracking();
+				//player.connected = true;
+				player.svcCheckComplete = true;
 
 				switch (player.team) {
 					case 'gov':
@@ -280,6 +276,8 @@ io.on('connection', function(socket) {
 						});
 						break;
 				}
+
+				startTracking();
 			},
 
 			introCompleted: function() {
@@ -307,17 +305,6 @@ io.on('connection', function(socket) {
 					player.clearDark();
 					startTracking();
 				}
-				// if (res.timestamp - player.lastLocReqTime < gameState.trackingInterval) {
-				// 	storeLocation();
-				// } else if (res.reqTimestamp === player.lastLocRequest.timestamp) {
-				// 	player.lastLocRequest.resReceived = true;
-				// 	storeLocation();
-				// 	if (!player.trackActive || player.goneDark) {
-				// 		player.goneDark = false;
-				// 		startTracking();
-				// 	}
-
-				// }
 
 			},
 
