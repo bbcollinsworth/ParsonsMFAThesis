@@ -233,7 +233,7 @@ var storeAndSendLocation = function(v1, v2) { //callback) {
 // 		});
 // 	});
 // };
-app.attachSocketEvents = function() {
+app.attachSocketEvents = function(callback) {
 	//INCOMING SOCKET FUNCTIONS
 	socket.on('serverMsg', function(res, err) {
 
@@ -471,10 +471,15 @@ app.attachSocketEvents = function() {
 			}
 		};
 
+		//calls the function
 		handleServerMsg[res.tag]();
 
-
 	});
+
+	//ONE EVENTS ATTACKED, TELL SERVER WE'RE LISTENING
+	emit('clientListening',{});
+	//
+	//if (callback) callback();
 };
 
 startup.initMap();

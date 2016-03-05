@@ -194,6 +194,7 @@ io.on('connection', function(socket) {
 
 	// log('The user ' + socket.id + ' just connected!', colors.yellow);
 	// emitTo.socket('connected', {});
+	//var mapInitCheck = function()
 
 	//=================================
 	//CLIENT MESSAGE HANDLER:
@@ -203,6 +204,8 @@ io.on('connection', function(socket) {
 		var handleClientMsg = {
 
 			clientListening: function(){
+				emitTo.socket('mapInitCheck');
+				//mapInitCheck();
 				//NEED SOMETHING THAT ONLY ALLOWS INITIALIZED EMIT ONCE LISTENING IS ACTIVE
 				checkPlayerType();
 			},

@@ -170,11 +170,16 @@ var startup = {
 	connectToServer: function() {
 		socket = io.connect();
 		msg("Initializing socket");
+
 		socket.on('connected', function(res, err) {
 			clientState.connected = true;
 			console.log("Connected to server");
-			app.attachSocketEvents();
-			emit('clientListening',{});
+			//MOVED TO END OF ATTACHSOCKETEVENTS
+			// var cb = function(){
+			// 	emit('clientListening',{});
+			// };
+			app.attachSocketEvents();//(cb);
+
 		});
 		
 	},
