@@ -21,9 +21,9 @@ var convertTimestamp = function(t, withSeconds) {
 var customLog = function(message) {
 	console.log(message);
 	if (clientState.connected) {
-		emit('clientLogMsg', {
+		socket.emit('clientMsg', {
+			tag: 'clientLogMsg',
 			content: message,
-			timestamp: Date.now(),
 			time: convertTimestamp(Date.now(), true)
 		});
 	}

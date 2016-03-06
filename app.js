@@ -53,6 +53,7 @@ server.listen(process.env.PORT || port, function() {
 var players = gameState.players;
 var teams = gameState.teams;
 var hubs = gameState.hubs; //this should alter data in gamestate when altered
+gameState.setupHubs();
 log("Starting hubs are: ", colors.yellow.inverse);
 log(hubs);
 

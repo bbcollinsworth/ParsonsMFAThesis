@@ -252,6 +252,8 @@ var gov = {
 		attachPingEvents: function() {
 			msg(gov.ui.text.ping);
 
+			customLog("GovUI ping events attached");
+
 			$('#searchButton').off('click').on('click', function() {
 				//msg('Ping button clicked');
 
@@ -303,6 +305,7 @@ var gov = {
 	},
 
 	renderUI: function() {
+		customLog("Rendering Gov UI");
 		viz.addSuspectContainer();
 
 		var pingButton = viz.searchButton();

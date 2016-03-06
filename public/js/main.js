@@ -25,6 +25,12 @@ var player = {
 
 var hubs = [];
 
+var emit = function(tag, emitObj) {
+	emitObj['tag'] = tag;
+	socket.emit('clientMsg', emitObj);
+	customLog('Sending ' + tag + ' to server');
+};
+
 app.initialized = function() {
 	clientState.initialized = true;
 	//clientState.readyCheckRunning = false;
@@ -104,12 +110,6 @@ app.trackLocation = function() {
 			}
 		);
 	}
-};
-
-var emit = function(tag, emitObj) {
-	emitObj['tag'] = tag;
-	socket.emit('clientMsg', emitObj);
-	console.log('Sending ' + tag + ' to server');
 };
 
 var centerOnPlayer = function() {
