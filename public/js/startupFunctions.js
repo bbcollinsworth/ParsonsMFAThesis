@@ -2,6 +2,32 @@ var govHash, insHash;
 var teamHash, uniqueHash;
 var vibrate, geo, storage, heading;
 
+var convertTimestamp = function(t, withSeconds) {
+	// FROM http://stackoverflow.com/questions/847185/convert-a-unix-timestamp-to-time-in-javascript
+	var date = new Date(t); //*1000);
+
+	var hours = date.getHours(); // hours part from the timestamp
+	hours = (hours % 12 === 0) ? 12 : hours % 12;
+	var minutes = "0" + date.getMinutes(); // minutes part from the timestamp
+	var seconds = "0" + date.getSeconds(); // seconds part from the timestamp
+
+	var formattedTime = hours + ':' + minutes.substr(-2); // + ':' + seconds.substr(-2);
+	if (withSeconds) {
+		formattedTime += ":" + seconds.substr(-2);
+	}
+	return formattedTime;
+};
+
+var customLog = function(message) {
+	console.log(message);
+	if (clientState.connected) {
+		emit('clientLogMsg', {
+			content: message,
+			timestamp: Date.now(),
+			time: convertTimestamp(Date.now(), true)
+		});
+	}
+};
 
 var startup = {
 
@@ -32,22 +58,6 @@ var startup = {
 			for (key in propsToUpdateObj) {
 				originalObj[key] = propsToUpdateObj[key];
 			}
-		};
-
-		window.convertTimestamp = function(t, withSeconds) {
-			// FROM http://stackoverflow.com/questions/847185/convert-a-unix-timestamp-to-time-in-javascript
-			var date = new Date(t); //*1000);
-
-			var hours = date.getHours(); // hours part from the timestamp
-			hours = (hours % 12 === 0) ? 12 : hours % 12;
-			var minutes = "0" + date.getMinutes(); // minutes part from the timestamp
-			var seconds = "0" + date.getSeconds(); // seconds part from the timestamp
-
-			var formattedTime = hours + ':' + minutes.substr(-2); // + ':' + seconds.substr(-2);
-			if (withSeconds) {
-				formattedTime += ":" + seconds.substr(-2);
-			}
-			return formattedTime;
 		};
 
 		window.reverseForIn = function(obj, f) {
@@ -91,7 +101,7 @@ var startup = {
 			}
 
 			if (styling in viz.headerStyles) {
-				console.log("adding header styling! " + styling);
+				customLog("adding header styling! " + styling);
 				$('#alertBox .ui-collapsible-content').addClass(viz.headerStyles[styling]);
 			}
 		};
@@ -119,9 +129,9 @@ var startup = {
 		var parsedHash = thisHash.split("&");
 		parsedHash[0] = parsedHash[0].slice(1, 100);
 		msg('Parsed hash is ' + parsedHash[0] + ', ' + parsedHash[1]);
-		console.log("Hash:");
-		console.log(parsedHash[0]);
-		console.log(parsedHash[1]);
+		customLog("Hash:");
+		customLog(parsedHash[0]);
+		customLog(parsedHash[1]);
 
 		teamHash = parsedHash[0];
 		uniqueHash = parsedHash[1];
@@ -133,7 +143,7 @@ var startup = {
 	},
 
 	initMap: function() {
-		console.log("Initializing map");
+		customLog("Initializing map");
 		//msg("Initializing map");
 		L.mapbox.accessToken = 'pk.eyJ1IjoiZnVja3lvdXJhcGkiLCJhIjoiZEdYS2ZmbyJ9.6vnDgXe3K0iWoNtZ4pKvqA';
 
@@ -145,7 +155,7 @@ var startup = {
 
 				window.featureLayer = L.geoJson().addTo(map);
 				clientState.mapLoaded = true;
-				console.log("Map is initialized!");
+				customLog("Map is initialized!");
 				//sendMapReady();
 			});
 
@@ -162,13 +172,13 @@ var startup = {
 		var seconds = 0;
 		var serverWait = setInterval(function() {
 			seconds++;
-			console.log("Waiting for server connection... " + seconds + "s");
+			customLog("Waiting for server connection... " + seconds + "s");
 		}, 1000);
 
 		socket.on('connected', function(res, err) {
 			clientState.connected = true;
 			clearInterval(serverWait);
-			console.log("Connected to server");
+			customLog("Connected to server");
 			app.attachSocketEvents(); //(cb);
 
 		});
@@ -185,19 +195,19 @@ var startup = {
 
 			var waitForReady = setInterval(function() {
 
-				console.log("Waiting for ready state...");
+				customLog("Waiting for ready state...");
 				if (clientState.mapLoaded) {
 					clearInterval(waitForReady);
 					app.initialized();
 
 				} else if (readyCounter > 0) {
 					//if (!clientState.mapLoaded) {
-					console.log("Waiting for map.");
+					customLog("Waiting for map.");
 					//}
 					readyCounter--;
-					console.log(readyCounter * 0.5 + "seconds");
+					customLog(readyCounter * 0.5 + "seconds");
 				} else {
-					console.log("Not ready. Reloading");
+					customLog("Not ready. Reloading");
 					clearInterval(waitForReady);
 					window.location.reload();
 				}
@@ -206,37 +216,37 @@ var startup = {
 		}
 	},
 
-	storedUserCheck: function(allIDs,gameStart) {
-		console.log("Checking for stored user. IDs from server are: ");
-		console.log(allIDs);
-		console.log("And locally stored ID is: ");
-		console.log(storage.userID);
+	storedUserCheck: function(allIDs, gameStart) {
+		customLog("Checking for stored user. IDs from server are: ");
+		customLog(allIDs);
+		customLog("And locally stored ID is: ");
+		customLog(storage.userID);
 		var userFound = false;
 		//check for stored id matching existing player:
 		if (storage.userID !== undefined) {
 
-			if (storage.idStoredTimestamp < gameStart){
+			if (storage.idStoredTimestamp < gameStart) {
 				storage.clear();
-				console.log("ID older than 1 day found; cleared localStorage to: ");
-				console.log(storage);
+				customLog("ID older than 1 day found; cleared localStorage to: ");
+				customLog(storage);
 				window.location.reload();
-			// }
-			// if ((Date.now() - storage.idStoredTimestamp) > 86400000) {
-			// 	storage.clear();
-			// 	console.log("ID older than 1 day found; cleared localStorage to: ");
-			// 	console.log(storage);
+				// }
+				// if ((Date.now() - storage.idStoredTimestamp) > 86400000) {
+				// 	storage.clear();
+				// 	customLog("ID older than 1 day found; cleared localStorage to: ");
+				// 	customLog(storage);
 			} else {
 				for (var i in allIDs) {
 					if (storage.userID == allIDs[i]) {
-						console.log("Stored User Found!:" + allIDs[i]);
+						customLog("Stored User Found!:" + allIDs[i]);
 						userFound = true;
 						break;
 					}
 				}
 				//if there's a local user but it wasn't matched, clear it
 				if (!userFound) {
-					console.log("ERROR: Locally stored user not matched to server, probably due to server restart.");
-					console.log("Clearing local storage.");
+					customLog("ERROR: Locally stored user not matched to server, probably due to server restart.");
+					customLog("Clearing local storage.");
 					storage.clear();
 				}
 			}
@@ -257,33 +267,33 @@ var startup = {
 			var thisFeature = clientState.features[feature];
 			try {
 				thisFeature.supported = Modernizr[feature]; //feature in navigator;
-				//console.log("Raw var for " + feature + ": " + (Modernizr[feature]));
+				//customLog("Raw var for " + feature + ": " + (Modernizr[feature]));
 			} catch (err) {
 				thisFeature = {
 					supported: false
 				};
-				console.log(err.message);
+				customLog(err.message);
 			}
 
 			if (thisFeature.supported) {
 				var supportedMsg = feature + " supported.";
 				//$('#footerText').append('<p>' + supportedMsg + '</p>');
-				console.log(supportedMsg);
+				customLog(supportedMsg);
 				return thisFeature.setup;
 			} else if ('errorReturn' in thisFeature) {
-				console.log("Special error return found for " + thisFeature.title);
-				console.log(thisFeature.errorReturn);
+				customLog("Special error return found for " + thisFeature.title);
+				customLog(thisFeature.errorReturn);
 				return thisFeature.errorReturn;
 			} else {
 				return function() {
-					console.log("Error: " + feature + " not supported. skipping...");
+					customLog("Error: " + feature + " not supported. skipping...");
 					//return;
 				};
 			}
 		};
 
 		vibrate = initialize('vibrate');
-		console.log(vibrate);
+		customLog(vibrate);
 		vibrate(1000);
 
 		geo = initialize('geolocation');
@@ -292,7 +302,7 @@ var startup = {
 		heading(function(event) {
 			window.player.pos['heading'] = event.alpha;
 		});
-		console.log("Location Svcs initialized");
+		customLog("Location Svcs initialized");
 
 		storage = initialize('localstorage');
 
@@ -338,7 +348,7 @@ var startup = {
 				'text': feature.title, //featureName,
 				'class': "feature-title"
 			});
-			console.log(itemName.toString());
+			customLog(itemName.toString());
 
 			var itemHelpText = $('<p />', {
 				'text': helpText
@@ -367,7 +377,7 @@ var startup = {
 
 				msg("Ready!");
 				storage.setItem('svcCheckComplete', true);
-				console.log("Local value of SvcCheckComplete stored as: " + storage.svcCheckComplete);
+				customLog("Local value of SvcCheckComplete stored as: " + storage.svcCheckComplete);
 
 				$('#footerText').html('');
 
@@ -381,4 +391,4 @@ var startup = {
 	}
 };
 
-console.log("StartupFunctions loaded");
+customLog("StartupFunctions loaded");

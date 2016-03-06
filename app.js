@@ -56,6 +56,17 @@ var hubs = gameState.hubs; //this should alter data in gamestate when altered
 log("Starting hubs are: ", colors.yellow.inverse);
 log(hubs);
 
+/*––––––––––– ADMIN SOCKET.IO starts here –––––––––––––––*/
+
+admin.on('connection', function(socket) {
+	console.log('ADMIN CONNECTED!');
+	socket.emit('greeting', {
+		msg: "You're connected as admin!",
+		logs: gameState.playerLogs
+	});
+
+});
+
 
 /*––––––––––– SOCKET.IO starts here –––––––––––––––*/
 io.on('connection', function(socket) {
@@ -206,9 +217,23 @@ io.on('connection', function(socket) {
 
 		var handleClientMsg = {
 
-			clientListening: function(){
+			clientLogMsg: function() {
+				if (!(player.userID in gameState.playerLogs)) {
+					gameState.playerLogs[player.userID] = {};
+				}
+				//var logItem = res.time + ": " + res.content;
+				var t = res.time;
+				var c = res.content;
+				// var logItem = {
+				// 	t: c
+				// };
+				gameState.playerLogs[player.userID][t] = c;
+				//gameState.playerLogs[player.userID].push(logItem);
+			},
+
+			clientListening: function() {
 				player.connected = true;
-				emitTo.socket('mapInitCheck',{});
+				emitTo.socket('mapInitCheck', {});
 				//mapInitCheck();
 				//NEED SOMETHING THAT ONLY ALLOWS INITIALIZED EMIT ONCE LISTENING IS ACTIVE
 				//checkPlayerType();

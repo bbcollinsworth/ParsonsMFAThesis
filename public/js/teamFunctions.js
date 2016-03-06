@@ -26,7 +26,7 @@ var ins = {
 				.addClass('scanIcon');
 
 			$('#scanButton').off('click').on('click', function() {
-				console.log("SCAN BUTTON CLICKED");
+				customLog("SCAN BUTTON CLICKED");
 
 				centerOnPlayer();
 
@@ -42,7 +42,7 @@ var ins = {
 				//storeAndSendLocation(scanFunction);
 
 				if (!ins.ui.scanButton.animRunning) {
-					console.log("calling scan animation");
+					customLog("calling scan animation");
 
 					ins.ui.scanButton.animRunning = true;
 					ins.ui.scanButton.animate();
@@ -84,7 +84,7 @@ var ins = {
 
 			msg(ins.ui.text.hackSuccess, 'success');
 			setTimeout(function() {
-				console.log("resetting scan");
+				customLog("resetting scan");
 				ins.ui.attachScanEvents();
 			}, 3000);
 		}
@@ -106,8 +106,8 @@ var ins = {
 
 		ins.ui.attachScanEvents();
 
-		console.log('Hub pointers created: ');
-		console.log(this.ui.hubPointers);
+		customLog('Hub pointers created: ');
+		customLog(this.ui.hubPointers);
 
 	},
 
@@ -149,7 +149,7 @@ var ins = {
 		var getAngleFromMapCenter = function(screenPos) {
 
 			var screenCenter = map.project(map.getCenter());
-			console.log("Map Center is " + screenCenter);
+			customLog("Map Center is " + screenCenter);
 
 			var vec = {
 				'x': screenPos.x - screenCenter.x,
@@ -168,7 +168,7 @@ var ins = {
 
 			var hubScreenCoords = map.project([hubArray[i].lat, hubArray[i].lng]);
 			hubArray[i]['angleTo'] = getAngleFromMapCenter(hubScreenCoords);
-			console.log("Angle to " + hubArray[i].name + " is " + hubArray[i]['angleTo'] + " degrees");
+			customLog("Angle to " + hubArray[i].name + " is " + hubArray[i]['angleTo'] + " degrees");
 
 			ins.ui.hubPointers[i].update(hubArray[i]);
 		}
@@ -213,7 +213,7 @@ var ins = {
 			ins.ui.attachScanEvents();
 
 		} else if (ins.targetHub.health > 0) {
-			console.log("Sending hack progress to server");
+			customLog("Sending hack progress to server");
 			emit('hubHackProgress', {
 				hubID: ins.targetHub.id,
 				hubName: ins.targetHub.name,
@@ -265,7 +265,7 @@ var gov = {
 				//storeAndSendLocation(pingFunction);
 
 				if (!gov.ui.pingCircle.animRunning) {
-					console.log("calling ping animation");
+					customLog("calling ping animation");
 					gov.ui.pingCircle.reCenter();
 
 					gov.ui.pingCircle.animRunning = true;
@@ -273,14 +273,14 @@ var gov = {
 
 					var tempPingCircle = document.getElementsByClassName('onMapPingCircle');
 					tempPingCircle[0].classList.add('run');
-					//console.log(tempPingCircle[0]);
+					//customLog(tempPingCircle[0]);
 
 					$('.onMapPingCircle').on('animationend webkitAnimationEnd', function() {
 
 						tempPingCircle[0].classList.remove('run');
 						gov.ui.pingCircle.animRunning = false;
 
-						console.log("Animation removed");
+						customLog("Animation removed");
 					});
 				}
 			});
@@ -338,8 +338,8 @@ var gov = {
 			}
 		});
 
-		console.log("Hub setup data from server: ");
-		console.log(hubs);
+		customLog("Hub setup data from server: ");
+		customLog(hubs);
 
 	},
 
@@ -352,7 +352,7 @@ var gov = {
 			if (otherPlayers[id].team == 'ins' && !otherPlayers[id].lockedOut) {
 
 				var dist = player.distanceTo(otherPlayers[id].latestPos);
-				console.log("Distance to " + otherPlayers[id].localID + " is " + dist + "m");
+				customLog("Distance to " + otherPlayers[id].localID + " is " + dist + "m");
 
 				if (dist <= gov.captureRange && !otherPlayers[id].goneDark) {
 					otherPlayers[id].inCaptureRange = true;
@@ -379,7 +379,7 @@ var gov = {
 				}
 
 				if (dist < 100) {
-					console.log("Sending close warning to " + id);
+					customLog("Sending close warning to " + id);
 
 					emit('agentGettingClose', {
 						playerID: player.localID,
@@ -392,8 +392,8 @@ var gov = {
 	},
 
 	captureComplete: function(capturedPlayerRef) {
-		console.log("Sending captureComplete for " + capturedPlayerRef.userID + ":");
-		console.log(capturedPlayerRef);
+		customLog("Sending captureComplete for " + capturedPlayerRef.userID + ":");
+		customLog(capturedPlayerRef);
 		emit("capturedPlayer", {
 			userID: capturedPlayerRef.userID,
 			team: capturedPlayerRef.team,
@@ -412,12 +412,12 @@ var gov = {
 	renderPlayers: function(pData) {
 
 		var players = clientState.allPlayers;
-		console.log("Current allPlayers before adding: ");
-		console.log(players);
+		customLog("Current allPlayers before adding: ");
+		customLog(players);
 
 		$.each(pData, function(userID, playerData) {
 
-			console.log("Player ID: " + userID);
+			customLog("Player ID: " + userID);
 
 			if (!(userID in players)) {
 				clientState.addPlayer(playerData, userID);
@@ -448,14 +448,14 @@ var gov = {
 				if (players[id].type == 'suspect' && !players[id].goneDark) {
 					liveSuspectFound = true;
 					toSelect = players[id];
-					console.log("Found live suspect to select");
+					customLog("Found live suspect to select");
 				} else if (players[id].type == 'suspect' && !liveSuspectFound) {
 					suspectFound = true;
-					console.log("Found suspect to select");
+					customLog("Found suspect to select");
 					toSelect = players[id];
 				} else if (players[id].type == 'agent' && !suspectFound && !liveSuspectFound) {
 					toSelect = players[id];
-					console.log("Found agent to select");
+					customLog("Found agent to select");
 				}
 			}
 
@@ -471,4 +471,4 @@ var gov = {
 
 };
 
-console.log("Team functions loaded");
+customLog("Team functions loaded");

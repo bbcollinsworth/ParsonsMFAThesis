@@ -137,12 +137,12 @@
 			lng: -74.004475
 		}, {
 			name: 'Washington Ave and Lincoln Pl',
-			enabled: false,
+			enabled: true,
 			lat: 40.672643,
 			lng: -73.962675
 		}, {
 			name: 'McNair Park',
-			enabled: false,
+			enabled: true,
 			lat: 40.670774,
 			lng: -73.961985
 		}
@@ -237,6 +237,8 @@
 		},
 
 		'players': players,
+
+		'playerLogs': {},
 
 		'teamPickMethod': 'alternate',
 

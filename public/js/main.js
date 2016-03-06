@@ -71,7 +71,7 @@ app.trackLocation = function() {
 		clientState.tracking = true;
 
 		var posUpdateHandler = function(position) {
-			console.log('Latest Watched Position: <br />' + position.coords.latitude + ', ' + position.coords.longitude + '<br />Heading: ' + player.pos.heading + '<br />' + convertTimestamp(Date.now(), true));
+			customLog('Latest Watched Position: <br />' + position.coords.latitude + ', ' + position.coords.longitude + '<br />Heading: ' + player.pos.heading + '<br />' + convertTimestamp(Date.now(), true));
 			//footerMsg('Latest Watched Position: <br />' + position.coords.latitude + ', ' + position.coords.longitude + '<br />Heading: ' + player.pos.heading + '<br />' + convertTimestamp(Date.now(), true));
 
 			var newPos = {
@@ -81,8 +81,8 @@ app.trackLocation = function() {
 			};
 
 			player.pos.update(newPos);
-			console.log("Playerpos updated: ");
-			console.log(player);
+			customLog("Playerpos updated: ");
+			customLog(player);
 
 			if (player.team == 'ins') {
 				centerOnPlayer();
@@ -91,8 +91,8 @@ app.trackLocation = function() {
 		};
 
 		var watchPosError = function(error) {
-			console.log("Watch position error: ");
-			console.log(error);
+			customLog("Watch position error: ");
+			customLog(error);
 		};
 
 		clientState['trackID'] = geo.watchPosition(
@@ -138,13 +138,13 @@ var sendStoredLocation = function(v1, v2) { //callback) {
 
 	//to catch server requestion location before it's been stored
 	if (callback !== undefined) {
-		console.log("Callback is: ");
-		console.log(callback);
+		customLog("Callback is: ");
+		customLog(callback);
 		try {
 			callback();
 		} catch (error) {
-			console.log("Send location callback error: ");
-			console.log(error);
+			customLog("Send location callback error: ");
+			customLog(error);
 		}
 	}
 
@@ -158,7 +158,7 @@ app.attachSocketEvents = function() { //callback) {
 
 			stillConnected: function() {
 				clientState.connected = true;
-				console.log("Still connected to server");
+				customLog("Still connected to server");
 			},
 
 			mapInitCheck: function() {
@@ -168,7 +168,7 @@ app.attachSocketEvents = function() { //callback) {
 			//1sec for new/returning player + teamHash, uniqueID
 			playerTypeCheck: function() {
 				var storedUserFound = startup.storedUserCheck(res.userIDs,res.gameStartTime);
-				console.log("Stored user found is: " + storedUserFound);
+				customLog("Stored user found is: " + storedUserFound);
 
 				if (storedUserFound) { //send returning player
 					clientState.localID = localStorage.userID;
@@ -189,7 +189,7 @@ app.attachSocketEvents = function() { //callback) {
 				storage.setItem("idStoredTimestamp", Date.now());
 				player.localID = storage.userID;
 				player.team = res.team;
-				console.log("UserID stored locally as: " + storage.userID);
+				customLog("UserID stored locally as: " + storage.userID);
 				msg('Hello Player ' + res.newID + '!');
 
 				startup.svcCheck();
@@ -214,7 +214,7 @@ app.attachSocketEvents = function() { //callback) {
 				clientState['lastLocReqTime'] = res.timestamp;
 				//if now - res.timestamp less than tracking interval
 				var timeElapsed = Date.now() - res.timestamp;
-				console.log("Time in seconds since request in GetLoc: " + timeElapsed / 1000);
+				customLog("Time in seconds since request in GetLoc: " + timeElapsed / 1000);
 
 				if (res.firstPing) {
 					clientState['trackInterval'] = res.trackingInterval;
@@ -230,9 +230,9 @@ app.attachSocketEvents = function() { //callback) {
 			insStartData: function() {
 				clientState.intro.content = res.introContent;
 
-				console.log("My lockout State is: " + res.playerLockedOut);
+				customLog("My lockout State is: " + res.playerLockedOut);
 				if (res.playerLockedOut) {
-					console.log('lockout Alert received');
+					customLog('lockout Alert received');
 					//window.alert("FAILURE: State Agents have locked your device!");
 					ins.renderLockout();
 				} else if (!res.playStarted) {
@@ -268,8 +268,8 @@ app.attachSocketEvents = function() { //callback) {
 			},
 
 			suspectData: function() {
-				console.log('Suspect data is: ');
-				console.log(res.locData);
+				customLog('Suspect data is: ');
+				customLog(res.locData);
 
 				gov.renderPlayers(res.locData, gov.suspectRangeCheck);
 			},
@@ -279,7 +279,7 @@ app.attachSocketEvents = function() { //callback) {
 			},
 
 			lockoutAlert: function() {
-				console.log('lockout Alert received');
+				customLog('lockout Alert received');
 				window.alert("FAILURE: State Agents have locked your device!");
 				ins.renderLockout();
 			},
@@ -292,8 +292,8 @@ app.attachSocketEvents = function() { //callback) {
 						case "gov":
 							players[lP.userID]['lockedOut'] = true;
 							players[lP.userID].marker.renderLockout();
-							console.log("Locking out player: ");
-							console.log(players[lP.userID]);
+							customLog("Locking out player: ");
+							customLog(players[lP.userID]);
 							setTimeout(function() {
 								window.alert("UPDATE: A suspect has been successfully neutralized.");
 								gov.ui.attachPingEvents();
@@ -309,8 +309,8 @@ app.attachSocketEvents = function() { //callback) {
 			},
 
 			hubsByDistance: function() {
-				console.log("Hubs by distance received: ");
-				console.log(res.hubsByDistance);
+				customLog("Hubs by distance received: ");
+				customLog(res.hubsByDistance);
 
 				$('#app').off('scanComplete').on('scanComplete', function() {
 					centerOnPlayer();
@@ -322,7 +322,7 @@ app.attachSocketEvents = function() { //callback) {
 
 			hubHealthUpdate: function() {
 
-				console.log("Health left: " + res.healthLeft);
+				customLog("Health left: " + res.healthLeft);
 				//Probably don't need
 				//if (res.hubName == ins.targetHub.name){
 				ins.targetHub.health = res.healthLeft;
@@ -330,7 +330,7 @@ app.attachSocketEvents = function() { //callback) {
 			},
 
 			hubAttackUpdate: function() {
-				console.log("Hub attack update received");
+				customLog("Hub attack update received");
 				var i = res.hubIndex;
 				hubs[i].update(res.latestHubInfo);
 				hubs[i].setFlashByAlertState();
@@ -354,7 +354,7 @@ app.attachSocketEvents = function() { //callback) {
 			},
 
 			hubAttackStopped: function() {
-				console.log("Hub attack stop received");
+				customLog("Hub attack stop received");
 				var i = res.hubIndex;
 				hubs[i].update(res.latestHubInfo);
 				hubs[i].stopFlash();
