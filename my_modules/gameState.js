@@ -11,6 +11,7 @@
 		hackTimeM: 1,
 		trailDurationM: 2,
 		dataSkipInterval: 3,
+		teamPickMethod: 'alternate',
 		introContent: {
 			'gov': {
 				'screen1': {
@@ -46,107 +47,106 @@
 	// var log = include('log');
 
 	//module.exports = function(players) {
-	var players = {};
+	var players = {
+		
+	};
 
 	var hubs = [{
-			name: 'tribeca bldg',
-			enabled: true,
-			lat: 40.720000,
-			lng: -74.004604
-		}, {
-			name: 'by st johns park',
-			enabled: true,
-			lat: 40.720708,
-			lng: -74.006922
-		}, {
-			name: 'by Canal plastics',
-			enabled: true,
-			lat: 40.720651,
-			lng: -74.003274
-		}, {
-			name: 'church and ave of Americas',
-			enabled: true,
-			lat: 40.718805,
-			lng: -74.005066
-		}, {
-			name: 'lispenard and Broadway',
-			enabled: true,
-			lat: 40.719173,
-			lng: -74.002291
-		}, {
-			name: '17th & Broadway PedPlaza',
-			enabled: true,
-			lat: 40.737323,
-			lng: -73.990213
-		}, {
-			name: 'Union Square SE Circle',
-			enabled: true,
-			lat: 40.734795,
-			lng: -73.990261
-		}, {
-			name: 'Union Square Lincoln statue',
-			enabled: true,
-			lat: 40.736183,
-			lng: -73.990122
-		}, {
-			name: '15th Street near 5th Ave',
-			enabled: true,
-			lat: 40.736462,
-			lng: -73.992086
-		}, {
-			name: 'Church of St. Francis Xavier',
-			enabled: true,
-			lat: 40.738258,
-			lng: -73.995006
-		}, 
-		{
-			name: 'Quad cinemas',
-			enabled: false,
-			lat: 40.736045,
-			lng: -73.996032
-		}, {
-			name: '18th near 5th',
-			enabled: true,
-			lat: 40.738731,
-			lng: -73.992364
-		}, {
-			name: 'University and 13th',
-			enabled: false,
-			lat: 40.734386,
-			lng: -73.992503
-		}, 
-		{
-			name: 'University center',
-			enabled: false,
-			lat: 40.735305,
-			lng: -73.994171
-		}, {
-			name: 'Popeyes',
-			enabled: false,
-			lat: 40.736858,
-			lng: -73.995447
-		}, {
-			name: '16th and 5th Ave SW corner park',
-			enabled: true,
-			lat: 40.737283,
-			lng: -73.992879
-		}, {
-			name: '15th St and 9th Ave NE corner',
-			enabled: false,
-			lat: 40.741543,
-			lng: -74.004475
-		}, {
-			name: 'Washington Ave and Lincoln Pl',
-			enabled: true,
-			lat: 40.672643,
-			lng: -73.962675
-		}, {
-			name: 'McNair Park',
-			enabled: true,
-			lat: 40.670774,
-			lng: -73.961985
-		}
-	];
+		name: 'tribeca bldg',
+		enabled: true,
+		lat: 40.720000,
+		lng: -74.004604
+	}, {
+		name: 'by st johns park',
+		enabled: true,
+		lat: 40.720708,
+		lng: -74.006922
+	}, {
+		name: 'by Canal plastics',
+		enabled: true,
+		lat: 40.720651,
+		lng: -74.003274
+	}, {
+		name: 'church and ave of Americas',
+		enabled: true,
+		lat: 40.718805,
+		lng: -74.005066
+	}, {
+		name: 'lispenard and Broadway',
+		enabled: true,
+		lat: 40.719173,
+		lng: -74.002291
+	}, {
+		name: '17th & Broadway PedPlaza',
+		enabled: true,
+		lat: 40.737323,
+		lng: -73.990213
+	}, {
+		name: 'Union Square SE Circle',
+		enabled: true,
+		lat: 40.734795,
+		lng: -73.990261
+	}, {
+		name: 'Union Square Lincoln statue',
+		enabled: true,
+		lat: 40.736183,
+		lng: -73.990122
+	}, {
+		name: '15th Street near 5th Ave',
+		enabled: true,
+		lat: 40.736462,
+		lng: -73.992086
+	}, {
+		name: 'Church of St. Francis Xavier',
+		enabled: true,
+		lat: 40.738258,
+		lng: -73.995006
+	}, {
+		name: 'Quad cinemas',
+		enabled: false,
+		lat: 40.736045,
+		lng: -73.996032
+	}, {
+		name: '18th near 5th',
+		enabled: true,
+		lat: 40.738731,
+		lng: -73.992364
+	}, {
+		name: 'University and 13th',
+		enabled: false,
+		lat: 40.734386,
+		lng: -73.992503
+	}, {
+		name: 'University center',
+		enabled: false,
+		lat: 40.735305,
+		lng: -73.994171
+	}, {
+		name: 'Popeyes',
+		enabled: false,
+		lat: 40.736858,
+		lng: -73.995447
+	}, {
+		name: '16th and 5th Ave SW corner park',
+		enabled: true,
+		lat: 40.737283,
+		lng: -73.992879
+	}, {
+		name: '15th St and 9th Ave NE corner',
+		enabled: false,
+		lat: 40.741543,
+		lng: -74.004475
+	}, {
+		name: 'Washington Ave and Lincoln Pl',
+		enabled: true,
+		lat: 40.672643,
+		lng: -73.962675
+	}, {
+		name: 'McNair Park',
+		enabled: true,
+		lat: 40.670774,
+		lng: -73.961985
+	}];
 
 
 	var hubStartStats = {
@@ -203,9 +203,9 @@
 
 	var state = {
 
-		createGameSession: function(startTimestamp){
+		createGameSession: function(startTimestamp) {
 			this.startTime = startTimestamp;
-			this.gameID = "game"+startTimestamp;
+			this.gameID = "game" + startTimestamp;
 		},
 
 		settings: playSettings,
@@ -240,9 +240,12 @@
 
 		'playerLogs': {},
 
-		'teamPickMethod': 'alternate',
-
+		//'teamPickMethod': 'alternate',
 		'teams': {
+			get pickMethod(){
+				return state.settings.teamPickMethod;
+			},
+			//'pickMethod': settings.teamPickMethod,
 			'g': 'gov',
 			'i': 'ins',
 			'default': 'gov', //set to Gov so first player will be int
@@ -261,12 +264,30 @@
 				//this would create opposing players near existing players
 				//IF playercount is above a certain number
 				//else return this.random()
-			} //,
+			},
+		},
+
+		getTeam: function(hash) {
+			var teams = state.teams;
+			var pickedTeam = teams['default'];
+			log("teamhash is: " + hash);
+
+			if (teams.hasOwnProperty(hash)) { //teams[hash] !== undefined) {
+				log("Set teamhash " + hash + " found. Setting to that team.");
+				pickedTeam = teams[hash];
+				teams.lastAssigned = pickedTeam; //so next unassigned player will join other team
+			} else {
+				pickedTeam = teams[teams.pickMethod](); //teams['default'];
+			}
+			log('Picked team is: ' + pickedTeam);
+			return pickedTeam;
 		},
 
 		'hubs': [], //hubs
 
 		setupHubs: function() {
+
+			log("Setup hubs called", colors.err);
 
 			//hubs.forEach()
 			for (i in hubs) {
@@ -295,6 +316,23 @@
 				// hub['attackingPlayers'] = hubStats.attackingPlayers;
 
 			} //);
+		},
+
+		getPlayerBySocketID: function(sID) {
+			var toReturn;
+
+			for (var uID in state.players) {
+				if (state.players[uID].socketID == sID) {
+					toReturn = state.players[uID];
+					break;
+				}
+			}
+
+			if (toReturn === undefined) {
+				log("ERROR: Player not found by SocketID", colors.err);
+			}
+
+			return toReturn;
 		},
 
 		get playerCount() {

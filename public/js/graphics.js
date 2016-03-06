@@ -343,7 +343,9 @@ var viz = {
 
 		h.marker.setRadius(h.markerRadius);
 
-		$.extend(true, h, hData);
+		myExtend(h,hData);
+
+		//$.extend(true, h, hData);
 
 		return h;
 	},

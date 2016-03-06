@@ -151,244 +151,249 @@ var sendStoredLocation = function(v1, v2) { //callback) {
 };
 
 app.attachSocketEvents = function() { //callback) {
-	//INCOMING SOCKET FUNCTIONS
-	socket.on('serverMsg', function(res, err) {
 
-		var handleServerMsg = {
+	if (!clientState.socketEventsAttached) {
+		clientState.socketEventsAttached = true;
+		//INCOMING SOCKET FUNCTIONS
+		socket.on('serverMsg', function(res, err) {
 
-			stillConnected: function() {
-				clientState.connected = true;
-				customLog("Still connected to server");
-			},
+			var handleServerMsg = {
 
-			mapInitCheck: function() {
-				startup.initCheck();
-			},
+				stillConnected: function() {
+					clientState.connected = true;
+					customLog("Still connected to server");
+				},
 
-			//1sec for new/returning player + teamHash, uniqueID
-			playerTypeCheck: function() {
-				var storedUserFound = startup.storedUserCheck(res.userIDs,res.gameStartTime);
-				customLog("Stored user found is: " + storedUserFound);
+				mapInitCheck: function() {
+					startup.initCheck();
+				},
 
-				if (storedUserFound) { //send returning player
-					clientState.localID = localStorage.userID;
-					player.localID = localStorage.userID;
-					emit('returningPlayer', {
-						userID: localStorage.userID
-					});
-				} else { //send new player
-					emit('newPlayer', {
-						teamHash: teamHash,
-						uniqueID: uniqueHash
-					});
-				}
-			},
+				//1sec for new/returning player + teamHash, uniqueID
+				playerTypeCheck: function() {
+					var storedUserFound = startup.storedUserCheck(res.userIDs, res.gameStartTime);
+					customLog("Stored user found is: " + storedUserFound);
 
-			newUserID: function() {
-				storage.setItem("userID", res.newID);
-				storage.setItem("idStoredTimestamp", Date.now());
-				player.localID = storage.userID;
-				player.team = res.team;
-				customLog("UserID stored locally as: " + storage.userID);
-				msg('Hello Player ' + res.newID + '!');
+					if (storedUserFound) { //send returning player
+						clientState.localID = localStorage.userID;
+						player.localID = localStorage.userID;
+						emit('returningPlayer', {
+							userID: localStorage.userID
+						});
+					} else { //send new player
+						emit('newPlayer', {
+							teamHash: teamHash,
+							uniqueID: uniqueHash
+						});
+					}
+				},
 
-				startup.svcCheck();
-			},
+				newUserID: function() {
+					storage.setItem("userID", res.newID);
+					storage.setItem("idStoredTimestamp", Date.now());
+					player.localID = storage.userID;
+					player.team = res.team;
+					customLog("UserID stored locally as: " + storage.userID);
+					msg('Hello Player ' + res.newID + '!');
 
-			returningReadyCheck: function() {
-
-				player.team = res.team;
-				if (res.introComplete || res.svcCheckComplete) {
-					// 	$('#app').trigger('ready');
-					// } else if (storage.svcCheckComplete) {
-					$('#footerText').html('');
-					app.ready();
-					//$('#app').trigger('ready');
-				} else {
 					startup.svcCheck();
-				}
-			},
+				},
 
-			getLocation: function() {
+				returningReadyCheck: function() {
 
-				clientState['lastLocReqTime'] = res.timestamp;
-				//if now - res.timestamp less than tracking interval
-				var timeElapsed = Date.now() - res.timestamp;
-				customLog("Time in seconds since request in GetLoc: " + timeElapsed / 1000);
+					player.team = res.team;
+					if (res.introComplete || res.svcCheckComplete) {
+						// 	$('#app').trigger('ready');
+						// } else if (storage.svcCheckComplete) {
+						$('#footerText').html('');
+						app.ready();
+						//$('#app').trigger('ready');
+					} else {
+						startup.svcCheck();
+					}
+				},
 
-				if (res.firstPing) {
-					clientState['trackInterval'] = res.trackingInterval;
-					// if (!clientState.tracking) {
-					// 	app.trackLocation();
-					// }
-					sendStoredLocation(res.timestamp, centerOnPlayer);
-				} else {
-					sendStoredLocation(res.timestamp);
-				}
-			},
+				getLocation: function() {
 
-			insStartData: function() {
-				clientState.intro.content = res.introContent;
+					clientState['lastLocReqTime'] = res.timestamp;
+					//if now - res.timestamp less than tracking interval
+					var timeElapsed = Date.now() - res.timestamp;
+					customLog("Time in seconds since request in GetLoc: " + timeElapsed / 1000);
 
-				customLog("My lockout State is: " + res.playerLockedOut);
-				if (res.playerLockedOut) {
-					customLog('lockout Alert received');
-					//window.alert("FAILURE: State Agents have locked your device!");
-					ins.renderLockout();
-				} else if (!res.playStarted) {
-					clientState.intro.run('ins');
-					//runIntro('ins');
+					if (res.firstPing) {
+						clientState['trackInterval'] = res.trackingInterval;
+						// if (!clientState.tracking) {
+						// 	app.trackLocation();
+						// }
+						sendStoredLocation(res.timestamp, centerOnPlayer);
+					} else {
+						sendStoredLocation(res.timestamp);
+					}
+				},
 
-					$('#app').off('introComplete').on('introComplete', function() {
-						emit('introCompleted', {});
+				insStartData: function() {
+					clientState.intro.content = res.introContent;
+
+					customLog("My lockout State is: " + res.playerLockedOut);
+					if (res.playerLockedOut) {
+						customLog('lockout Alert received');
+						//window.alert("FAILURE: State Agents have locked your device!");
+						ins.renderLockout();
+					} else if (!res.playStarted) {
+						clientState.intro.run('ins');
+						//runIntro('ins');
+
+						$('#app').off('introComplete').on('introComplete', function() {
+							emit('introCompleted', {});
+							ins.renderUI();
+						});
+					} else {
 						ins.renderUI();
-					});
-				} else {
-					ins.renderUI();
-				}
-			},
+					}
+				},
 
-			govStartData: function() {
-				clientState.intro.content = res.introContent;
-				gov.renderHubs(res.hubs);
+				govStartData: function() {
+					clientState.intro.content = res.introContent;
+					gov.renderHubs(res.hubs);
 
-				if (!res.playStarted) {
-					clientState.intro.run('gov');
+					if (!res.playStarted) {
+						clientState.intro.run('gov');
 
-					$('#app').off('introComplete').on('introComplete', function() {
-						emit('introCompleted', {});
+						$('#app').off('introComplete').on('introComplete', function() {
+							emit('introCompleted', {});
+							gov.renderUI();
+							//attachEvents();
+						});
+					} else {
 						gov.renderUI();
 						//attachEvents();
+					}
+
+				},
+
+				suspectData: function() {
+					customLog('Suspect data is: ');
+					customLog(res.locData);
+
+					gov.renderPlayers(res.locData, gov.suspectRangeCheck);
+				},
+
+				agentCloseWarning: function() {
+					window.alert("WARNING: State agents within " + res.distance + " meters.");
+				},
+
+				lockoutAlert: function() {
+					customLog('lockout Alert received');
+					window.alert("FAILURE: State Agents have locked your device!");
+					ins.renderLockout();
+				},
+
+				playerLockoutsUpdate: function() {
+					var lP = res.lockedPlayer;
+					var players = clientState.allPlayers;
+					if (lP.userID !== player.localID) {
+						switch (player.team) {
+							case "gov":
+								players[lP.userID]['lockedOut'] = true;
+								players[lP.userID].marker.renderLockout();
+								customLog("Locking out player: ");
+								customLog(players[lP.userID]);
+								setTimeout(function() {
+									window.alert("UPDATE: A suspect has been successfully neutralized.");
+									gov.ui.attachPingEvents();
+								}, 750);
+								break;
+							case "ins":
+								window.alert("ALERT: A fellow hacker has been neutralized.");
+								break;
+							default:
+								break;
+						}
+					}
+				},
+
+				hubsByDistance: function() {
+					customLog("Hubs by distance received: ");
+					customLog(res.hubsByDistance);
+
+					$('#app').off('scanComplete').on('scanComplete', function() {
+						centerOnPlayer();
+						ins.runHubRangeCheck(res.hubsByDistance);
+						// ins.pointToHubs(res.hubsByDistance,ins.popPointers);
 					});
-				} else {
-					gov.renderUI();
-					//attachEvents();
-				}
 
-			},
+				},
 
-			suspectData: function() {
-				customLog('Suspect data is: ');
-				customLog(res.locData);
+				hubHealthUpdate: function() {
 
-				gov.renderPlayers(res.locData, gov.suspectRangeCheck);
-			},
+					customLog("Health left: " + res.healthLeft);
+					//Probably don't need
+					//if (res.hubName == ins.targetHub.name){
+					ins.targetHub.health = res.healthLeft;
+					ins.ui.refreshHackProgress();
+				},
 
-			agentCloseWarning: function() {
-				window.alert("WARNING: State agents within " + res.distance + " meters.");
-			},
+				hubAttackUpdate: function() {
+					customLog("Hub attack update received");
+					var i = res.hubIndex;
+					hubs[i].update(res.latestHubInfo);
+					hubs[i].setFlashByAlertState();
 
-			lockoutAlert: function() {
-				customLog('lockout Alert received');
-				window.alert("FAILURE: State Agents have locked your device!");
-				ins.renderLockout();
-			},
-
-			playerLockoutsUpdate: function() {
-				var lP = res.lockedPlayer;
-				var players = clientState.allPlayers;
-				if (lP.userID !== player.localID) {
-					switch (player.team) {
-						case "gov":
-							players[lP.userID]['lockedOut'] = true;
-							players[lP.userID].marker.renderLockout();
-							customLog("Locking out player: ");
-							customLog(players[lP.userID]);
-							setTimeout(function() {
-								window.alert("UPDATE: A suspect has been successfully neutralized.");
-								gov.ui.attachPingEvents();
-							}, 750);
+					switch (hubs[i].alertState) {
+						case 3:
+							if (!hubs[i].alerts.lvl3) {
+								window.alert("WARNING: Security hub attack 50% complete.");
+								hubs[i].alerts.lvl3 = true;
+							}
 							break;
-						case "ins":
-							window.alert("ALERT: A fellow hacker has been neutralized.");
+						case 1:
+							//THIS SHOULD NOT have if test
+							window.alert("WARNING: A security hub is under attack.");
+							hubs[i].alerts.lvl1 = true;
 							break;
 						default:
 							break;
 					}
+					//}
+				},
+
+				hubAttackStopped: function() {
+					customLog("Hub attack stop received");
+					var i = res.hubIndex;
+					hubs[i].update(res.latestHubInfo);
+					hubs[i].stopFlash();
+					// if (hubs[i].flashing){
+
+					// }
+				},
+
+				hackComplete: function() {
+					ins.ui.hackSuccess();
+				},
+
+				hubDown: function() {
+					switch (player.team) {
+						case "gov":
+							hubs[res.hubIndex].stopFlash();
+							hubs[res.hubIndex].shutDown();
+							window.alert("Hackers have taken down a security hub!");
+							break;
+						case "ins":
+						default:
+							window.alert("SUCCESS: A surveillance site has been hacked!");
+							break;
+					}
 				}
-			},
+			};
 
-			hubsByDistance: function() {
-				customLog("Hubs by distance received: ");
-				customLog(res.hubsByDistance);
+			//calls the function
+			handleServerMsg[res.tag]();
 
-				$('#app').off('scanComplete').on('scanComplete', function() {
-					centerOnPlayer();
-					ins.runHubRangeCheck(res.hubsByDistance);
-					// ins.pointToHubs(res.hubsByDistance,ins.popPointers);
-				});
+		});
 
-			},
+		//ONCE EVENTS ATTACHED, TELL SERVER WE'RE LISTENING
+		emit('clientListening', {});
 
-			hubHealthUpdate: function() {
-
-				customLog("Health left: " + res.healthLeft);
-				//Probably don't need
-				//if (res.hubName == ins.targetHub.name){
-				ins.targetHub.health = res.healthLeft;
-				ins.ui.refreshHackProgress();
-			},
-
-			hubAttackUpdate: function() {
-				customLog("Hub attack update received");
-				var i = res.hubIndex;
-				hubs[i].update(res.latestHubInfo);
-				hubs[i].setFlashByAlertState();
-
-				switch (hubs[i].alertState) {
-					case 3:
-						if (!hubs[i].alerts.lvl3) {
-							window.alert("WARNING: Security hub attack 50% complete.");
-							hubs[i].alerts.lvl3 = true;
-						}
-						break;
-					case 1:
-						//THIS SHOULD NOT have if test
-						window.alert("WARNING: A security hub is under attack.");
-						hubs[i].alerts.lvl1 = true;
-						break;
-					default:
-						break;
-				}
-				//}
-			},
-
-			hubAttackStopped: function() {
-				customLog("Hub attack stop received");
-				var i = res.hubIndex;
-				hubs[i].update(res.latestHubInfo);
-				hubs[i].stopFlash();
-				// if (hubs[i].flashing){
-
-				// }
-			},
-
-			hackComplete: function() {
-				ins.ui.hackSuccess();
-			},
-
-			hubDown: function() {
-				switch (player.team) {
-					case "gov":
-						hubs[res.hubIndex].stopFlash();
-						hubs[res.hubIndex].shutDown();
-						window.alert("Hackers have taken down a security hub!");
-						break;
-					case "ins":
-					default:
-						window.alert("SUCCESS: A surveillance site has been hacked!");
-						break;
-				}
-			}
-		};
-
-		//calls the function
-		handleServerMsg[res.tag]();
-
-	});
-
-	//ONCE EVENTS ATTACKED, TELL SERVER WE'RE LISTENING
-	emit('clientListening', {});
+	}
 	//
 	//if (callback) callback();
 };

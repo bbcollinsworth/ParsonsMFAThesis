@@ -3,6 +3,7 @@ var clientState = {
 	mapLoaded: false,
 	readyCheckRunning: false,
 	initialized: false,
+	socketEventsAttached: false,
 	//ready: false,
 	tracking: false,
 	// playerPos: {

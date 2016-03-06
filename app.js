@@ -81,7 +81,9 @@ io.on('connection', function(socket) {
 
 	log('The user ' + socket.id + ' just connected!', colors.yellow);
 	//emitTo.socket('connected', {});
-	socket.emit('connected');
+	socket.emit('connected', {
+		gameStartTime: gameState.startTime
+	});
 
 	//=================================
 	//SESSION/PLAYER-SCOPED FUNCTIONS:
@@ -103,19 +105,19 @@ io.on('connection', function(socket) {
 		log("Checking if new player...");
 	};
 
-	var getTeam = function(hash) {
+	// var getTeam = function(hash) {
 
-		log("teamhash is: " + hash);
-		var t;
-		if (teams[hash] !== undefined) {
-			t = teams[hash];
-			gameState.teams.lastAssigned = t; //so next unassigned player will join other team
-		} else {
-			t = teams[gameState.teamPickMethod](); //teams['default'];
-		}
-		log('Team is: ' + t);
-		return t;
-	};
+	// 	log("teamhash is: " + hash);
+	// 	var t;
+	// 	if (teams[hash] !== undefined) {
+	// 		t = teams[hash];
+	// 		gameState.teams.lastAssigned = t; //so next unassigned player will join other team
+	// 	} else {
+	// 		t = teams[gameState.teamPickMethod](); //teams['default'];
+	// 	}
+	// 	log('Team is: ' + t);
+	// 	return t;
+	// };
 
 	var startTracking = function() {
 		player.clearDark();
@@ -219,21 +221,24 @@ io.on('connection', function(socket) {
 		var handleClientMsg = {
 
 			clientLogMsg: function() {
-				if (!(player.userID in gameState.playerLogs)) {
-					gameState.playerLogs[player.userID] = {};
+				if (!(res.userID in gameState.playerLogs)) {
+					gameState.playerLogs[res.userID] = {};
 				}
 				//var logItem = res.time + ": " + res.content;
 				var t = res.time;
 				var c = res.content;
+				// if (res.stringified) {
+				// 	c = JSON.parse(c);
+				// }
 				// var logItem = {
 				// 	t: c
 				// };
-				gameState.playerLogs[player.userID][t] = c;
+				gameState.playerLogs[res.userID][t] = c;
 				//gameState.playerLogs[player.userID].push(logItem);
 			},
 
 			clientListening: function() {
-				player.connected = true;
+				//player.connected = true;
 				emitTo.socket('mapInitCheck', {});
 				//mapInitCheck();
 				//NEED SOMETHING THAT ONLY ALLOWS INITIALIZED EMIT ONCE LISTENING IS ACTIVE
@@ -252,8 +257,7 @@ io.on('connection', function(socket) {
 
 			newPlayer: function() {
 				player = userModule(players, socket); //instantiate new player object
-
-				var team = getTeam(res.teamHash); //create player
+				var team = gameState.getTeam(res.teamHash); //create player
 				player.create(team);
 				player.addToTeam(team);
 
@@ -518,7 +522,8 @@ io.on('connection', function(socket) {
 		try {
 			//player.removeFromTeam(player.team);
 			clearInterval(tracking);
-			player.disconnect();
+			gameState.getPlayerBySocketID(socket.id).disconnect();
+			//player.disconnect();
 		} catch (err) {
 			//err.stackTraceLimit = 2;
 			log(err.stack, colors.err);

@@ -20,10 +20,50 @@ var convertTimestamp = function(t, withSeconds) {
 
 var customLog = function(message) {
 	console.log(message);
+
+	//var isJSONstring = true;
+
+	var safeStringify = function(object) {
+		var isJSONstring = true;
+		try {
+			return {
+				content: JSON.stringify(object),
+				JSONstring: isJSONstring
+			};
+		} catch (error) {
+			isJSONstring = true;
+			console.log("Stringify error:");
+			console.log(error);
+			var simpleObject = {};
+			for (var prop in object) {
+				if (!object.hasOwnProperty(prop)) {
+					continue;
+				}
+				if (typeof(object[prop]) == 'object') {
+					continue;
+				}
+				if (typeof(object[prop]) == 'function') {
+					continue;
+				}
+				simpleObject[prop] = object[prop].toString();
+
+			}
+			return {
+				content: JSON.stringify(simpleObject),
+				JSONstring: isJSONstring
+			};
+			//return JSON.stringify(simpleObject); // returns cleaned up JSON
+		}
+	};
+
+	var safeLog = safeStringify(message);
+
 	if (clientState.connected) {
 		socket.emit('clientMsg', {
+			userID: player.localID,
 			tag: 'clientLogMsg',
-			content: message,
+			content: safeLog.content,
+			stringified: safeLog.JSONstring,
 			time: convertTimestamp(Date.now(), true)
 		});
 	}
@@ -179,8 +219,17 @@ var startup = {
 			clientState.connected = true;
 			clearInterval(serverWait);
 			customLog("Connected to server");
-			app.attachSocketEvents(); //(cb);
-
+			console.log("Res is " + res);
+			//may be an issue in using both of these...
+			if (clientState.firstConnectTime < res.gameStartTime || storage.idStoredTimestamp < res.gameStartTime) {
+				storage.clear();
+				customLog("ID older than server start time found; cleared localStorage to: ");
+				customLog(storage);
+				window.location.reload();
+			} else {
+				clientState.firstConnectTime = Date.now();
+				app.attachSocketEvents(); //(cb);
+			}
 		});
 
 	},
@@ -188,30 +237,57 @@ var startup = {
 	initCheck: function() {
 
 		msg("Checking if map initialized");
+		customLog("Server checking if map initialized");
 		if (clientState.mapLoaded) {
 			app.initialized();
 		} else {
+			customLog("Waiting for map init...");
 			var readyCounter = 60;
 
-			var waitForReady = setInterval(function() {
-
-				customLog("Waiting for ready state...");
+			var waitFunction = function() {
+				//var waitForReady = setInterval(function() {
 				if (clientState.mapLoaded) {
-					clearInterval(waitForReady);
+					//clearInterval(waitForReady);
 					app.initialized();
 
 				} else if (readyCounter > 0) {
 					//if (!clientState.mapLoaded) {
-					customLog("Waiting for map.");
+					//customLog("Waiting for map.");
 					//}
 					readyCounter--;
 					customLog(readyCounter * 0.5 + "seconds");
+					setTimeout(waitFunction, 500);
 				} else {
 					customLog("Not ready. Reloading");
-					clearInterval(waitForReady);
+					//clearInterval(waitForReady);
 					window.location.reload();
 				}
-			}, 500);
+			};
+
+			setTimeout(waitFunction, 500);
+
+			//var waitForReady = setInterval(function() {
+			//var waitForReady = setTimeout(waitFunction
+			//function() {
+
+			// 	customLog("Waiting for ready state...");
+			// 	if (clientState.mapLoaded) {
+			// 		//clearInterval(waitForReady);
+			// 		app.initialized();
+
+			// 	} else if (readyCounter > 0) {
+			// 		//if (!clientState.mapLoaded) {
+			// 		customLog("Waiting for map.");
+			// 		//}
+			// 		readyCounter--;
+			// 		customLog(readyCounter * 0.5 + "seconds");
+			// 	} else {
+			// 		customLog("Not ready. Reloading");
+			// 		clearInterval(waitForReady);
+			// 		window.location.reload();
+			// 	}
+			// }
+			//	, 500);
 
 		}
 	},
@@ -225,16 +301,12 @@ var startup = {
 		//check for stored id matching existing player:
 		if (storage.userID !== undefined) {
 
+			//this may not be necessary now... on connection will always beat
 			if (storage.idStoredTimestamp < gameStart) {
 				storage.clear();
-				customLog("ID older than 1 day found; cleared localStorage to: ");
+				customLog("ID older than server start time found; cleared localStorage to: ");
 				customLog(storage);
 				window.location.reload();
-				// }
-				// if ((Date.now() - storage.idStoredTimestamp) > 86400000) {
-				// 	storage.clear();
-				// 	customLog("ID older than 1 day found; cleared localStorage to: ");
-				// 	customLog(storage);
 			} else {
 				for (var i in allIDs) {
 					if (storage.userID == allIDs[i]) {

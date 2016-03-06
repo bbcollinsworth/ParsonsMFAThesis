@@ -1,5 +1,8 @@
 module.exports = function(moduleToLoad) {
 
+	// var state = require('./gameState.js');
+	// state.setupHubs();
+
 	var modules = {
 		geolib: function() {
 			return require('geolib');
@@ -35,7 +38,7 @@ module.exports = function(moduleToLoad) {
 		},
 		gameState: function() {
 			var temp = require('./gameState.js');
-			temp.setupHubs();
+			//temp.setupHubs();
 			return temp;
 		}
 	};

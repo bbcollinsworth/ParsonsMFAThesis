@@ -136,7 +136,7 @@ module.exports = function(users, _socket) {
 			user.socketID = '';
 			user.connected = false;
 			user.setDark();
-			//log(user.userID + ' has gone dark', colors.orange);
+			log(user.userID + ' has been disconnected.', colors.bgYellow);
 		}
 
 	};
