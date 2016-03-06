@@ -81,8 +81,8 @@ app.trackLocation = function() {
 			};
 
 			player.pos.update(newPos);
-			customLog("Playerpos updated: ");
-			customLog(player);
+			console.log("Playerpos updated: ");
+			console.log(player);
 
 			if (player.team == 'ins') {
 				centerOnPlayer();
