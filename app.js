@@ -97,6 +97,7 @@ io.on('connection', function(socket) {
 		var t;
 		if (teams[hash] !== undefined) {
 			t = teams[hash];
+			gameState.teams.lastAssigned = t; //so next unassigned player will join other team
 		} else {
 			t = teams[gameState.teamPickMethod](); //teams['default'];
 		}

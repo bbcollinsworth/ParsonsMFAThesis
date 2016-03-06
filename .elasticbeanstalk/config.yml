@@ -1,6 +1,8 @@
 branch-defaults:
   master:
     environment: rProto-dev
+  newconnecttest:
+    environment: rproto-dev
   watchpostest:
     environment: rproto-dev
 global:
