@@ -5,31 +5,9 @@ var vibrate, geo, storage, heading;
 
 var startup = {
 
-	// attachEvents: function() {
-	// 	$('#app').off('initialized').on('initialized', function() {
-	// 		readyCheckRunning = false;
-	// 		msg("Server and map initialized.");
-	// 		emit('clientInitialized', {});
-	// 	});
-
-	// 	$('#app').off('ready').on('ready', function() {
-	// 		$('#footerText').css({
-	// 			'display': 'none'
-	// 		});
-
-	// 		app.trackLocation();
-	// 		app.addStyling[player.team]();
-
-	// 		emit('readyToPlay', {
-	// 			svcCheckComplete: true
-	// 		});
-	// 	});
-	// },
-
 	setup: function() {
 
 		initLeafletExtensions();
-		// startup.attachEvents();
 
 		//custom map function
 		Math.map = function(varToMap, varMin, varMax, mapToMin, mapToMax, clamp) {
@@ -157,7 +135,6 @@ var startup = {
 	initMap: function() {
 		console.log("Initializing map");
 		//msg("Initializing map");
-		//initializing mapbox.js / leaflet map
 		L.mapbox.accessToken = 'pk.eyJ1IjoiZnVja3lvdXJhcGkiLCJhIjoiZEdYS2ZmbyJ9.6vnDgXe3K0iWoNtZ4pKvqA';
 
 		window.map = L.mapbox.map('map', 'fuckyourapi.o7ne7nmm', {
@@ -199,18 +176,10 @@ var startup = {
 	},
 
 	initCheck: function() {
-		//clientState.readyCheckRunning = true;
-
-		// var triggerInit = function() {
-		// 	app.initialized();
-		// 	// clientState.initialized = true;
-		// 	// $('#app').trigger('initialized');
-		// };
 
 		msg("Checking if map initialized");
 		if (clientState.mapLoaded) {
 			app.initialized();
-			// triggerInit();
 		} else {
 			var readyCounter = 60;
 
@@ -220,11 +189,10 @@ var startup = {
 				if (clientState.mapLoaded) {
 					clearInterval(waitForReady);
 					app.initialized();
-					//triggerInit();
-					
+
 				} else if (readyCounter > 0) {
 					//if (!clientState.mapLoaded) {
-						console.log("Waiting for map.");
+					console.log("Waiting for map.");
 					//}
 					readyCounter--;
 					console.log(readyCounter * 0.5 + "seconds");
@@ -238,7 +206,7 @@ var startup = {
 		}
 	},
 
-	storedUserCheck: function(allIDs) {
+	storedUserCheck: function(allIDs,gameStart) {
 		console.log("Checking for stored user. IDs from server are: ");
 		console.log(allIDs);
 		console.log("And locally stored ID is: ");
@@ -246,18 +214,31 @@ var startup = {
 		var userFound = false;
 		//check for stored id matching existing player:
 		if (storage.userID !== undefined) {
-			for (var i in allIDs) {
-				if (storage.userID == allIDs[i]) {
-					console.log("Stored User Found!:" + allIDs[i]);
-					userFound = true;
-					break;
-				}
-			}
-			//if there's a local user but it wasn't matched, clear it
-			if (!userFound){
-				console.log("ERROR: Locally stored user not matched to server, probably due to server restart.");
-				console.log("Clearing local storage.");
+
+			if (storage.idStoredTimestamp < gameStart){
 				storage.clear();
+				console.log("ID older than 1 day found; cleared localStorage to: ");
+				console.log(storage);
+				window.location.reload();
+			// }
+			// if ((Date.now() - storage.idStoredTimestamp) > 86400000) {
+			// 	storage.clear();
+			// 	console.log("ID older than 1 day found; cleared localStorage to: ");
+			// 	console.log(storage);
+			} else {
+				for (var i in allIDs) {
+					if (storage.userID == allIDs[i]) {
+						console.log("Stored User Found!:" + allIDs[i]);
+						userFound = true;
+						break;
+					}
+				}
+				//if there's a local user but it wasn't matched, clear it
+				if (!userFound) {
+					console.log("ERROR: Locally stored user not matched to server, probably due to server restart.");
+					console.log("Clearing local storage.");
+					storage.clear();
+				}
 			}
 		}
 

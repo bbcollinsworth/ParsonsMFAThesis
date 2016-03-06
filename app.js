@@ -22,6 +22,11 @@ var emitModule = include('emit');
 var userModule = include('users');
 var gameState = include('gameState');
 
+gameState.createGameSession(Date.now());
+
+// gameState['gameStartTime'] = Date.now();
+// gameState['gameID'] = "game"+gameState.gameStartTime;
+
 
 app.use(bodyParser.json());
 app.use(function(req, res, next) {
@@ -80,7 +85,8 @@ io.on('connection', function(socket) {
 
 		log("ExistingIDs List length: " + existingUserIDs.length);
 		emitTo.socket('playerTypeCheck', {
-			userIDs: existingUserIDs
+			userIDs: existingUserIDs,
+			gameStartTime: gameState.startTime
 		});
 		log("Checking if new player...");
 	};

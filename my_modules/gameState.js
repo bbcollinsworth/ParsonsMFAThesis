@@ -203,6 +203,11 @@
 
 	var state = {
 
+		createGameSession: function(startTimestamp){
+			this.startTime = startTimestamp;
+			this.gameID = "game"+startTimestamp;
+		},
+
 		settings: playSettings,
 
 		//'trackIntervalInSeconds': 10,

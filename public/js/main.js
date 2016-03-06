@@ -150,7 +150,6 @@ var sendStoredLocation = function(v1, v2) { //callback) {
 
 };
 
-
 app.attachSocketEvents = function() { //callback) {
 	//INCOMING SOCKET FUNCTIONS
 	socket.on('serverMsg', function(res, err) {
@@ -168,7 +167,7 @@ app.attachSocketEvents = function() { //callback) {
 
 			//1sec for new/returning player + teamHash, uniqueID
 			playerTypeCheck: function() {
-				var storedUserFound = startup.storedUserCheck(res.userIDs);
+				var storedUserFound = startup.storedUserCheck(res.userIDs,res.gameStartTime);
 				console.log("Stored user found is: " + storedUserFound);
 
 				if (storedUserFound) { //send returning player
