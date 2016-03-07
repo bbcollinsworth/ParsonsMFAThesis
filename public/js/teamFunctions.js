@@ -264,22 +264,18 @@ var gov = {
 				};
 
 				sendStoredLocation(pingFunction);
-				//storeAndSendLocation(pingFunction);
 
 				if (!gov.ui.pingCircle.animRunning) {
 					customLog("calling ping animation");
-					gov.ui.pingCircle.reCenter();
+					//gov.ui.pingCircle.reCenter();
 
-					gov.ui.pingCircle.animRunning = true;
-					gov.ui.pingCircle.animateBurst();
+					gov.ui.pingCircle.animate();
 
-					var tempPingCircle = document.getElementsByClassName('onMapPingCircle');
-					tempPingCircle[0].classList.add('run');
-					//customLog(tempPingCircle[0]);
+					$(gov.ui.pingCircle.domElement).on('animationend webkitAnimationEnd', function() {
 
-					$('.onMapPingCircle').on('animationend webkitAnimationEnd', function() {
+						//$('.onMapPingCircle').on('animationend webkitAnimationEnd', function() {
 
-						tempPingCircle[0].classList.remove('run');
+						//tempPingCircle[0].classList.remove('run');
 						gov.ui.pingCircle.animRunning = false;
 
 						customLog("Animation removed");
@@ -311,7 +307,7 @@ var gov = {
 		var pingButton = viz.searchButton();
 		$('#mobileFooter').prepend(pingButton);
 
-		gov.ui['pingCircle'] = viz.addPingCircle();
+		gov.ui['pingCircle'] = viz.pingCircle('pingCircleID'); //viz.addPingCircle();
 
 		gov.ui.attachPingEvents();
 	},
@@ -414,32 +410,37 @@ var gov = {
 
 	renderPlayers: function(pData) {
 
+
+
 		var players = clientState.allPlayers;
 		customLog("Current allPlayers before adding: ");
 		customLog(players);
 
-		$.each(pData, function(userID, playerData) {
+		var updateAndRender = function() {
 
-			customLog("Player ID: " + userID);
+			$.each(pData, function(userID, playerData) {
 
-			if (!(userID in players)) {
-				clientState.addPlayer(playerData, userID);
-				players[userID].updateLocData(playerData);
-			} else {
-				players[userID].updateLocData(playerData);
-				var tagText = convertTimestamp(playerData.locData[0].time);
-				//if (players[userID].team == 'ins' && !players[userID].goneDark){
-				if (!players[userID].goneDark) {
-					tagText = "now";
-				}
-				players[userID].marker.updateTagText({
-					'text': {
-						ln1: "(As of " + tagText + ")"
+				customLog("Player ID: " + userID);
+
+				if (!(userID in players)) {
+					clientState.addPlayer(playerData, userID);
+					players[userID].updateLocData(playerData);
+				} else {
+					players[userID].updateLocData(playerData);
+					var tagText = convertTimestamp(playerData.locData[0].time);
+					//if (players[userID].team == 'ins' && !players[userID].goneDark){
+					if (!players[userID].goneDark) {
+						tagText = "now";
 					}
-				});
-			}
+					players[userID].marker.updateTagText({
+						'text': {
+							ln1: "(As of " + tagText + ")"
+						}
+					});
+				}
 
-		});
+			});
+		};
 
 		var findToSelect = function() {
 			var toSelect;
@@ -459,6 +460,9 @@ var gov = {
 				} else if (players[id].type == 'agent' && !suspectFound && !liveSuspectFound) {
 					toSelect = players[id];
 					customLog("Found agent to select");
+				} else if (toSelect === undefined) {
+					toSelect = players[id];
+					customLog("Found no one to select, just selecting this player");
 				}
 			}
 
@@ -467,9 +471,19 @@ var gov = {
 			}
 		};
 
-		findToSelect();
+		if (gov.ui.pingCircle.animRunning) {
+			setTimeout(function() {
+				gov.ui.pingCircle.clearAnimation();
+				updateAndRender();
+				findToSelect();
+				gov.suspectRangeCheck();
+			}, 1500);
+		} else {
+			updateAndRender();
+			findToSelect();
+			gov.suspectRangeCheck();
+		}
 
-		gov.suspectRangeCheck();
 	}
 
 };

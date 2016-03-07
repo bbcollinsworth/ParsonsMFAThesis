@@ -20,200 +20,200 @@
 
 /*body {
 	text-shadow: none;
-}*/
+	}*/
 
-#app p, div, h1, h2, h3, h4, h5, h6 {
-	text-shadow: none;
-}
+	#app p, div, h1, h2, h3, h4, h5, h6 {
+		text-shadow: none;
+	}
 
-#app.ins-app-styling {
-	font-family: 'Special Elite',sans-serif;
-	color: white;
-}
+	#app.ins-app-styling {
+		font-family: 'Special Elite',sans-serif;
+		color: white;
+	}
 
-#container {
-	position: absolute;
-	pointer-events: none;
-	top: 0px;
-	left: 0px;
-	width: inherit;
-	min-height: 100vh;
-	margin: auto;
-	padding: 0px;
-	text-align: center;
-	overflow: hidden;
-}
+	#container {
+		position: absolute;
+		pointer-events: none;
+		top: 0px;
+		left: 0px;
+		width: inherit;
+		min-height: 100vh;
+		margin: auto;
+		padding: 0px;
+		text-align: center;
+		overflow: hidden;
+	}
 
-#container.lockScreen {
-	background-color: rgba(0,0,0,0.7);
-}
-
-
-#mobileHeader, #mobileFooter {
-	width: inherit;
-	margin: auto;
-}
-
-#mobileHeader {
-	font-weight: 400;
-	border-width: 0px;
-	background-color: rgba(0,0,0,0);
-}
-
-#mobileFooter {
-	background-color: rgba(255,255,255,0.5);
-	box-shadow: 3px 3px 3px 3px rgba(100,100,100,0.5);
-	transition-duration: 1s;
-}
-
-#alertPopoutText {
-	/*display: none;*/
-}
-
-#alertBox {
-	width: 100%;
-}
-
-#nextButton {
-	background-color: gray;
-	padding: 0.4em;
-	color: white;
-	font-size: 1.5em;
-	margin: auto;
-}
-
-.ui-collapsible-heading {
-	text-align: left;
-	border-radius: 0px 20px 20px 0px;
-}
-
-#alertBox.ui-collapsible-content {
-	//font-family: 'Open Sans',sans-serif;
-	font-weight: 400;
-	background-color: rgba(255,255,255,0.7);
-	box-shadow: 10px 0px 30px 0px rgba(0,0,0,0.3);
-	text-shadow: none;
-	border: 0px;
-}
-
-#alertBox .ui-collapsible-content.ins-alert-styling {
-	color: white;
-	background-color: rgba(0,0,0,0.8);
-	font-weight: 100;
-}
-
-#alertBox .ui-collapsible-content.urgent-alert {
-	color: white;
-	background-color: rgba(255,0,0,0.7);
-}
-
-#alertBox .ui-collapsible-content.ins-urgent-alert{
-	color: #FD2D2D;
-}
-
-#alertBox .ui-collapsible-content.success-alert {
-	text-transform: uppercase;
-	letter-spacing: 0.2em;
-	color: white;
-	background-color: rgba(255,218,68,0.7);
-	font-weight: 600;
-	font-size: 1.5em;
-	line-height: 1em;
-}
-
-#alertBox .ui-collapsible-content.lockout-alert {
-	text-transform: uppercase;
-	letter-spacing: 0.2em;
-	color: rgba(180,180,180,1.0);
-	background-color: rgba(0,0,0,0.7);
-	font-size: 1.5em;
-	font-weight: 600;
-	line-height: 1em;
-}
-
-#svcChecklist .ui-collapsible-heading {
-	border-radius: 0px;
-}
-
-.feature-list {
-	text-align: left;
-	border-radius: 0px;
-	/*width: 100%;*/
-}
-
-.ui-icon-check {
-	background-color: green;
-}
-
-.feature-title {
-	border-radius: 0px;
-	width: 100%;
-}
-
-#map {
-	position: margin;
-	static: auto;
-	height: 100%;
-}
-
-/*PING BUTTON FOR GOV TEAM*/
-#searchButton {
-	pointer-events: all;
-	position: absolute;
-	top: -75px;
-	left: 50%;
-	transform: translate(-50%,-50%);
-	//left: calc(50% - 30px);
-	margin: auto;
-	padding: 0.1em;
-	width: 50px;
-	height: 50px;
-	box-shadow: 0px 1px 10px 5px rgba(0,0,0,0.2);
-	border-radius: 50%;
-	//background: rgba(255,255,255,0.5);
-}
-
-#searchButton.searchIcon {
-	background-color: rgba(255,255,255,0.5);
-	background-repeat: no-repeat;
-	background-image: url("cssImages/specialeye.svg"); /*targeteye*/
-	background-size: contain;
-	border: 6px solid rgba(255,255,255,0.5);
-}
+	#container.lockScreen {
+		background-color: rgba(0,0,0,0.7);
+	}
 
 
-/*<div>Icons made by <a href="http://www.flaticon.com/authors/daniel-bruce" title="Daniel Bruce">Daniel Bruce</a> from <a href="http://www.flaticon.com" title="Flaticon">www.flaticon.com</a>             is licensed by <a href="http://creativecommons.org/licenses/by/3.0/" title="Creative Commons BY 3.0">CC BY 3.0</a></div>*/
-.ui-icon-specialeye:after {
-	background-image: url("cssImages/specialeye.svg");
-}
-/* Fallback */
-.ui-nosvg .ui-icon-specialeye:after {
-	background-image: url("cssImages/specialeye.png");
-}
+	#mobileHeader, #mobileFooter {
+		width: inherit;
+		margin: auto;
+	}
 
-.ui-icon-scan:after {
-	background-image: url("cssImages/sidescan.png");
-}
-/* Fallback */
-.ui-nosvg .ui-icon-scan:after {
-	background-image: url("cssImages/sidescan.png");
-}
+	#mobileHeader {
+		font-weight: 400;
+		border-width: 0px;
+		background-color: rgba(0,0,0,0);
+	}
 
-/*SCAN BUTTON FOR INS TEAM*/
-#scanButton {
-	transition-duration: 0.2s;
-	pointer-events: all;
-	position: absolute;
-	top: 50vh;
-	left: 50%;
-	transform: translate(-50%,-50%);
-	margin: auto;
-	padding: 0.1em;
-	width: 60px;
-	height: 60px;
-	box-shadow: 0px 1px 10px 5px rgba(0,0,0,0.2);
-	border-radius: 50%;
-	border: 6px solid transparent; //rgba(255,255,255,0.5);
+	#mobileFooter {
+		background-color: rgba(255,255,255,0.5);
+		box-shadow: 3px 3px 3px 3px rgba(100,100,100,0.5);
+		transition-duration: 1s;
+	}
+
+	#alertPopoutText {
+		/*display: none;*/
+	}
+
+	#alertBox {
+		width: 100%;
+	}
+
+	#nextButton {
+		background-color: gray;
+		padding: 0.4em;
+		color: white;
+		font-size: 1.5em;
+		margin: auto;
+	}
+
+	.ui-collapsible-heading {
+		text-align: left;
+		border-radius: 0px 20px 20px 0px;
+	}
+
+	#alertBox.ui-collapsible-content {
+		//font-family: 'Open Sans',sans-serif;
+		font-weight: 400;
+		background-color: rgba(255,255,255,0.7);
+		box-shadow: 10px 0px 30px 0px rgba(0,0,0,0.3);
+		text-shadow: none;
+		border: 0px;
+	}
+
+	#alertBox .ui-collapsible-content.ins-alert-styling {
+		color: white;
+		background-color: rgba(0,0,0,0.8);
+		font-weight: 100;
+	}
+
+	#alertBox .ui-collapsible-content.urgent-alert {
+		color: white;
+		background-color: rgba(255,0,0,0.7);
+	}
+
+	#alertBox .ui-collapsible-content.ins-urgent-alert{
+		color: #FD2D2D;
+	}
+
+	#alertBox .ui-collapsible-content.success-alert {
+		text-transform: uppercase;
+		letter-spacing: 0.2em;
+		color: white;
+		background-color: rgba(255,218,68,0.7);
+		font-weight: 600;
+		font-size: 1.5em;
+		line-height: 1em;
+	}
+
+	#alertBox .ui-collapsible-content.lockout-alert {
+		text-transform: uppercase;
+		letter-spacing: 0.2em;
+		color: rgba(180,180,180,1.0);
+		background-color: rgba(0,0,0,0.7);
+		font-size: 1.5em;
+		font-weight: 600;
+		line-height: 1em;
+	}
+
+	#svcChecklist .ui-collapsible-heading {
+		border-radius: 0px;
+	}
+
+	.feature-list {
+		text-align: left;
+		border-radius: 0px;
+		/*width: 100%;*/
+	}
+
+	.ui-icon-check {
+		background-color: green;
+	}
+
+	.feature-title {
+		border-radius: 0px;
+		width: 100%;
+	}
+
+	#map {
+		position: margin;
+		static: auto;
+		height: 100%;
+	}
+
+	/*PING BUTTON FOR GOV TEAM*/
+	#searchButton {
+		pointer-events: all;
+		position: absolute;
+		top: -75px;
+		left: 50%;
+		transform: translate(-50%,-50%);
+		//left: calc(50% - 30px);
+		margin: auto;
+		padding: 0.1em;
+		width: 50px;
+		height: 50px;
+		box-shadow: 0px 1px 10px 5px rgba(0,0,0,0.2);
+		border-radius: 50%;
+		//background: rgba(255,255,255,0.5);
+	}
+
+	#searchButton.searchIcon {
+		background-color: rgba(255,255,255,0.5);
+		background-repeat: no-repeat;
+		background-image: url("cssImages/specialeye.svg"); /*targeteye*/
+		background-size: contain;
+		border: 6px solid rgba(255,255,255,0.5);
+	}
+
+
+	/*<div>Icons made by <a href="http://www.flaticon.com/authors/daniel-bruce" title="Daniel Bruce">Daniel Bruce</a> from <a href="http://www.flaticon.com" title="Flaticon">www.flaticon.com</a>             is licensed by <a href="http://creativecommons.org/licenses/by/3.0/" title="Creative Commons BY 3.0">CC BY 3.0</a></div>*/
+	.ui-icon-specialeye:after {
+		background-image: url("cssImages/specialeye.svg");
+	}
+	/* Fallback */
+	.ui-nosvg .ui-icon-specialeye:after {
+		background-image: url("cssImages/specialeye.png");
+	}
+
+	.ui-icon-scan:after {
+		background-image: url("cssImages/sidescan.png");
+	}
+	/* Fallback */
+	.ui-nosvg .ui-icon-scan:after {
+		background-image: url("cssImages/sidescan.png");
+	}
+
+	/*SCAN BUTTON FOR INS TEAM*/
+	#scanButton {
+		transition-duration: 0.2s;
+		pointer-events: all;
+		position: absolute;
+		top: 50vh;
+		left: 50%;
+		transform: translate(-50%,-50%);
+		margin: auto;
+		padding: 0.1em;
+		width: 60px;
+		height: 60px;
+		box-shadow: 0px 1px 10px 5px rgba(0,0,0,0.2);
+		border-radius: 50%;
+		border: 6px solid transparent; //rgba(255,255,255,0.5);
 	/*background-color: rgba(255,255,255,0.5);
 	background-repeat: no-repeat;*/
 }
@@ -343,6 +343,30 @@
 	//left: 0;
 }
 
+.ping-circle {
+    //background-color: white;
+    border-radius: 50%;
+}
+
+#pingCircleID {
+	//background-color: white;
+	width: 0px;
+	height: 0px;
+    border-radius: 50%;
+	position: absolute;
+    top: 50vh;
+    left: 50vw;
+    transform: translate(-50%,-50%);
+    margin: auto;
+    //border: 100px solid white;
+}
+
+.ping-circle.ping-animate {
+	-webkit-animation: ping ease 1.5s infinite; /* Safari 4+ */
+	-moz-animation: ping ease 1.5s infinite; /* Fx 5+ */
+	-o-animation: ping ease 1.5s infinite; /* Opera 12+ */
+	animation: ping ease 1.5s infinite;
+}
 
 
 .onMapPingCircle {
@@ -418,11 +442,18 @@
 	border-color: rgba(120,120,120,0.7);
 }
 
+.locked-tag {
+	background-color: rgba(0,0,0,0.7);
+	border-color: rgba(0,0,0,0.7);
+}
+
+
+
 .player-tag.selected-tag {
 	opacity: 1;
 	width: 100%;
 	border-right: 0.5em solid transparent;
-    /*border-radius: 0% 1em 1em 0%;*/
+	/*border-radius: 0% 1em 1em 0%;*/
 	/*color: rgba(255,255,255,1.0);
 	background-color: rgba(255,0,0,0.7);*/
 }
@@ -571,42 +602,42 @@
 
 @keyframes ping {
 	0% {
-		fill: rgba(255,255,255,1.0);
-		r: 0;
+//		fill: rgba(255,255,255,1.0);
+		border: 10px solid rgba(255,255,255,1.0);
 	}
 	100% {
-		fill: rgba(255,255,255,0.0);
-		r: 800;
+//		fill: rgba(255,255,255,0.0);
+		border: 500px solid rgba(255,255,255,0.0);
 	}
 }
 @-webkit-keyframes ping {
 	0% {
-		fill: rgba(255,255,255,1.0);
-		r: 0;
+//		fill: rgba(255,255,255,1.0);
+		border: 10px solid rgba(255,255,255,1.0);
 	}
 	100% {
-		fill: rgba(255,255,255,0.0);
-		r: 800;
+//		fill: rgba(255,255,255,0.0);
+		border: 500px solid rgba(255,255,255,0.0);
 	}
 }
 @-moz-keyframes ping {
 	0% {
-		fill: rgba(255,255,255,1.0);
-		r: 0;
+//		fill: rgba(255,255,255,1.0);
+		border: 10px solid rgba(255,255,255,1.0);
 	}
 	100% {
-		fill: rgba(255,255,255,0.0);
-		r: 800;
+//		fill: rgba(255,255,255,0.0);
+		border: 500px solid rgba(255,255,255,0.0);
 	}
 }
 @-o-keyframes ping {
 	0% {
-		fill: rgba(255,255,255,1.0);
-		r: 0;
+//		fill: rgba(255,255,255,1.0);
+		border: 10px solid rgba(255,255,255,1.0);
 	}
 	100% {
-		fill: rgba(255,255,255,0.0);
-		r: 800;
+//		fill: rgba(255,255,255,0.0);
+		border: 500px solid rgba(255,255,255,0.0);
 	}
 }
 

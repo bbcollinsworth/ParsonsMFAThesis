@@ -105,20 +105,6 @@ io.on('connection', function(socket) {
 		log("Checking if new player...");
 	};
 
-	// var getTeam = function(hash) {
-
-	// 	log("teamhash is: " + hash);
-	// 	var t;
-	// 	if (teams[hash] !== undefined) {
-	// 		t = teams[hash];
-	// 		gameState.teams.lastAssigned = t; //so next unassigned player will join other team
-	// 	} else {
-	// 		t = teams[gameState.teamPickMethod](); //teams['default'];
-	// 	}
-	// 	log('Team is: ' + t);
-	// 	return t;
-	// };
-
 	var startTracking = function() {
 		player.clearDark();
 		//player.trackActive = true;

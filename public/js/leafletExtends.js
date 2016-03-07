@@ -52,7 +52,7 @@ var initLeafletExtensions = function() {
 			}
 
 			//if (this.playerRef.team == 'ins') {
-			this.goneDarkCheck();
+			this.darkLockedCheck();
 			//}
 			//this.updateTag();
 			//this.setLatLng([posObj.lat, posObj.lng]);
@@ -119,13 +119,19 @@ var initLeafletExtensions = function() {
 		},
 
 		//tag: 
-		goneDarkCheck: function() {
+		darkLockedCheck: function() {
 			var thisMarker = this;
 			var classType = '';
 			var icon;
 			var opacity;
 
-			if (thisMarker.playerRef.goneDark) {
+			if (thisMarker.playerRef.lockedOut) {
+				classType = 'locked';
+				var icon = thisMarker.icons.lockedOut;
+				//var zIndexOffset = -100;
+				var opacity = 0.5;
+				thisMarker['tag'].removeClass('ins-tag');
+			} else if (thisMarker.playerRef.goneDark) {
 				classType = 'dark';
 				icon = thisMarker.icons.dark;
 				opacity = 0.5;
@@ -171,7 +177,7 @@ var initLeafletExtensions = function() {
 			if (team == 'ins') {
 				console.log('Gone dark is: ' + thisMarker.playerRef.goneDark);
 				//thisMarker.updateTag();
-				thisMarker.goneDarkCheck();
+				thisMarker.darkLockedCheck();
 			}
 
 			thisMarker.tag.on('click', function() {
@@ -282,7 +288,7 @@ var initLeafletExtensions = function() {
 
 
 	//=================================
-	//PLAYER MARKER INIT
+	//TRAIL MARKER INIT
 	//=================================
 
 	var trailMarkerExt = {
@@ -323,65 +329,118 @@ var initLeafletExtensions = function() {
 	console.log("Custom trailMarker class created");
 
 	//=================================
+	//ANIMATEABLE MARKER INIT
+	//=================================
+
+	// var AnimMarkerExt = {
+	// 	'animRunning': false,
+
+	// 	reCenter: function() {
+	// 		//this.setLatLng(map.getCenter());
+
+	// 		var mapCenter = map.latLngToLayerPoint(map.getCenter());
+	// 		console.log("Recentering "+ this.itemName +" to: " + mapCenter.x + "," + mapCenter.y);
+
+	// 		$(circle.domElement).attr('style', "");
+	// 		$(this.domElement).css({
+	// 			'left': mapCenter.x,
+	// 			'top': mapCenter.y
+	// 		});
+	// 	},
+
+	// 	refresh: function(posObj, options) {
+	// 		this.setLatLng([posObj.lat, posObj.lng]);
+	// 		if (options !== undefined) {
+	// 			this.setStyle(options);
+	// 		}
+
+	// 		console.log("Marker refreshed to: " + posObj.lat + ", " + posObj.lng);
+	// 	},
+
+	// 	animate: function() {
+
+	// 		var a = this;
+	// 		a.animRunning = true;
+	// 		customLog("Run animation called on animateable " + a.itemName);
+	// 		if (a.hasOwnProperty('domElement')) {
+	// 			customLog("Animateable DOM element found! Adding class " + a.animateClass);
+	// 			$(a.domElement).addClass(a.animateClass);
+	// 		} else {
+	// 			customLog("Animateable DOM element not found!");
+
+	// 		}
+	// 	}
+
+	// };
+
+	// L.AnimMarker = L.Marker.extend(AnimMarkerExt);
+
+	// L.animMarker = function(position, options) {
+	// 	return new L.AnimMarker(position, options);
+	// };
+
+	// console.log("Custom PingAnim class created");
+
+	//=================================
 	//PING CIRCLE INIT
 	//=================================
 
-	var pingCircleExt = {
+	// var pingCircleExt = {
 
-		'burstAnim': {},
-		'animRunning': false,
+	// 	'burstAnim': {},
+	// 	'animRunning': false,
 
-		reCenter: function() {
-			this.setLatLng(map.getCenter());
-		},
+	// 	reCenter: function() {
+	// 		this.setLatLng(map.getCenter());
+	// 	},
 
-		animateBurst: function() {
-			var finalRad = 800;
-			var startRad = 0;
-			var timeInMillis = 1000;
-			var divisor = 60;
-			var frameRate = Math.floor(timeInMillis / divisor);
-			var radInterval = finalRad / divisor;
-			var counter = 0.0;
-			this.setStyle({
-				'radius': 0
-			});
+	// 	animateBurst: function() {
+	// 		var finalRad = 800;
+	// 		var startRad = 0;
+	// 		var timeInMillis = 1000;
+	// 		var divisor = 60;
+	// 		var frameRate = Math.floor(timeInMillis / divisor);
+	// 		var radInterval = finalRad / divisor;
+	// 		var counter = 0.0;
+	// 		this.setStyle({
+	// 			'radius': 0
+	// 		});
 
-			var pC = this;
+	// 		var pC = this;
 
-			this.burstAnim = setInterval(function() {
-				counter += frameRate;
-				startRad += radInterval;
-				pC.setStyle({
-					'radius': startRad
-				});
+	// 		this.burstAnim = setInterval(function() {
+	// 			counter += frameRate;
+	// 			startRad += radInterval;
+	// 			pC.setStyle({
+	// 				'radius': startRad
+	// 			});
 
-				//console.log("radius changed");
+	// 			//console.log("radius changed");
 
-				if (!pC.animRunning) {
-					pC.setStyle({
-						'radius': 0
-					});
-					clearInterval(pC.burstAnim);
-				}
-			}, 16);
-		},
+	// 			if (!pC.animRunning) {
+	// 				pC.setStyle({
+	// 					'radius': 0
+	// 				});
+	// 				clearInterval(pC.burstAnim);
+	// 			}
+	// 		}, 16);
+	// 	},
 
-		clearBurst: function() {
-			clearInterval(this.burstAnim);
-			this.setStyle({
-				'radius': 0
-			});
-		}
-	};
+	// 	clearBurst: function() {
+	// 		clearInterval(this.burstAnim);
+	// 		this.setStyle({
+	// 			'radius': 0
+	// 		});
+	// 	}
+	// };
 
-	L.PingCircle = L.CircleMarker.extend(pingCircleExt);
+	// L.PingCircle = L.CircleMarker.extend(pingCircleExt);
 
-	L.pingCircle = function(position, options) {
-		return new L.PingCircle(position, options);
-	};
+	// L.pingCircle = function(position, options) {
+	// 	return new L.PingCircle(position, options);
+	// };
 
-	console.log("Custom pingCircle class created");
+	// console.log("Custom pingCircle class created");
 
 	//=================================
 	//CAPTURE CIRCLE INIT

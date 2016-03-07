@@ -152,6 +152,7 @@ var sendStoredLocation = function(v1, v2) { //callback) {
 
 app.attachSocketEvents = function() { //callback) {
 
+	//DEBOUNCE IN CASE OF SERVER RESTART
 	if (!clientState.socketEventsAttached) {
 		clientState.socketEventsAttached = true;
 		//INCOMING SOCKET FUNCTIONS
@@ -294,7 +295,8 @@ app.attachSocketEvents = function() { //callback) {
 						switch (player.team) {
 							case "gov":
 								players[lP.userID]['lockedOut'] = true;
-								players[lP.userID].marker.renderLockout();
+								players[lP.userID].marker.darkLockedCheck();
+								//players[lP.userID].marker.renderLockout();
 								customLog("Locking out player: ");
 								customLog(players[lP.userID]);
 								setTimeout(function() {

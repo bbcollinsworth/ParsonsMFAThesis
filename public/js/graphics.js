@@ -71,6 +71,98 @@ var viz = {
 		return newTrail;
 	},
 
+	animMarker: {
+		'animRunning': false,
+
+		// create: function(className,idName){
+		// 	var options = {
+		// 		'class': className,
+		// 	}
+		// 	if (idName){
+		// 		options['id'] = idName;
+		// 	}
+
+		// 	$("<div />",options);
+
+		// },
+
+		reCenter: function() {
+			var mapCenter = map.latLngToLayerPoint(map.getCenter());
+			console.log("Recentering " + this.itemName + " to: " + mapCenter.x + "," + mapCenter.y);
+
+			$(this.domElement).css({
+				'left': mapCenter.x,
+				'top': mapCenter.y
+			});
+		},
+
+		animate: function() {
+
+			var a = this;
+			a.animRunning = true;
+			customLog("Run animation called on animateable " + a.itemName);
+			if (a.hasOwnProperty('domElement')) {
+				customLog("Animateable DOM element found! Adding class " + a.animateClass);
+				$(a.domElement).addClass(a.animateClass);
+			} else {
+				customLog("Animateable DOM element not found!");
+
+			}
+		},
+
+		clearAnimation: function(){
+			var a = this;
+			this.animRunning = false;
+			$(a.domElement).removeClass(a.animateClass);
+			customLog("Removing ping animation");
+		}
+
+	},
+
+	addAnimMarker: function(className, idName) {
+
+		customLog("Creating animMarker");
+
+		var m = $.extend({}, viz.animMarker);
+
+		var options = {
+			'class': className,
+		}
+		if (idName) {
+			options['id'] = idName;
+		}
+
+		m['domElement'] = $("<div />", options);
+
+		$('#map').append(m.domElement);
+
+		return m;
+	},
+
+	pingCircle: function(domID) {
+
+		if (domID) {
+			var circle = viz.addAnimMarker('ping-circle', domID);
+		} else {
+			var circle = viz.addAnimMarker('ping-circle');
+		}
+
+		var mapCenter = map.latLngToLayerPoint(map.getCenter());
+
+		$(circle.domElement).css({
+				'left': mapCenter.x,
+				'top': mapCenter.y
+			});
+
+		circle['itemName'] = 'Ping Circle';
+		circle['animateClass'] = 'ping-animate';
+
+		customLog("Ping Circle Animateable created");
+		console.log(circle);
+
+		return circle;
+	},
+
 	trail: {
 		settings: {
 			maxSize: 15,
@@ -80,7 +172,7 @@ var viz = {
 		markers: [],
 		generateTrailMarker: function(pos, oldest) {
 			var classesToAdd = 'trail-marker ' + pos.time;
-			if (this.playerRef.goneDark){
+			if (this.playerRef.goneDark) {
 				console.log("Gone Dark is " + this.playerRef.goneDark);
 				classesToAdd += ' dark-trail';
 			}
@@ -182,16 +274,16 @@ var viz = {
 		$('#container').append(c);
 	},
 
-	addPingCircle: function() {
+	// addPingCircle: function() {
 
-		var pC = L.pingCircle(map.getCenter(), viz.pingSetup.options);
-		pC.addTo(map);
+	// 	var pC = L.pingCircle(map.getCenter(), viz.pingSetup.options);
+	// 	pC.addTo(map);
 
-		var thisCircle = document.getElementsByClassName('onMapPingCircle');
-		pC['domElement'] = thisCircle[0];
-		//thisCircle[0].id = "#pingCircle";
-		return pC;
-	},
+	// 	var thisCircle = document.getElementsByClassName('onMapPingCircle');
+	// 	pC['domElement'] = thisCircle[0];
+	// 	//thisCircle[0].id = "#pingCircle";
+	// 	return pC;
+	// },
 
 	captureSetup: {
 		radius: 80,
@@ -343,7 +435,7 @@ var viz = {
 
 		h.marker.setRadius(h.markerRadius);
 
-		myExtend(h,hData);
+		myExtend(h, hData);
 
 		//$.extend(true, h, hData);
 
