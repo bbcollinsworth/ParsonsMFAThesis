@@ -75,6 +75,7 @@ app.trackLocation = function() {
 	if (!clientState.tracking) {
 
 		clientState.tracking = true;
+		customLog('WATCH POSITION STARTED');
 
 		var posUpdateHandler = function(position) {
 			customLog('Latest Watched Position: <br />' + position.coords.latitude + ', ' + position.coords.longitude + '<br />Heading: ' + player.pos.heading + '<br />' + convertTimestamp(Date.now(), true));
@@ -93,7 +94,8 @@ app.trackLocation = function() {
 			console.log("Playerpos updated: ");
 			console.log(player);
 
-			if (player.team == 'ins') {
+			//center map on player if team is ins or if it's first pos update
+			if (player.team == 'ins' || !clientState.centeredOnPlayer) {
 				centerOnPlayer();
 			}
 
@@ -116,7 +118,10 @@ app.trackLocation = function() {
 };
 
 var centerOnPlayer = function() {
-	map.panTo([player.pos.lat, player.pos.lng]);
+	if (player.pos.lat !== undefined) {
+		clientState.centeredOnPlayer = true;
+		map.panTo([player.pos.lat, player.pos.lng]);
+	}
 };
 
 var stopTracking;
@@ -134,7 +139,6 @@ var sendStoredLocation = function(v1, v2) { //callback) {
 	}
 
 	//check to make sure we've started tracking
-	//if (player.pos.lat !== undefined) {
 	emit('locationUpdate', {
 		//will this work or will it reset to latest for all?
 		reqTimestamp: serverReqTime,
@@ -142,6 +146,7 @@ var sendStoredLocation = function(v1, v2) { //callback) {
 	});
 
 	//to catch server requestion location before it's been stored
+	//...but shouldn't need anymore for centerOnPlayer at least
 	if (callback !== undefined) {
 		customLog("Callback is: ");
 		customLog(callback);

@@ -368,11 +368,10 @@ var gov = {
 						gov.ui.attachPingEvents();
 					}
 					msg(gov.ui.text.inRangeButDark);
-				} else if (otherPlayers[id].inCaptureRange) {
+				} else { //if (otherPlayers[id].inCaptureRange) {
+					//TRYING WITH JUST ELSE...REATTACING EVENTS SHOULDN'T BE PROBLEM
 
-					//} else if (otherPlayers[id].captureEventsAttached) {
 					otherPlayers[id].inCaptureRange = false;
-					//otherPlayers[id].marker.clearCaptureEvents();
 					otherPlayers[id].clearCaptureEvents();
 					gov.ui.attachPingEvents();
 				}
@@ -390,13 +389,19 @@ var gov = {
 		}
 	},
 
-	captureComplete: function(capturedPlayerRef) {
-		customLog("Sending captureComplete for " + capturedPlayerRef.userID + ":");
-		customLog(capturedPlayerRef);
+	captureComplete: function(capturedPlayer) {
+		capturedPlayer.marker.captureCircle.clearAnimation();
+		delete capturedPlayer.marker['captureCircle'];
+		capturedPlayer.clearCaptureEvents();
+		customLog('Deleted capture circle and cleared capture events for ' + capturedPlayer.userID + '. Marker now: ');
+		customLog(capturedPlayer.marker);
+
+		customLog("Sending captureComplete for " + capturedPlayer.userID + ":");
+		customLog(capturedPlayer);
 		emit("capturedPlayer", {
-			userID: capturedPlayerRef.userID,
-			team: capturedPlayerRef.team,
-			localID: capturedPlayerRef.localID
+			userID: capturedPlayer.userID,
+			team: capturedPlayer.team,
+			localID: capturedPlayer.localID
 		});
 	},
 
@@ -447,25 +452,45 @@ var gov = {
 			var suspectFound = false;
 
 			for (id in players) {
-				if (players[id].type == 'suspect' && !players[id].goneDark) {
-					liveSuspectFound = true;
-					toSelect = players[id];
-					customLog("Found live suspect to select");
-				} else if (players[id].type == 'suspect' && !liveSuspectFound) {
-					suspectFound = true;
-					customLog("Found suspect to select");
-					toSelect = players[id];
-				} else if (players[id].type == 'agent' && !suspectFound && !liveSuspectFound) {
-					toSelect = players[id];
-					customLog("Found agent to select");
-				} else if (toSelect === undefined) {
-					toSelect = players[id];
-					customLog("Found no one to select, just selecting this player");
+				customLog("Status for " + players[id].localID + " is " + players[id].status);
+				switch (players[id].status) {
+					case 'active':
+						liveSuspectFound = true;
+						toSelect = players[id];
+						customLog("Found live suspect to select");
+						break;
+					case 'dark':
+						if (!liveSuspectFound) {
+							suspectFound = true;
+							customLog("Found suspect to select");
+							toSelect = players[id];
+						}
+						break;
+					case 'agent':
+						if (!liveSuspectFound && !suspectFound) {
+							toSelect = players[id];
+							customLog("Found agent to select");
+						}
+						break;
+					default:
+						break;
 				}
 			}
 
-			if (toSelect !== undefined) {
+			if (toSelect === undefined) {
+				var playerKeysArr = Object.keys(players);
+				if (playerKeysArr.length > 0) {
+					toSelect = players[playerKeysArr[playerKeysArr.length - 1]];
+					customLog("Found no one to select, just selecting last player");
+				} else {
+					customLog("ERROR: No selectable player found.");
+				}
+			}
+
+			try {
 				toSelect.marker.setSelected();
+			} catch (error) {
+				customLog(error);
 			}
 		};
 

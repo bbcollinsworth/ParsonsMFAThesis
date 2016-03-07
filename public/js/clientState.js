@@ -7,11 +7,8 @@ var clientState = {
 	//ready: false,
 	tracking: false,
 	posStored: false,
-	// playerPos: {
-	// 	lat: 0,
-	// 	lng: 0
-	// },
-	// localID: '',
+	centeredOnPlayer: false,
+
 	intro: {
 		content: {},
 		run: function() { //team) {
@@ -23,10 +20,6 @@ var clientState = {
 				$('#nextButton').off('click').on('click', function() {
 					$('#app').trigger('introComplete');
 				});
-
-				// if (team == 'gov'){
-				// 	gov.renderHubs();
-				// }
 			});
 		}
 	},
@@ -63,21 +56,8 @@ var clientState = {
 					p.marker.captureCircle.animate();
 					$(p.marker.captureCircle.domElement).on('animationend oAnimationEnd webkitAnimationEnd', function() {
 						gov.captureComplete(p);
-						p.marker.captureCircle.clearAnimation();
 					});
-					// p['captureCircle'] = viz.addCaptureCircle(p.latestPos);
-					// p['captureCircle'].parentPlayerRef = p;
-					// p['captureCircle'].addTo(map);
-
-				// if (!('captureCircle' in p)) {
-				// 	p['captureCircle'] = viz.addCaptureCircle(p.latestPos);
-				// 	p['captureCircle'].parentPlayerRef = p;
-				// 	p['captureCircle'].addTo(map);
-
-					//newPlayer.captureCircle.remove();
-					// add something to remove the old one
 				}
-
 				//p['captureCircle'].startAnim();
 				//map.on('mouseup', p.stopCapture);
 
@@ -92,21 +72,8 @@ var clientState = {
 
 				playerToCapture.marker.off('click').on('click', function(e) {
 
-					//playerToCapture.marker.on('mousedown', function(e){
-					//e.preventDefault();
-					//this.startCapture
 					clientState.markerEvents.ins.startCapture(playerToCapture);
-				}); //viz.markerOptions.mouseDownEvent);
-
-				// this.marker.on('mouseup', function(e) {
-				// 	//e.preventDefault();
-				// 	console.log("Mouse up - capture pausing");
-				// 	newPlayer.captureCircle.animRunning = false;
-				// }); 
-
-				//viz.markerOptions.mouseDownEvent);
-				// this['captureCircle'] = viz.addCaptureCircle(this.latestPos);
-				// this['captureCircle'].startAnim();
+				});
 			},
 
 			clearCaptureEvents: function() {
@@ -121,6 +88,22 @@ var clientState = {
 			userID: uID,
 			team: player.team,
 			type: player.type,
+			get status() {
+				var p = this;
+				customLog("Checking status of " + p.localID);
+
+				if (p.type == 'suspect') {
+					if (p.lockedOut) {
+						return 'locked';
+					} else if (p.goneDark) {
+						return 'dark';
+					} else {
+						return 'active';
+					}
+				} else {
+					return 'agent';
+				}
+			},
 			//latestPos: player.locData[0],
 			oldestTime: player.oldestTime,
 			locData: player.locData,
@@ -157,7 +140,7 @@ var clientState = {
 		console.log(clientState.allPlayers);
 
 		clientState.allPlayers.localCount.update(newPlayer.type);
-		//updateLocalCounts(player.type);
+
 		if (newPlayer.userID === storage.userID) {
 			newPlayer.localID = "you";
 		} else {
@@ -173,8 +156,8 @@ var clientState = {
 		};
 
 		newPlayer.marker.initPopup(popupData);
-		//newPlayer.marker.addPopup(true);
-		newPlayer.marker.addTag(); //(newPlayer.team);
+
+		newPlayer.marker.addTag();
 
 		if (newPlayer.team == 'ins') {
 			//newPlayer['trail'] = viz.initTrail(newPlayer);
@@ -183,7 +166,6 @@ var clientState = {
 
 		console.log("New player stored locally as " + newPlayer.localID);
 
-		//return newPlayer;
 	},
 	features: {
 		geolocation: {
@@ -204,6 +186,7 @@ var clientState = {
 						});
 						clientState.features.geolocation.ready = true;
 						clientState.posStored = true;
+						//centerOnPlayer();
 						app.trackLocation();
 						console.log('Geoloc test successful');
 

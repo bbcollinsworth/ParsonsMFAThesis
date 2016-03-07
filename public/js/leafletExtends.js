@@ -124,12 +124,13 @@ var initLeafletExtensions = function() {
 			var classType = '';
 			var icon;
 			var opacity;
+			var zIndexOffset = 0;
 
 			if (thisMarker.playerRef.lockedOut) {
 				classType = 'locked';
-				var icon = thisMarker.icons.lockedOut;
-				//var zIndexOffset = -100;
-				var opacity = 0.5;
+				icon = thisMarker.icons.lockedOut;
+				opacity = 0.5;
+				zIndexOffset = -100;
 				thisMarker['tag'].removeClass('ins-tag');
 			} else if (thisMarker.playerRef.goneDark) {
 				classType = 'dark';
@@ -145,13 +146,12 @@ var initLeafletExtensions = function() {
 
 			thisMarker['tag'].addClass(classType + '-tag');
 
-
-			//var zIndexOffset = -100;
-			//var opacity = 0.5; //,
-
 			thisMarker.setIcon(icon);
-			//this.setZIndexOffset(zIndexOffset);
 			thisMarker.setOpacity(opacity);
+
+			if (zIndexOffset !== 0){
+				thisMarker.setZIndexOffset(zIndexOffset);
+			}
 
 		},
 
@@ -375,6 +375,7 @@ var initLeafletExtensions = function() {
 				if (a.hasOwnProperty('domElement')) {
 					customLog("Animateable DOM element found! Adding class " + a.animateClass);
 					$(a.domElement).addClass(a.animateClass);
+
 				} else {
 					customLog("Animateable DOM element not found!");
 
