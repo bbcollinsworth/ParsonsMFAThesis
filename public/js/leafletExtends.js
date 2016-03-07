@@ -199,6 +199,12 @@ var initLeafletExtensions = function() {
 			}));
 		},
 
+		addCaptureCircle: function(domID) {
+			var marker = this;
+			customLog("Position to add capture circle is: " + marker.getLatLng());
+			marker['captureCircle'] = viz.captureCircle(marker.getLatLng(), domID);
+		},
+
 		addPopup: function(shouldOpen) {
 
 			var pHTML = this.makePopupHTML();
@@ -280,6 +286,9 @@ var initLeafletExtensions = function() {
 
 	L.PlayerMarker = L.Marker.extend(playerMarkerExt);
 
+	//adds functionality from leaflet.smoothbounce without affecting base Marker class:
+	initBounceEffects(L);
+
 	L.playerMarker = function(position, options) {
 		return new L.PlayerMarker(position, options);
 	};
@@ -328,58 +337,66 @@ var initLeafletExtensions = function() {
 
 	console.log("Custom trailMarker class created");
 
-	//=================================
-	//ANIMATEABLE MARKER INIT
-	//=================================
+	// =================================
+	// ANIMATEABLE MARKER INIT
+	// =================================
 
-	// var AnimMarkerExt = {
-	// 	'animRunning': false,
+	var AnimMarkerExt = {
+		'animRunning': false,
 
-	// 	reCenter: function() {
-	// 		//this.setLatLng(map.getCenter());
+		reCenter: function() {
+			this.setLatLng(map.getCenter());
 
-	// 		var mapCenter = map.latLngToLayerPoint(map.getCenter());
-	// 		console.log("Recentering "+ this.itemName +" to: " + mapCenter.x + "," + mapCenter.y);
+			// var mapCenter = map.latLngToLayerPoint(map.getCenter());
+			console.log("Recentering " + this.itemName + " to: " + mapCenter.x + "," + mapCenter.y);
 
-	// 		$(circle.domElement).attr('style', "");
-	// 		$(this.domElement).css({
-	// 			'left': mapCenter.x,
-	// 			'top': mapCenter.y
-	// 		});
-	// 	},
+			// $(circle.domElement).attr('style', "");
+			// $(this.domElement).css({
+			// 	'left': mapCenter.x,
+			// 	'top': mapCenter.y
+			// });
+		},
 
-	// 	refresh: function(posObj, options) {
-	// 		this.setLatLng([posObj.lat, posObj.lng]);
-	// 		if (options !== undefined) {
-	// 			this.setStyle(options);
-	// 		}
+		refresh: function(posObj, options) {
+			this.setLatLng([posObj.lat, posObj.lng]);
+			if (options !== undefined) {
+				this.setStyle(options);
+			}
 
-	// 		console.log("Marker refreshed to: " + posObj.lat + ", " + posObj.lng);
-	// 	},
+			console.log("Marker refreshed to: " + posObj.lat + ", " + posObj.lng);
+		},
 
-	// 	animate: function() {
+		animate: function() {
+			var a = this;
 
-	// 		var a = this;
-	// 		a.animRunning = true;
-	// 		customLog("Run animation called on animateable " + a.itemName);
-	// 		if (a.hasOwnProperty('domElement')) {
-	// 			customLog("Animateable DOM element found! Adding class " + a.animateClass);
-	// 			$(a.domElement).addClass(a.animateClass);
-	// 		} else {
-	// 			customLog("Animateable DOM element not found!");
+			if (!a.animRunning) {
+				a.animRunning = true;
+				customLog("Run animation called on animateable " + a.itemName);
+				if (a.hasOwnProperty('domElement')) {
+					customLog("Animateable DOM element found! Adding class " + a.animateClass);
+					$(a.domElement).addClass(a.animateClass);
+				} else {
+					customLog("Animateable DOM element not found!");
 
-	// 		}
-	// 	}
+				}
+			}
+		},
 
-	// };
+		clearAnimation: function(){
+			var a=this;
+			a.animRunning = false;
+			$(a.domElement).removeClass(a.animateClass);
+		}
 
-	// L.AnimMarker = L.Marker.extend(AnimMarkerExt);
+	};
 
-	// L.animMarker = function(position, options) {
-	// 	return new L.AnimMarker(position, options);
-	// };
+	L.AnimMarker = L.Marker.extend(AnimMarkerExt);
 
-	// console.log("Custom PingAnim class created");
+	L.animMarker = function(position, options) {
+		return new L.AnimMarker(position, options);
+	};
+
+	console.log("Custom PingAnim class created");
 
 	//=================================
 	//PING CIRCLE INIT

@@ -42,7 +42,7 @@ app.ready = function() {
 	$('#footerText').css({
 		'display': 'none'
 	});
-
+	//CATCH IF NOT FIRED IN GEOLOC READY-TEST
 	app.trackLocation();
 	app.addStyling[player.team]();
 
@@ -79,6 +79,9 @@ app.trackLocation = function() {
 		var posUpdateHandler = function(position) {
 			customLog('Latest Watched Position: <br />' + position.coords.latitude + ', ' + position.coords.longitude + '<br />Heading: ' + player.pos.heading + '<br />' + convertTimestamp(Date.now(), true));
 			//footerMsg('Latest Watched Position: <br />' + position.coords.latitude + ', ' + position.coords.longitude + '<br />Heading: ' + player.pos.heading + '<br />' + convertTimestamp(Date.now(), true));
+			if (!clientState.posStored) {
+				clientState.posStored = true;
+			}
 
 			var newPos = {
 				lat: position.coords.latitude,
@@ -130,6 +133,8 @@ var sendStoredLocation = function(v1, v2) { //callback) {
 		}
 	}
 
+	//check to make sure we've started tracking
+	//if (player.pos.lat !== undefined) {
 	emit('locationUpdate', {
 		//will this work or will it reset to latest for all?
 		reqTimestamp: serverReqTime,
@@ -147,6 +152,12 @@ var sendStoredLocation = function(v1, v2) { //callback) {
 			customLog(error);
 		}
 	}
+	//} else {
+	if (player.pos.lat === undefined) {
+		customLog("Position requested but no position stored yet.");
+	}
+	//emit('locationError',{});
+	//}
 
 };
 

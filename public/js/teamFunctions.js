@@ -410,8 +410,6 @@ var gov = {
 
 	renderPlayers: function(pData) {
 
-
-
 		var players = clientState.allPlayers;
 		customLog("Current allPlayers before adding: ");
 		customLog(players);
@@ -471,6 +469,7 @@ var gov = {
 			}
 		};
 
+		//waits to allow some animation if server responds immediately
 		if (gov.ui.pingCircle.animRunning) {
 			setTimeout(function() {
 				gov.ui.pingCircle.clearAnimation();

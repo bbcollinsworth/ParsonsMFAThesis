@@ -15,8 +15,8 @@
 		introContent: {
 			'gov': {
 				'screen1': {
-					1: "The Government needs your help to stop cyber criminals.",
-					2: "At this moment, hackers are attempting to disable vital state security systems in your area.",
+					1: "<b>Stopping cyber crime starts with you.</b>",
+					2: "At this moment, hackers are attempting to disable vital Government security systems in your area.",
 					3: "If they succeed, millions of lives could be at risk.",
 					4: '<div id="nextButton">OK</div>'
 				},
@@ -319,6 +319,7 @@
 		},
 
 		getPlayerBySocketID: function(sID) {
+			log("Searching for player with socketID "+ sID);
 			var toReturn;
 
 			for (var uID in state.players) {

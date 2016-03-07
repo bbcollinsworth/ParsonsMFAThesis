@@ -30,7 +30,7 @@ module.exports = function(users, _socket) {
 
 			var userProps = {
 				'socketID': socket.id,
-				'index': users.length,
+				'index': gameState.playerCount,
 				//'name': '',
 				'team': team,
 				//var teamNumber = getTeamSize(team) + 1,

@@ -31,8 +31,7 @@
  * @author Alexei KLENIN <alexey_klenin@hotmail.fr>
  */
 //;
-var initBounceEffects = function(L){
-//(function(L) {
+(function(L) {
 
     'use strict';
 
@@ -423,15 +422,15 @@ var initBounceEffects = function(L){
      * -------------------------------------------------------------------------
      */
 
-    L.PlayerMarker._bouncingMarkers = []; // array of bouncing markers
+    L.Marker._bouncingMarkers = []; // array of bouncing markers
 
     /**
      * Registers default options of bouncing animation.
      *
      * @param options    object with options
      */
-    L.PlayerMarker.setBouncingOptions = function(options) {
-        L.extend(L.PlayerMarker.prototype._bouncingOptions, options);
+    L.Marker.setBouncingOptions = function(options) {
+        L.extend(L.Marker.prototype._bouncingOptions, options);
     };
 
     /**
@@ -439,17 +438,17 @@ var initBounceEffects = function(L){
      *
      * @return array of bouncing markers
      */
-    L.PlayerMarker.getBouncingMarkers = function() {
-        return L.PlayerMarker._bouncingMarkers;
+    L.Marker.getBouncingMarkers = function() {
+        return L.Marker._bouncingMarkers;
     };
 
     /**
      * Stops the bouncing of all currently bouncing markers. Purge the array of
      * bouncing markers.
      */
-    L.PlayerMarker.stopAllBouncingMarkers = function() {
+    L.Marker.stopAllBouncingMarkers = function() {
         var marker;
-        while (marker = L.PlayerMarker._bouncingMarkers.shift()) {
+        while (marker = L.Marker._bouncingMarkers.shift()) {
             marker._bouncingMotion.isBouncing = false; // stop bouncing
         }
     };
@@ -462,13 +461,13 @@ var initBounceEffects = function(L){
      * @param exclusive   flag of exclusive bouncing. If set to true, stops the
      *                    bouncing of all other markers.
      */
-    L.PlayerMarker._addBouncingMarker = function(marker, exclusive) {
+    L.Marker._addBouncingMarker = function(marker, exclusive) {
         if (exclusive || marker._bouncingOptions.exclusive) {
-            L.PlayerMarker.stopAllBouncingMarkers();
+            L.Marker.stopAllBouncingMarkers();
         } else {
-            L.PlayerMarker._stopEclusiveMarkerBouncing();
+            L.Marker._stopEclusiveMarkerBouncing();
         }
-        L.PlayerMarker._bouncingMarkers.push(marker);
+        L.Marker._bouncingMarkers.push(marker);
     };
 
     /**
@@ -476,13 +475,13 @@ var initBounceEffects = function(L){
      *
      * @param marker    marker object
      */
-    L.PlayerMarker._removeBouncingMarker = function(marker) {
-        var i = L.PlayerMarker._bouncingMarkers.length;
+    L.Marker._removeBouncingMarker = function(marker) {
+        var i = L.Marker._bouncingMarkers.length;
 
         if (i) {
             while (i--) {
-                if (L.PlayerMarker._bouncingMarkers[i] == marker) {
-                    L.PlayerMarker._bouncingMarkers.splice(i, 1);
+                if (L.Marker._bouncingMarkers[i] == marker) {
+                    L.Marker._bouncingMarkers.splice(i, 1);
                     break;
                 }
             }
@@ -492,26 +491,26 @@ var initBounceEffects = function(L){
     /**
      * Stops the bouncing of exclusive marker.
      */
-    L.PlayerMarker._stopEclusiveMarkerBouncing = function() {
-        var i = L.PlayerMarker._bouncingMarkers.length;
+    L.Marker._stopEclusiveMarkerBouncing = function() {
+        var i = L.Marker._bouncingMarkers.length;
 
         if (i) {
             while (i--) {
-                if (L.PlayerMarker._bouncingMarkers[i]._bouncingOptions.exclusive) {
-                    L.PlayerMarker._bouncingMarkers[i]._bouncingMotion.isBouncing =
+                if (L.Marker._bouncingMarkers[i]._bouncingOptions.exclusive) {
+                    L.Marker._bouncingMarkers[i]._bouncingMotion.isBouncing =
                         false; // stop bouncing
-                    L.PlayerMarker._bouncingMarkers.splice(i, 1);
+                    L.Marker._bouncingMarkers.splice(i, 1);
                 }
             }
         }
     };
 
     /* -------------------------------------------------------------------------
-     *         L.PlayerMarker.prototype methods (shared by all instances)
+     *         L.Marker.prototype methods (shared by all instances)
      * -------------------------------------------------------------------------
      */
 
-    L.PlayerMarker.include({
+    L.Marker.include({
 
         /* Default bouncing animation properties */
         _bouncingOptions: {
@@ -543,7 +542,7 @@ var initBounceEffects = function(L){
              */
             if (!this.hasOwnProperty('_bouncingOptions')) {
                 this._bouncingOptions = L.extend({},
-                    L.PlayerMarker.prototype._bouncingOptions
+                    L.Marker.prototype._bouncingOptions
                 );
             }
 
@@ -732,7 +731,7 @@ var initBounceEffects = function(L){
             }
 
             motion.isBouncing = true;
-            L.PlayerMarker._addBouncingMarker(marker, exclusive);
+            L.Marker._addBouncingMarker(marker, exclusive);
             move(); // start animation
 
             return marker; // fluent API
@@ -748,7 +747,7 @@ var initBounceEffects = function(L){
          */
         stopBouncing: function() {
             this._bouncingMotion.isBouncing = false;
-            L.PlayerMarker._removeBouncingMarker(this);
+            L.Marker._removeBouncingMarker(this);
 
             return this; // fluent API
         },
@@ -897,7 +896,7 @@ var initBounceEffects = function(L){
     /**
      * Add init hook to calculate animation timeline.
      */
-    L.PlayerMarker.addInitHook(function() {
+    L.Marker.addInitHook(function() {
         this._bouncingMotion = {
             isBouncing: false
         };
@@ -905,15 +904,15 @@ var initBounceEffects = function(L){
     });
 
     // TODO: decide to redeclare ether only public or only private methods
-    var oldSetPos = L.PlayerMarker.prototype._setPos;
-    var oldOnAdd = L.PlayerMarker.prototype.onAdd;
+    var oldSetPos = L.Marker.prototype._setPos;
+    var oldOnAdd = L.Marker.prototype.onAdd;
 
     /**
      * Redeclaration of _setPos function.
      *
      * @param pos    position object
      */
-    L.PlayerMarker.prototype._setPos = function(pos) {
+    L.Marker.prototype._setPos = function(pos) {
         oldSetPos.call(this, pos);
         this._bouncingMotion.x = pos.x;
         this._bouncingMotion.y = pos.y;
@@ -925,7 +924,7 @@ var initBounceEffects = function(L){
      *
      * @param map    map object
      */
-    L.PlayerMarker.prototype.onAdd = function(map) {
+    L.Marker.prototype.onAdd = function(map) {
         oldOnAdd.call(this, map);
 
         /* Create base cssText */
@@ -941,5 +940,5 @@ var initBounceEffects = function(L){
             this._bouncingMotion.baseShadowCssText = renderCssText(styles);
         }
     };
-};
-//})(L);
+
+})(L);

@@ -6,6 +6,7 @@ var clientState = {
 	socketEventsAttached: false,
 	//ready: false,
 	tracking: false,
+	posStored: false,
 	// playerPos: {
 	// 	lat: 0,
 	// 	lng: 0
@@ -57,16 +58,27 @@ var clientState = {
 				//IMPORTANT: NEED TO START WATCHING POS TO FIGURE OUT IF MOVING
 				console.log("Starting capture on " + p.localID);
 
-				if (!('captureCircle' in p)) {
-					p['captureCircle'] = viz.addCaptureCircle(p.latestPos);
-					p['captureCircle'].parentPlayerRef = p;
-					p['captureCircle'].addTo(map);
+				if (!('captureCircle' in p.marker)) {
+					p.marker.addCaptureCircle();
+					p.marker.captureCircle.animate();
+					$(p.marker.captureCircle.domElement).on('animationend oAnimationEnd webkitAnimationEnd', function() {
+						gov.captureComplete(p);
+						p.marker.captureCircle.clearAnimation();
+					});
+					// p['captureCircle'] = viz.addCaptureCircle(p.latestPos);
+					// p['captureCircle'].parentPlayerRef = p;
+					// p['captureCircle'].addTo(map);
+
+				// if (!('captureCircle' in p)) {
+				// 	p['captureCircle'] = viz.addCaptureCircle(p.latestPos);
+				// 	p['captureCircle'].parentPlayerRef = p;
+				// 	p['captureCircle'].addTo(map);
 
 					//newPlayer.captureCircle.remove();
 					// add something to remove the old one
 				}
 
-				p['captureCircle'].startAnim();
+				//p['captureCircle'].startAnim();
 				//map.on('mouseup', p.stopCapture);
 
 			},
@@ -109,14 +121,18 @@ var clientState = {
 			userID: uID,
 			team: player.team,
 			type: player.type,
-			latestPos: player.locData[0],
+			//latestPos: player.locData[0],
 			oldestTime: player.oldestTime,
 			locData: player.locData,
+			get latestPos(){
+				return this.locData[0];
+			},
 			updateLocData: function(newData) {
 				for (itemKey in newData) {
 					this[itemKey] = newData[itemKey];
 					console.log("Updated " + itemKey + " for player " + this.userID);
 				}
+				//this.latestPos = this.locData[0];
 				if ('trail' in this) {
 					console.log("Trail found in " + this.userID + "!");
 					var pRef = this;
@@ -187,6 +203,8 @@ var clientState = {
 							time: position.timestamp
 						});
 						clientState.features.geolocation.ready = true;
+						clientState.posStored = true;
+						app.trackLocation();
 						console.log('Geoloc test successful');
 
 						startup.svcCheck(); //re-run service check

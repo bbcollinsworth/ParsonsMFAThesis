@@ -369,15 +369,15 @@
 }
 
 
-.onMapPingCircle {
+/*.onMapPingCircle {
 	fill: rgba(255,255,255,0.0);
 	r: 0;
 }
 
 .onMapPingCircle.run {
-	-webkit-animation: ping ease 1s 1; /* Safari 4+ */
-	-moz-animation: ping ease 1s 1; /* Fx 5+ */
-	-o-animation: ping ease 1s 1; /* Opera 12+ */
+	-webkit-animation: ping ease 1s 1; 
+	-moz-animation: ping ease 1s 1;
+	-o-animation: ping ease 1s 1; 
 	animation: ping ease 1s 1;
 
 }
@@ -385,16 +385,40 @@
 .pCircle.run {
 	//animation: ping ease 1s 1;
 
-	-webkit-animation: ping ease 1s 1; /* Safari 4+ */
-	-moz-animation:    ping ease 1s 1; /* Fx 5+ */
-	-o-animation:      ping ease 1s 1; /* Opera 12+ */
+	-webkit-animation: ping ease 1s 1; 
+	-moz-animation:    ping ease 1s 1; 
+	-o-animation:      ping ease 1s 1; 
 	animation:         ping ease 1s 1;
+}*/
+
+.capture-circle {
+	width: 0px;
+	height: 0px;
+	margin-left: 0px;
+	margin-top: 0px;
+	//border: 10px dashed rgba(255,0,0,1.0);
 }
 
-.captureCircle {
-	position: absolute;
+#captureCircleID {
+	background-color: rgba(255,0,0,0.1);
+	/*width: 100px;
+	hight: 100px;*/
+	//position: absolute;
+	border-radius: 50%;
 }
 
+.capture-circle.capture-animate{
+	border: 10px dashed rgba(255,0,0,1.0);
+	-webkit-animation: capture ease-in 5s 1; /* Safari 4+ */
+	-moz-animation: capture ease-in 5s 1; /* Fx 5+ */
+	-o-animation: capture ease-in 5s 1; /* Opera 12+ */
+	animation: capture ease-in 5s 1;
+}
+
+/*.captureCircle {
+
+}
+*/
 #suspect-container {
 	position: absolute;
 	left: 0px;
@@ -412,7 +436,7 @@
 .player-tag {
 	pointer-events: all;
 	transform: translate(0,-50%);
-	transition-duration: 1s;
+	transition-duration: 0.5s;
 	position: relative;
 	text-align: left;
 	padding: 0.2em 0.5em;
@@ -551,6 +575,21 @@
 	50% {
 		color: #FF0000;
 		border: 16px solid #FF0000;
+	}
+}
+
+@keyframes capture {
+	0% {
+		width: 800px;
+		height: 800px;
+		margin-left: -400px;
+		margin-top: -400px;
+	}
+	100% {
+		width: 20px;
+		height: 20px;
+		margin-left: -10px;
+		margin-top: -10px;
 	}
 }
 

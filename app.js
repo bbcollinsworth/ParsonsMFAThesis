@@ -307,6 +307,18 @@ io.on('connection', function(socket) {
 				player.playStarted = true;
 			},
 
+			locationError: function(){
+				player.lastReqResRcvd = true;
+
+				var elapsed = (Date.now() - res.reqTimestamp) / 1000;
+				log("Response received BUT no location stored for player yet; " + elapsed + "sec after req sent",colors.err);
+
+				if (!player.trackActive || player.goneDark) {
+					player.clearDark();
+					startTracking();
+				}
+			},
+
 			locationUpdate: function() {
 				// var elapsed = (Date.now() - res.reqTimestamp) / 1000;
 				// log("Response received " + elapsed + "sec after req sent");
@@ -322,7 +334,11 @@ io.on('connection', function(socket) {
 					//log(player.locationData[0]);
 				};
 
+				if (res.locData.lat !== undefined){
 				storeLocation();
+			} else {
+				log("Loc update received from " + player.userID + " but position not valid");
+			}
 
 				if (!player.trackActive || player.goneDark) {
 					player.clearDark();
@@ -337,14 +353,14 @@ io.on('connection', function(socket) {
 				for (p in players) {
 					var dataAgeLimit = Date.now() - gameState.suspectTrailDuration;
 
-					var locArray = [];
-					if (players[p].team == 'ins' && !players[p].lockedOut) {
-						locArray = players[p].getLocationData(dataAgeLimit);
-					} else {
-						locArray = [players[p].getLastLocation()];
-					}
+					//var locArray = [];
+					// if (players[p].team == 'ins' && !players[p].lockedOut) {
+					// 	locArray = players[p].getLocationData(dataAgeLimit);
+					// } else {
+						var locArray = [players[p].getLastLocation()];
+					//}
 
-					if (locArray.length > 0) {
+					if (locArray.length > 0 && locArray[0] !== null) {
 
 						newLocData[players[p].userID] = {
 							team: players[p].team,

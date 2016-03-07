@@ -110,7 +110,7 @@ var viz = {
 			}
 		},
 
-		clearAnimation: function(){
+		clearAnimation: function() {
 			var a = this;
 			this.animRunning = false;
 			$(a.domElement).removeClass(a.animateClass);
@@ -139,6 +139,31 @@ var viz = {
 		return m;
 	},
 
+	captureCircle: function(pos, domID) {
+
+		var className = 'capture-circle';
+
+		var idName = (domID !== undefined) ? domID : 'captureCircleID';
+		var iconOptions = {
+			className: className,
+			iconSize: null
+		};
+		var markerOptions = {
+			icon: L.divIcon(iconOptions),
+			interactive: false //,
+			//opacity: 0 //1.0*mappedToTime
+		};
+
+		var c = L.animMarker([pos.lat, pos.lng], markerOptions);
+		c.addTo(map);
+
+		c['animateClass'] = 'capture-animate';
+		c['domElement'] = document.getElementsByClassName(className);
+		$(c.domElement).attr('id', idName);
+
+		return c;
+	},
+
 	pingCircle: function(domID) {
 
 		if (domID) {
@@ -150,9 +175,9 @@ var viz = {
 		var mapCenter = map.latLngToLayerPoint(map.getCenter());
 
 		$(circle.domElement).css({
-				'left': mapCenter.x,
-				'top': mapCenter.y
-			});
+			'left': mapCenter.x,
+			'top': mapCenter.y
+		});
 
 		circle['itemName'] = 'Ping Circle';
 		circle['animateClass'] = 'ping-animate';
