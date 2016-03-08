@@ -71,20 +71,8 @@ var viz = {
 		return newTrail;
 	},
 
-	animMarker: {
+	animDiv: {
 		'animRunning': false,
-
-		// create: function(className,idName){
-		// 	var options = {
-		// 		'class': className,
-		// 	}
-		// 	if (idName){
-		// 		options['id'] = idName;
-		// 	}
-
-		// 	$("<div />",options);
-
-		// },
 
 		reCenter: function() {
 			var mapCenter = map.latLngToLayerPoint(map.getCenter());
@@ -119,11 +107,11 @@ var viz = {
 
 	},
 
-	addAnimMarker: function(className, idName) {
+	addAnimDiv: function(className, idName) {
 
-		customLog("Creating animMarker");
+		customLog("Creating animDiv");
 
-		var m = $.extend({}, viz.animMarker);
+		var m = $.extend({}, viz.animDiv);
 
 		var options = {
 			'class': className,
@@ -137,6 +125,31 @@ var viz = {
 		$('#map').append(m.domElement);
 
 		return m;
+	},
+
+	pingCircle: function(domID) {
+		var circle = {};
+		
+		if (domID) {
+			circle = viz.addAnimDiv('ping-circle', domID);
+		} else {
+			circle = viz.addAnimDiv('ping-circle');
+		}
+
+		var mapCenter = map.latLngToLayerPoint(map.getCenter());
+
+		$(circle.domElement).css({
+			'left': mapCenter.x,
+			'top': mapCenter.y
+		});
+
+		circle['itemName'] = 'Ping Circle';
+		circle['animateClass'] = 'ping-animate';
+
+		customLog("Ping Circle Animateable created");
+		console.log(circle);
+
+		return circle;
 	},
 
 	captureCircle: function(pos, domID) {
@@ -162,30 +175,6 @@ var viz = {
 		$(c.domElement).attr('id', idName);
 
 		return c;
-	},
-
-	pingCircle: function(domID) {
-
-		if (domID) {
-			var circle = viz.addAnimMarker('ping-circle', domID);
-		} else {
-			var circle = viz.addAnimMarker('ping-circle');
-		}
-
-		var mapCenter = map.latLngToLayerPoint(map.getCenter());
-
-		$(circle.domElement).css({
-			'left': mapCenter.x,
-			'top': mapCenter.y
-		});
-
-		circle['itemName'] = 'Ping Circle';
-		circle['animateClass'] = 'ping-animate';
-
-		customLog("Ping Circle Animateable created");
-		console.log(circle);
-
-		return circle;
 	},
 
 	trail: {
@@ -268,19 +257,6 @@ var viz = {
 				}
 			}
 
-			// if (t.playerRef.goneDark){
-			// 	$('trail-marker').addClass('dark-trail');
-			// }
-
-			//var markerEls = document.getElementsByClassName('trail-marker');
-			//console.log("LOGGING MARKER ELEMENTS");
-			//console.log(markerEls);
-			// markerEls.forEach(function(m){
-			// 	console.log(m);
-			// 	// m.css({
-
-			// 	// });
-			// });
 			console.log("Last path marker is: ");
 			console.log(t.markers[0]);
 
@@ -299,32 +275,21 @@ var viz = {
 		$('#container').append(c);
 	},
 
-	// addPingCircle: function() {
-
-	// 	var pC = L.pingCircle(map.getCenter(), viz.pingSetup.options);
-	// 	pC.addTo(map);
-
-	// 	var thisCircle = document.getElementsByClassName('onMapPingCircle');
-	// 	pC['domElement'] = thisCircle[0];
-	// 	//thisCircle[0].id = "#pingCircle";
-	// 	return pC;
+	// captureSetup: {
+	// 	radius: 80,
+	// 	options: {
+	// 		'radius': 80,
+	// 		'className': "captureCircle",
+	// 		'fillColor': '#ff0000',
+	// 		'fillOpacity': '0.1',
+	// 		'weight': 10,
+	// 		'color': '#ff0000',
+	// 		'opacity': '0.9',
+	// 		'dashArray': '10,30',
+	// 		'lineCap': 'square',
+	// 		'lineJoin': 'square'
+	// 	}
 	// },
-
-	captureSetup: {
-		radius: 80,
-		options: {
-			'radius': 80,
-			'className': "captureCircle",
-			'fillColor': '#ff0000',
-			'fillOpacity': '0.1',
-			'weight': 10,
-			'color': '#ff0000',
-			'opacity': '0.9',
-			'dashArray': '10,30',
-			'lineCap': 'square',
-			'lineJoin': 'square'
-		}
-	},
 
 	addCaptureCircle: function(pos) {
 		var c = L.captureCircle([pos.lat, pos.lng], viz.captureSetup.options);
@@ -334,48 +299,48 @@ var viz = {
 		return c;
 	},
 
-	drawCaptureCircle: function(pos) {
-		var p = [pos.lat, pos.lng];
-		var c = L.circleMarker(p, viz.captureSetup.options);
-		c.setRadius(viz.captureSetup.radius);
+	// drawCaptureCircle: function(pos) {
+	// 	var p = [pos.lat, pos.lng];
+	// 	var c = L.circleMarker(p, viz.captureSetup.options);
+	// 	c.setRadius(viz.captureSetup.radius);
 
-		var screenOffset = map.latLngToContainerPoint(p);
-		// screenOffset.x += viz.captureSetup.radius;
-		// screenOffset.y += viz.captureSetup.radius;
-		var rad = viz.captureSetup.radius;
-		var α = 0,
-			π = Math.PI,
-			t = 30;
+	// 	var screenOffset = map.latLngToContainerPoint(p);
+	// 	// screenOffset.x += viz.captureSetup.radius;
+	// 	// screenOffset.y += viz.captureSetup.radius;
+	// 	var rad = viz.captureSetup.radius;
+	// 	var α = 0,
+	// 		π = Math.PI,
+	// 		t = 30;
 
-		//FUNCTION FOR PIE-TIMER
-		c['draw'] = function() {
-			α++;
-			//α %= 360;
-			var r = (α * π / 180),
-				x = Math.sin(r) * rad,
-				y = Math.cos(r) * -1 * rad,
-				mid = (α > 180) ? 1 : 0,
-				anim = 'M 0 0 v -' + rad + ' A' + rad + ' ' + rad + ' 1 ' + mid + ' 1 ' + x + ' ' + y + ' z';
+	// 	//FUNCTION FOR PIE-TIMER
+	// 	c['draw'] = function() {
+	// 		α++;
+	// 		//α %= 360;
+	// 		var r = (α * π / 180),
+	// 			x = Math.sin(r) * rad,
+	// 			y = Math.cos(r) * -1 * rad,
+	// 			mid = (α > 180) ? 1 : 0,
+	// 			anim = 'M 0 0 v -' + rad + ' A' + rad + ' ' + rad + ' 1 ' + mid + ' 1 ' + x + ' ' + y + ' z';
 
-			var circles = document.getElementsByClassName('captureCircle');
-			var newCSS = {
-				'transform': 'translate(' + screenOffset.x + ',' + screenOffset.y + ')',
-				'd': anim
-			};
-			$.each(newCSS, function(key, value) {
-				//WOULD NEED TO BE CHANGED TO DEAL WITH INDEX / ARRAY ISSUE OF CLASS
-				circles[0].setAttribute(key, value);
-			});
+	// 		var circles = document.getElementsByClassName('captureCircle');
+	// 		var newCSS = {
+	// 			'transform': 'translate(' + screenOffset.x + ',' + screenOffset.y + ')',
+	// 			'd': anim
+	// 		};
+	// 		$.each(newCSS, function(key, value) {
+	// 			//WOULD NEED TO BE CHANGED TO DEAL WITH INDEX / ARRAY ISSUE OF CLASS
+	// 			circles[0].setAttribute(key, value);
+	// 		});
 
-			if (α < 360) {
-				setTimeout(c.draw, t); // Redraw
-			}
-		};
+	// 		if (α < 360) {
+	// 			setTimeout(c.draw, t); // Redraw
+	// 		}
+	// 	};
 
-		c.addTo(map);
-		c.draw();
-		return c;
-	},
+	// 	c.addTo(map);
+	// 	c.draw();
+	// 	return c;
+	// },
 
 	// ====== HUB VISUALIZATION SETUP ==============//
 	hubOptions: {
@@ -469,19 +434,12 @@ var viz = {
 
 	searchButton: function() {
 
-		// var eyeIcon = $("<div />", {
-		// 	'class': "ui-btn ui-nodisc-icon ui-corner-all ui-icon-specialeye ui-btn-icon-notext"
-		// });
-
 		var button = $("<div />", {
 			'class': "ui-btn",
 			'id': "searchButton" //,
-			//'data-icon': "eye"
 		});
 
 		button.addClass('searchIcon');
-
-		//button.append(eyeIcon);
 
 		return button;
 
