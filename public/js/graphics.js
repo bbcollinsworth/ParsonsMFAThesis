@@ -1,11 +1,85 @@
 var viz = {
+	//initHeaderUI
 
 	headerStyles: {
-		'urgent': 'urgent-alert',
-		'ins-urgent': 'ins-urgent-alert',
-		'success': 'success-alert',
-		'lockout': 'lockout-alert' //,
-		//'normal': 'normal-alert'
+		'current': "normal",
+		update: function(style) {
+			var s = this;
+
+			var refresh = function(styleKey,removeOrAdd) {
+				var classTypes = {
+					'boxClass': '#alertBox',
+					'controlClass': '#alertBoxControl'
+				};
+
+				for (key in classTypes) {
+					if (key in s.classes[styleKey]) {
+						$(classTypes[key])[removeOrAdd](s.classes[styleKey][key]);
+					}
+				}
+			}
+
+			for (c in s.classes) {
+				refresh(c, 'removeClass');
+			}
+			if (style === undefined) {
+				style = 'normal';
+			}
+			if (style in s.classes) {
+				customLog("adding header styling! " + style);
+				refresh(style, 'addClass');
+			}
+
+			// for (c in s.classes) {
+			// 	if ('boxClass' in s.classes[c]) {
+			// 		$('#alertBox').removeClass(s.classes[c].boxClass);
+			// 	}
+			// 	if ('controlClass' in s.classes[c]) {
+			// 		$('#alertBoxControl').removeClass(s.classes[c].controlClass);
+			// 	}
+			// }
+
+			// if (style in s.classes) {
+			// 	customLog("adding header styling! " + styling);
+			// 	if ('boxClass' in s.classes[style]) {
+			// 		$('#alertBox').addClass(s.classes[style].boxClass);
+			// 	}
+			// 	if ('controlClass' in s.classes[c]) {
+			// 		$('#alertBoxControl').addClass(s.classes[style].controlClass);
+			// 	}
+			// }
+
+		},
+		classes: {
+			get normal() {
+				switch (player.team) {
+					case 'gov':
+						return {
+							controlClass: 'ui-alt-icon'
+						};
+					default:
+						return {};
+				}
+			},
+			'intro': {
+				controlClass: 'control-hidden'
+			},
+			'urgent': {
+				boxClass: 'urgent-alert'
+			},
+			'ins-urgent': {
+				boxClass: 'ins-urgent-alert'
+			},
+			'success': {
+				boxClass: 'success-alert',
+				controlClass: 'control-hidden'
+			},
+			'lockout': {
+				boxClass: 'lockout-alert',
+				controlClass: 'control-hidden'
+			} //,
+			//'normal': 'normal-alert'
+		}
 	},
 
 	headerToggle: {

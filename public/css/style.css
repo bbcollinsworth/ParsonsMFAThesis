@@ -80,6 +80,10 @@
 	background-color: transparent;
 }
 
+#alertBoxControl.control-hidden {
+	display: none;
+}
+
 .header-inner {
 	background-color: rgba(255,255,255,0.7);
 	box-shadow: 10px 0px 30px 0px rgba(0,0,0,0.3);
@@ -91,151 +95,149 @@
 
 #alertBodyText.header-minimized {
 	display: none;
-		/*opacity: 0;
-		transition-duration: 0.5s;
-		font-size: 0em;*/
-	}
 
-	#nextButton {
-		background-color: gray;
-		padding: 0.4em;
-		color: white;
-		font-size: 1.5em;
-		margin: auto;
-	}
+}
 
-	.ui-collapsible-heading {
-		text-align: left;
-		border-radius: 0px 20px 20px 0px;
-	}
+#nextButton {
+	background-color: gray;
+	padding: 0.4em;
+	color: white;
+	font-size: 1.5em;
+	margin: auto;
+}
 
-	#alertBox.ui-collapsible-content {
-		//font-family: 'Open Sans',sans-serif;
-		font-weight: 400;
-		background-color: rgba(255,255,255,0.7);
-		box-shadow: 10px 0px 30px 0px rgba(0,0,0,0.3);
-		text-shadow: none;
-		border: 0px;
-	}
+.ui-collapsible-heading {
+	text-align: left;
+	border-radius: 0px 20px 20px 0px;
+}
 
-	#alertBox.ins-alert-styling {
-		color: white;
-		background-color: rgba(0,0,0,0.8);
-		font-weight: 100;
-	}
+#alertBox.ui-collapsible-content {
+	//font-family: 'Open Sans',sans-serif;
+	font-weight: 400;
+	background-color: rgba(255,255,255,0.7);
+	box-shadow: 10px 0px 30px 0px rgba(0,0,0,0.3);
+	text-shadow: none;
+	border: 0px;
+}
 
-	#alertBox.urgent-alert {
-		color: white;
-		background-color: rgba(255,0,0,0.7);
-	}
+#alertBox.ins-alert-styling {
+	color: white;
+	background-color: rgba(0,0,0,0.8);
+	font-weight: 100;
+}
 
-	#alertBox.ins-urgent-alert {
-		color: #FD2D2D;
-	}
+#alertBox.urgent-alert {
+	color: white;
+	background-color: rgba(255,0,0,0.7);
+}
 
-	#alertBox.success-alert {
-		text-transform: uppercase;
-		letter-spacing: 0.2em;
-		color: white;
-		background-color: rgba(255,218,68,0.7);
-		font-weight: 600;
-		font-size: 1.5em;
-		line-height: 1em;
-	}
+#alertBox.ins-urgent-alert {
+	color: #FD2D2D;
+}
 
-	#alertBox.lockout-alert {
-		text-transform: uppercase;
-		letter-spacing: 0.2em;
-		color: rgba(180,180,180,1.0);
-		background-color: rgba(0,0,0,0.7);
-		font-size: 1.5em;
-		font-weight: 600;
-		line-height: 1em;
-	}
+#alertBox.success-alert {
+	text-transform: uppercase;
+	letter-spacing: 0.2em;
+	color: white;
+	background-color: rgba(255,218,68,0.7);
+	font-weight: 600;
+	font-size: 1.5em;
+	line-height: 1em;
+}
 
-	#svcChecklist .ui-collapsible-heading {
-		border-radius: 0px;
-	}
+#alertBox.lockout-alert {
+	text-transform: uppercase;
+	letter-spacing: 0.2em;
+	color: rgba(180,180,180,1.0);
+	background-color: rgba(0,0,0,0.7);
+	font-size: 1.5em;
+	font-weight: 600;
+	line-height: 1em;
+}
 
-	.feature-list {
-		text-align: left;
-		border-radius: 0px;
-		/*width: 100%;*/
-	}
+#svcChecklist .ui-collapsible-heading {
+	border-radius: 0px;
+}
 
-	.ui-icon-check {
-		background-color: green;
-	}
+.feature-list {
+	text-align: left;
+	border-radius: 0px;
+	/*width: 100%;*/
+}
 
-	.feature-title {
-		border-radius: 0px;
-		width: 100%;
-	}
+.ui-icon-check {
+	background-color: green;
+}
 
-	#map {
-		position: margin;
-		static: auto;
-		height: 100%;
-	}
+.feature-title {
+	border-radius: 0px;
+	width: 100%;
+}
 
-	/*PING BUTTON FOR GOV TEAM*/
-	#searchButton {
-		pointer-events: all;
-		position: absolute;
-		top: -75px;
-		left: 50%;
-		transform: translate(-50%,-50%);
-		//left: calc(50% - 30px);
-		margin: auto;
-		padding: 0.1em;
-		width: 50px;
-		height: 50px;
-		box-shadow: 0px 1px 10px 5px rgba(0,0,0,0.2);
-		border-radius: 50%;
-		//background: rgba(255,255,255,0.5);
-	}
+#map {
+	position: margin;
+	static: auto;
+	height: 100%;
+}
 
-	#searchButton.searchIcon {
-		background-color: rgba(255,255,255,0.5);
-		background-repeat: no-repeat;
-		background-image: url("cssImages/specialeye.svg"); /*targeteye*/
-		background-size: contain;
-		border: 6px solid rgba(255,255,255,0.5);
-	}
+/*PING BUTTON FOR GOV TEAM*/
+#searchButton {
+	pointer-events: all;
+	position: absolute;
+	top: -75px;
+	left: 50%;
+	transform: translate(-50%,-50%);
+	//left: calc(50% - 30px);
+	margin: auto;
+	padding: 0.1em;
+	width: 50px;
+	height: 50px;
+	box-shadow: 0px 1px 10px 5px rgba(0,0,0,0.2);
+	border-radius: 50%;
+	//background: rgba(255,255,255,0.5);
+}
+
+#searchButton.searchIcon {
+	background-color: rgba(255,255,255,0.5);
+	background-repeat: no-repeat;
+	background-image: url("cssImages/specialeye.svg"); /*targeteye*/
+	background-size: contain;
+	border: 6px solid rgba(255,255,255,0.5);
+}
 
 
-	/*<div>Icons made by <a href="http://www.flaticon.com/authors/daniel-bruce" title="Daniel Bruce">Daniel Bruce</a> from <a href="http://www.flaticon.com" title="Flaticon">www.flaticon.com</a>             is licensed by <a href="http://creativecommons.org/licenses/by/3.0/" title="Creative Commons BY 3.0">CC BY 3.0</a></div>*/
-	.ui-icon-specialeye:after {
-		background-image: url("cssImages/specialeye.svg");
-	}
-	/* Fallback */
-	.ui-nosvg .ui-icon-specialeye:after {
-		background-image: url("cssImages/specialeye.png");
-	}
+/*<div>Icons made by <a href="http://www.flaticon.com/authors/daniel-bruce" title="Daniel Bruce">Daniel Bruce</a> from <a href="http://www.flaticon.com" title="Flaticon">www.flaticon.com</a>             is licensed by <a href="http://creativecommons.org/licenses/by/3.0/" title="Creative Commons BY 3.0">CC BY 3.0</a></div>*/
+.ui-icon-specialeye:after {
+	background-image: url("cssImages/specialeye.svg");
+}
+/* Fallback */
+.ui-nosvg .ui-icon-specialeye:after {
+	background-image: url("cssImages/specialeye.png");
+}
 
-	.ui-icon-scan:after {
-		background-image: url("cssImages/sidescan.png");
-	}
-	/* Fallback */
-	.ui-nosvg .ui-icon-scan:after {
-		background-image: url("cssImages/sidescan.png");
-	}
+.ui-icon-scan:after {
+	background-image: url("cssImages/sidescan.png");
+}
+/* Fallback */
+.ui-nosvg .ui-icon-scan:after {
+	background-image: url("cssImages/sidescan.png");
+}
 
-	/*SCAN BUTTON FOR INS TEAM*/
-	#scanButton {
-		transition-duration: 0.2s;
-		pointer-events: all;
-		position: absolute;
-		top: 50vh;
-		left: 50%;
-		transform: translate(-50%,-50%);
-		margin: auto;
-		padding: 0.1em;
-		width: 60px;
-		height: 60px;
-		box-shadow: 0px 1px 10px 5px rgba(0,0,0,0.2);
-		border-radius: 50%;
-		border: 6px solid transparent; //rgba(255,255,255,0.5);
+/*SCAN BUTTON FOR INS TEAM*/
+#scanButton {
+	transition-duration: 0.2s;
+	pointer-events: all;
+	position: absolute;
+	top: 50vh;
+	left: 50%;
+	transform: translate(-50%,-50%);
+	margin: auto;
+	padding: 0.1em;
+	width: 60px;
+	height: 60px;
+	box-shadow: 0px 1px 10px 5px rgba(0,0,0,0.2);
+	border-radius: 50%;
+	border: 6px solid transparent; //rgba(255,255,255,0.5);
 	/*background-color: rgba(255,255,255,0.5);
 	background-repeat: no-repeat;*/
 }

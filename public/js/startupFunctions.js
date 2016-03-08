@@ -126,39 +126,33 @@ var startup = {
 			}
 
 			$('#alertBodyText').html(msgHTML);
-			// $('#alertBox').find('.ui-collapsible-content').attr({
-			// 	'aria-hidden': false
-			// });
-			// $('#alertBox').attr({
-			// 	'data-collapsed': false
-			// });
-			// $('#alertBox').removeClass('ui-collapsible-collapsed');
-			// $('#alertPopoutText').removeClass('ui-collapsible-heading-collapsed');
-			// $('#mobileHeader').trigger("refresh");
 
-			for (s in viz.headerStyles) {
-				$('#alertBox').removeClass(viz.headerStyles[s]);
-			}
+			viz.headerStyles.update(styling);
+			// for (s in viz.headerStyles) {
+			// 	$('#alertBox').removeClass(viz.headerStyles[s]);
+			// }
 
-			//this should be turned into a viz.addHeaderStyles[styling]()
-			//function call:
-			if (styling in viz.headerStyles) {
-				customLog("adding header styling! " + styling);
-				$('#alertBox').addClass(viz.headerStyles[styling]);
+			// //this should be turned into a viz.addHeaderStyles[styling]()
+			// //function call:
+			// if (styling in viz.headerStyles) {
+			// 	customLog("adding header styling! " + styling);
+			// 	$('#alertBox').addClass(viz.headerStyles[styling]);
 
-				//KINDA ANNOYING way to switch icon color depending on alert type
-				if ('headerToggle' in app) {
-					app.headerToggle.icon.removeClass('ui-alt-icon');
-				}
-			} else if (player.team == 'gov') {
-				if ('headerToggle' in app) {
-					app.headerToggle.icon.addClass('ui-alt-icon');
-				}
-			}
+			// 	//KINDA ANNOYING way to switch icon color depending on alert type
+			// 	if ('headerToggle' in app) {
+			// 		app.headerToggle.icon.removeClass('ui-alt-icon');
+			// 	}
+			// } else if (player.team == 'gov') {
+			// 	if ('headerToggle' in app) {
+			// 		app.headerToggle.icon.addClass('ui-alt-icon');
+			// 	}
+			// }
 
-			if ('headerToggle' in app) {
+			if (('headerToggle' in app)&& styling !== viz.headerStyles.current) {
 				app.headerToggle.forceExpand();
 			}
+
+			viz.headerStyles.current = styling;
 		};
 
 		window.footerMsg = function(text, styling) {
