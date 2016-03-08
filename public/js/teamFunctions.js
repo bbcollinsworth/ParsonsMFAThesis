@@ -101,6 +101,10 @@ var ins = {
 			this.ui.hubPointers.unshift(newPointer);
 		}
 
+		ins.ui['headerToggle'] = viz.headerToggle.create('ins');
+		//store a reference for calling "Msg, etc"
+		app['headerToggle'] = ins.ui.headerToggle;
+
 		this.ui['scanButton'] = viz.scanButton();
 		$('#container').append(this.ui['scanButton']);
 
@@ -307,6 +311,12 @@ var gov = {
 		var pingButton = viz.searchButton();
 		$('#mobileFooter').prepend(pingButton);
 
+		//app['ui']['headerToggle'] = viz.headerToggle.create('gov');
+		gov.ui['headerToggle'] = viz.headerToggle.create('gov');
+		//store a reference for calling "Msg, etc"
+		app['headerToggle'] = gov.ui.headerToggle;
+		customLog('Added header toggle:');
+		console.log(gov.ui.headerToggle);
 		gov.ui['pingCircle'] = viz.pingCircle('pingCircleID'); //viz.addPingCircle();
 
 		gov.ui.attachPingEvents();

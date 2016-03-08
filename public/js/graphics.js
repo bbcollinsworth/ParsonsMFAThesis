@@ -8,6 +8,74 @@ var viz = {
 		//'normal': 'normal-alert'
 	},
 
+	headerToggle: {
+		minClass: 'header-minimized',
+		expandIconClass: 'ui-icon-carat-d',
+		contractIconClass: 'ui-icon-carat-u',
+		get headerText() {
+			return $('#alertBodyText');
+		},
+		// get icon(){
+		// 	return $('#alertBoxControl');
+		// },
+		iconSetup: {
+			'gov': $("<div />", {
+				'id': "alertBoxControl",
+				'class': "alert-control ui-btn ui-corner-all ui-icon-carat-u ui-btn-icon-notext ui-nodisc-icon ui-alt-icon"
+			}),
+			'ins': $("<div />", {
+				'id': "alertBoxControl",
+				'class': "alert-control ui-btn ui-corner-all ui-icon-carat-u ui-btn-icon-notext ui-nodisc-icon"
+			})
+		},
+		expand: function() {
+			var hT = this;
+			hT.headerText.slideDown(400, 'easeOutCubic');
+			//this.headerText.removeClass(viz.headerToggle.minClass);
+			hT.icon.removeClass(hT.expandIconClass).addClass(hT.contractIconClass);
+		},
+		contract: function() {
+			var hT = this;
+			hT.headerText.slideUp(400, 'easeOutCubic');
+			//this.headerText.addClass(viz.headerToggle.minClass);
+			hT.icon.removeClass(hT.contractIconClass).addClass(hT.expandIconClass);
+
+		},
+		create: function(team) {
+			// var toggleIcon = $("<div />", {
+			// this.icon = $("<div />", {
+			// 	'id': "alertBoxControl",
+			// 	'class': "alert-control ui-btn ui-corner-all ui-icon-carat-u ui-btn-icon-notext ui-nodisc-icon ui-alt-icon"
+			// });
+			var hT = this;
+			$('#alertPopoutSpace').html(hT.iconSetup[team]);
+
+			hT['icon'] = $('#alertBoxControl');
+
+			//var min = 'header-minimized';
+
+			hT.icon.off('click').on('click', function() {
+
+				//if (hT.headerText.hasClass(hT.minClass)) {
+				if (hT.icon.hasClass(hT.expandIconClass)) {
+					hT.expand();
+					// headerText.removeClass(minClass);
+					// toggleIcon.removeClass('ui-icon-carat-d').addClass('ui-icon-carat-u');
+				} else {
+					hT.contract();
+				}
+			});
+
+			return hT;
+		},
+		forceExpand: function() {
+			//if (this.headerText.hasClass(this.minClass)) {
+			if (this.icon.hasClass(this.expandIconClass)) {
+				this.expand();
+			}
+		}
+	},
+
 	markerOptions: {
 		'suspect': {
 			zIndexOffset: 1000,
@@ -129,7 +197,7 @@ var viz = {
 
 	pingCircle: function(domID) {
 		var circle = {};
-		
+
 		if (domID) {
 			circle = viz.addAnimDiv('ping-circle', domID);
 		} else {

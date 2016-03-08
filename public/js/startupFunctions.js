@@ -126,23 +126,38 @@ var startup = {
 			}
 
 			$('#alertBodyText').html(msgHTML);
-			$('#alertBox').find('.ui-collapsible-content').attr({
-				'aria-hidden': false
-			});
-			$('#alertBox').attr({
-				'data-collapsed': false
-			});
-			$('#alertBox').removeClass('ui-collapsible-collapsed');
-			$('#alertPopoutText').removeClass('ui-collapsible-heading-collapsed');
-			$('#mobileHeader').trigger("refresh");
+			// $('#alertBox').find('.ui-collapsible-content').attr({
+			// 	'aria-hidden': false
+			// });
+			// $('#alertBox').attr({
+			// 	'data-collapsed': false
+			// });
+			// $('#alertBox').removeClass('ui-collapsible-collapsed');
+			// $('#alertPopoutText').removeClass('ui-collapsible-heading-collapsed');
+			// $('#mobileHeader').trigger("refresh");
 
 			for (s in viz.headerStyles) {
-				$('#alertBox .ui-collapsible-content').removeClass(viz.headerStyles[s]);
+				$('#alertBox').removeClass(viz.headerStyles[s]);
 			}
 
+			//this should be turned into a viz.addHeaderStyles[styling]()
+			//function call:
 			if (styling in viz.headerStyles) {
 				customLog("adding header styling! " + styling);
-				$('#alertBox .ui-collapsible-content').addClass(viz.headerStyles[styling]);
+				$('#alertBox').addClass(viz.headerStyles[styling]);
+
+				//KINDA ANNOYING way to switch icon color depending on alert type
+				if ('headerToggle' in app) {
+					app.headerToggle.icon.removeClass('ui-alt-icon');
+				}
+			} else if (player.team == 'gov') {
+				if ('headerToggle' in app) {
+					app.headerToggle.icon.addClass('ui-alt-icon');
+				}
+			}
+
+			if ('headerToggle' in app) {
+				app.headerToggle.forceExpand();
 			}
 		};
 

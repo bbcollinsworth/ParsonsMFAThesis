@@ -18,6 +18,7 @@
   });
   </script>
   <script src="http://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.js"></script>
+  <script src="js/jQueryEasing.js"></script>
   <script src="js/modernizr-customNew.js"></script>
 
   <link href='http://fonts.googleapis.com/css?family=Oswald:400,300,700|Special+Elite|Open+Sans:300italic,400italic,600italic,700italic,400,300,600,700' rel='stylesheet' type='text/css'>
@@ -27,8 +28,12 @@
   <div data-role="page" id="app">
     <div id="map"></div>
     <div data-role="header" id="mobileHeader" data-position="fixed" data-inset="false" data-fullscreen="false" data-tap-toggle="false">
-      <div id ="alertBox" data-role="collapsible" data-collapsed="false" data-transition="slidedown" data-inset="true" data-iconpos="right">
-        <h1 id="alertPopoutText">&nbsp;</h1>
+      <div id ="alertBox" class="header-inner">
+      <!-- <div id ="alertBox" data-role="collapsible" data-collapsed="false" data-transition="slidedown" data-inset="true" data-iconpos="right"> -->
+        <!-- <h1 id="alertPopoutText">&nbsp;</h1> -->
+        <div id="alertPopoutSpace">
+          <!-- <div id="alertBoxControl" class="alert-control ui-btn ui-corner-all ui-icon-carat-d ui-btn-icon-notext ui-nodisc-icon ui-alt-icon"></div> -->
+        </div>
         <div id="alertBodyText">Alert Text</div>
       </div>
     </div>

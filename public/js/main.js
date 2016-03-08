@@ -65,7 +65,7 @@ app.addStyling = {
 	},
 	ins: function() {
 		$('#app').addClass('ins-app-styling');
-		$('.ui-collapsible-content').addClass('ins-alert-styling');
+		$('#alertBox').addClass('ins-alert-styling');
 	}
 
 };
