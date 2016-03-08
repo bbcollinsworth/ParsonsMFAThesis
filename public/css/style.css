@@ -614,6 +614,48 @@
 		margin-top: -10px;
 	}
 }
+@-webkit-keyframes capture {
+	0% {
+		width: 800px;
+		height: 800px;
+		margin-left: -400px;
+		margin-top: -400px;
+	}
+	100% {
+		width: 20px;
+		height: 20px;
+		margin-left: -10px;
+		margin-top: -10px;
+	}
+}
+@-moz-keyframes capture {
+	0% {
+		width: 800px;
+		height: 800px;
+		margin-left: -400px;
+		margin-top: -400px;
+	}
+	100% {
+		width: 20px;
+		height: 20px;
+		margin-left: -10px;
+		margin-top: -10px;
+	}
+}
+@-o-keyframes capture {
+	0% {
+		width: 800px;
+		height: 800px;
+		margin-left: -400px;
+		margin-top: -400px;
+	}
+	100% {
+		width: 20px;
+		height: 20px;
+		margin-left: -10px;
+		margin-top: -10px;
+	}
+}
 
 @keyframes scan {
 	0% {

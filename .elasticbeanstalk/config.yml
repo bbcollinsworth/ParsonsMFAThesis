@@ -1,4 +1,6 @@
 branch-defaults:
+  headertest:
+    environment: rproto-dev
   master:
     environment: rProto-dev
   newconnecttest:
