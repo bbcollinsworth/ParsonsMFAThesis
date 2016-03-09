@@ -379,7 +379,7 @@
 	border-radius: 50%;
 	position: absolute;
 	top: 50vh;
-	left: 50vw;
+	left: 50%;
 	transform: translate(-50%,-50%);
 	margin: auto;
 	//border: 100px solid white;

@@ -30,25 +30,6 @@ var viz = {
 				refresh(style, 'addClass');
 			}
 
-			// for (c in s.classes) {
-			// 	if ('boxClass' in s.classes[c]) {
-			// 		$('#alertBox').removeClass(s.classes[c].boxClass);
-			// 	}
-			// 	if ('controlClass' in s.classes[c]) {
-			// 		$('#alertBoxControl').removeClass(s.classes[c].controlClass);
-			// 	}
-			// }
-
-			// if (style in s.classes) {
-			// 	customLog("adding header styling! " + styling);
-			// 	if ('boxClass' in s.classes[style]) {
-			// 		$('#alertBox').addClass(s.classes[style].boxClass);
-			// 	}
-			// 	if ('controlClass' in s.classes[c]) {
-			// 		$('#alertBoxControl').addClass(s.classes[style].controlClass);
-			// 	}
-			// }
-
 		},
 		classes: {
 			get normal() {
@@ -280,10 +261,12 @@ var viz = {
 
 		var mapCenter = map.latLngToLayerPoint(map.getCenter());
 
-		$(circle.domElement).css({
-			'left': mapCenter.x,
-			'top': mapCenter.y
-		});
+		// $(circle.domElement).css({
+		// 	'left': '50vw',
+		// 	'top': '50vh'
+		// 	// 'left': mapCenter.x,
+		// 	// 'top': mapCenter.y
+		// });
 
 		circle['itemName'] = 'Ping Circle';
 		circle['animateClass'] = 'ping-animate';
