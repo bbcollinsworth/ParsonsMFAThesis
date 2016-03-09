@@ -707,42 +707,58 @@
 
 @keyframes ping {
 	0% {
-		//		fill: rgba(255,255,255,1.0);
-		border: 10px solid rgba(255,255,255,1.0);
+		background-color: rgba(255,255,255,1.0);
+		width: 0px;
+		height: 0px;
+		/*border: 10px solid rgba(255,255,255,1.0);*/
 	}
 	100% {
-		//		fill: rgba(255,255,255,0.0);
-		border: 500px solid rgba(255,255,255,0.0);
+		background-color: rgba(255,255,255,0.0);
+		width: 800px;
+		height: 800px;
+		/*border: 500px solid rgba(255,255,255,0.0);*/
 	}
 }
 @-webkit-keyframes ping {
 	0% {
-		//		fill: rgba(255,255,255,1.0);
-		border: 10px solid rgba(255,255,255,1.0);
+		background-color: rgba(255,255,255,1.0);
+		width: 0px;
+		height: 0px;
+		/*border: 10px solid rgba(255,255,255,1.0);*/
 	}
 	100% {
-		//		fill: rgba(255,255,255,0.0);
-		border: 500px solid rgba(255,255,255,0.0);
+		background-color: rgba(255,255,255,0.0);
+		width: 800px;
+		height: 800px;
+		/*border: 500px solid rgba(255,255,255,0.0);*/
 	}
 }
 @-moz-keyframes ping {
 	0% {
-		//		fill: rgba(255,255,255,1.0);
-		border: 10px solid rgba(255,255,255,1.0);
+		background-color: rgba(255,255,255,1.0);
+		width: 0px;
+		height: 0px;
+		/*border: 10px solid rgba(255,255,255,1.0);*/
 	}
 	100% {
-		//		fill: rgba(255,255,255,0.0);
-		border: 500px solid rgba(255,255,255,0.0);
+		background-color: rgba(255,255,255,0.0);
+		width: 800px;
+		height: 800px;
+		/*border: 500px solid rgba(255,255,255,0.0);*/
 	}
 }
 @-o-keyframes ping {
 	0% {
-		//		fill: rgba(255,255,255,1.0);
-		border: 10px solid rgba(255,255,255,1.0);
+		background-color: rgba(255,255,255,1.0);
+		width: 0px;
+		height: 0px;
+		/*border: 10px solid rgba(255,255,255,1.0);*/
 	}
 	100% {
-		//		fill: rgba(255,255,255,0.0);
-		border: 500px solid rgba(255,255,255,0.0);
+		background-color: rgba(255,255,255,0.0);
+		width: 800px;
+		height: 800px;
+		/*border: 500px solid rgba(255,255,255,0.0);*/
 	}
 }
 

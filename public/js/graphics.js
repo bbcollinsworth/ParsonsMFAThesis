@@ -259,13 +259,13 @@ var viz = {
 			circle = viz.addAnimDiv('ping-circle');
 		}
 
-		var mapCenter = map.latLngToLayerPoint(map.getCenter());
+		// var mapCenter = map.latLngToLayerPoint(map.getCenter());
 
 		// $(circle.domElement).css({
-		// 	'left': '50vw',
-		// 	'top': '50vh'
-		// 	// 'left': mapCenter.x,
-		// 	// 'top': mapCenter.y
+		// // 	'left': '50vw',
+		// // 	'top': '50vh'
+		// 'left': mapCenter.x,
+		// 'top': mapCenter.y
 		// });
 
 		circle['itemName'] = 'Ping Circle';

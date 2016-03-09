@@ -272,7 +272,6 @@ var gov = {
 				if (!gov.ui.pingCircle.animRunning) {
 					customLog("calling ping animation");
 					//gov.ui.pingCircle.reCenter();
-
 					gov.ui.pingCircle.animate();
 
 					$(gov.ui.pingCircle.domElement).on('animationend webkitAnimationEnd', function() {
