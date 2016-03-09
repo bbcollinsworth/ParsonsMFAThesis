@@ -15,11 +15,13 @@ var admin = io.of('/admin');
 //********* LOAD MODULES *************
 var include = require('./my_modules/moduleLoader.js');
 
-var geolib = include('geolib');
-var colors = include('colors');
-var log = include('log');
-var emitModule = include('emit');
-var userModule = include('users');
+include('globalModules');
+
+// var geolib = include('geolib');
+// var colors = include('colors');
+// var log = include('log');
+// var emitModule = include('emit');
+// var userModule = include('users');
 var gameState = include('gameState');
 
 gameState.createGameSession(Date.now());
@@ -307,11 +309,11 @@ io.on('connection', function(socket) {
 				player.playStarted = true;
 			},
 
-			locationError: function(){
+			locationError: function() {
 				player.lastReqResRcvd = true;
 
 				var elapsed = (Date.now() - res.reqTimestamp) / 1000;
-				log("Response received BUT no location stored for player yet; " + elapsed + "sec after req sent",colors.err);
+				log("Response received BUT no location stored for player yet; " + elapsed + "sec after req sent", colors.err);
 
 				if (!player.trackActive || player.goneDark) {
 					player.clearDark();
@@ -334,11 +336,11 @@ io.on('connection', function(socket) {
 					//log(player.locationData[0]);
 				};
 
-				if (res.locData.lat !== undefined){
-				storeLocation();
-			} else {
-				log("Loc update received from " + player.userID + " but position not valid");
-			}
+				if (res.locData.lat !== undefined) {
+					storeLocation();
+				} else {
+					log("Loc update received from " + player.userID + " but position not valid");
+				}
 
 				if (!player.trackActive || player.goneDark) {
 					player.clearDark();
@@ -357,7 +359,7 @@ io.on('connection', function(socket) {
 					// if (players[p].team == 'ins' && !players[p].lockedOut) {
 					// 	locArray = players[p].getLocationData(dataAgeLimit);
 					// } else {
-						var locArray = [players[p].getLastLocation()];
+					var locArray = [players[p].getLastLocation()];
 					//}
 
 					if (locArray.length > 0 && locArray[0] !== null) {

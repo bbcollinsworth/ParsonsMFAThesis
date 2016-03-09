@@ -3,7 +3,28 @@ module.exports = function(moduleToLoad) {
 	// var state = require('./gameState.js');
 	// state.setupHubs();
 
+	// var globalModules = {
+	// 	util: 
+	// 	require('util');
+
+	// };
+
 	var modules = {
+		globalModules: function() {
+			var g = {
+				'geolib': modules.geolib(),
+				'util': modules.util(),
+				'colors': modules.colors(),
+				'log': modules.log(),
+				'emitModule': modules.emit(),
+				'userModule': modules.users()
+			};
+
+			for (var key in g){
+				GLOBAL[key] = g[key];
+			}
+
+		},
 		geolib: function() {
 			return require('geolib');
 		},

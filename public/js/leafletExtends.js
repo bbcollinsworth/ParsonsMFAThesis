@@ -54,8 +54,7 @@ var initLeafletExtensions = function() {
 			if (this.playerRef.team == 'ins') {
 				this.darkLockedCheck();
 			}
-			//this.updateTag();
-			//this.setLatLng([posObj.lat, posObj.lng]);
+
 			if (options !== undefined) {
 				this.setStyle(options);
 			}
@@ -68,9 +67,6 @@ var initLeafletExtensions = function() {
 					this.bounce(1);
 			}
 
-			// if (!this.playerRef.goneDark || !this.playerRef.lockedOut) {
-			// 	this.bounce(1);
-			// }
 			console.log("Marker refreshed to: " + this.playerRef.latestPos.lat + ", " + this.playerRef.latestPos.lng);
 		},
 

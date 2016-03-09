@@ -1,11 +1,11 @@
 module.exports = function(io, socket) {
 
-	var colors = require('colors');
-	var log = require('./logWithColor.js');
+	// var colors = require('colors');
+	// var log = require('./logWithColor.js');
 
-	colors.setTheme({
-		sendingMsg: 'magenta'
-	});
+	// colors.setTheme({
+	// 	sendingMsg: 'magenta'
+	// });
 	//var socket;
 
 	return {

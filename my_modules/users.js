@@ -3,10 +3,11 @@ module.exports = function(users, _socket) {
 
 	var include = require('./moduleLoader.js');
 
-	var colors = include('colors');
-	var log = include('log');
+	// var colors = include('colors');
+	// var log = include('log');
 	var gameState = include('gameState');
-	var util = include('util');
+	// var util = include('util');
+	
 	// log("GameState from userModule is: ");
 	// log(gameState);
 

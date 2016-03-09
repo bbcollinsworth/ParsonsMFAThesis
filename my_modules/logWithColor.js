@@ -1,7 +1,7 @@
 module.exports = function(text, styling) {
 
-	var include = require('./moduleLoader.js');
-	var util = include('util');
+	// var include = require('./moduleLoader.js');
+	// var util = include('util');
 
 	var t = "";
 	if (typeof text === 'object') {

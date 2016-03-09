@@ -1,10 +1,10 @@
 (function() { //module.exports = function() {
 
-	var include = require('./moduleLoader.js');
+	// var include = require('./moduleLoader.js');
 
-	var colors = include('colors');
-	var log = include('log');
-	var util = include('util');
+	// var colors = include('colors');
+	// var log = include('log');
+	// var util = include('util');
 
 	var playSettings = {
 		trackIntervalS: 3,
