@@ -482,7 +482,6 @@ var gov = {
 						}
 						break;
 					default:
-						break;
 				}
 			}
 

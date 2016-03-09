@@ -128,25 +128,6 @@ var startup = {
 			$('#alertBodyText').html(msgHTML);
 
 			viz.headerStyles.update(styling);
-			// for (s in viz.headerStyles) {
-			// 	$('#alertBox').removeClass(viz.headerStyles[s]);
-			// }
-
-			// //this should be turned into a viz.addHeaderStyles[styling]()
-			// //function call:
-			// if (styling in viz.headerStyles) {
-			// 	customLog("adding header styling! " + styling);
-			// 	$('#alertBox').addClass(viz.headerStyles[styling]);
-
-			// 	//KINDA ANNOYING way to switch icon color depending on alert type
-			// 	if ('headerToggle' in app) {
-			// 		app.headerToggle.icon.removeClass('ui-alt-icon');
-			// 	}
-			// } else if (player.team == 'gov') {
-			// 	if ('headerToggle' in app) {
-			// 		app.headerToggle.icon.addClass('ui-alt-icon');
-			// 	}
-			// }
 
 			if (('headerToggle' in app)&& styling !== viz.headerStyles.current) {
 				app.headerToggle.forceExpand();

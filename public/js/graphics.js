@@ -6,7 +6,7 @@ var viz = {
 		update: function(style) {
 			var s = this;
 
-			var refresh = function(styleKey,removeOrAdd) {
+			var refresh = function(styleKey, removeOrAdd) {
 				var classTypes = {
 					'boxClass': '#alertBox',
 					'controlClass': '#alertBoxControl'
@@ -17,7 +17,7 @@ var viz = {
 						$(classTypes[key])[removeOrAdd](s.classes[styleKey][key]);
 					}
 				}
-			}
+			};
 
 			for (c in s.classes) {
 				refresh(c, 'removeClass');
@@ -42,8 +42,8 @@ var viz = {
 						return {};
 				}
 			},
-			'intro': {
-				controlClass: 'control-hidden'
+				'intro': {
+					controlClass: 'control-hidden'
 			},
 			'urgent': {
 				boxClass: 'urgent-alert'
@@ -86,36 +86,23 @@ var viz = {
 		expand: function() {
 			var hT = this;
 			hT.headerText.slideDown(400, 'easeOutCubic');
-			//this.headerText.removeClass(viz.headerToggle.minClass);
 			hT.icon.removeClass(hT.expandIconClass).addClass(hT.contractIconClass);
 		},
 		contract: function() {
 			var hT = this;
 			hT.headerText.slideUp(400, 'easeOutCubic');
-			//this.headerText.addClass(viz.headerToggle.minClass);
 			hT.icon.removeClass(hT.contractIconClass).addClass(hT.expandIconClass);
-
 		},
 		create: function(team) {
-			// var toggleIcon = $("<div />", {
-			// this.icon = $("<div />", {
-			// 	'id': "alertBoxControl",
-			// 	'class': "alert-control ui-btn ui-corner-all ui-icon-carat-u ui-btn-icon-notext ui-nodisc-icon ui-alt-icon"
-			// });
 			var hT = this;
 			$('#alertPopoutSpace').html(hT.iconSetup[team]);
 
 			hT['icon'] = $('#alertBoxControl');
 
-			//var min = 'header-minimized';
-
 			hT.icon.off('click').on('click', function() {
 
-				//if (hT.headerText.hasClass(hT.minClass)) {
 				if (hT.icon.hasClass(hT.expandIconClass)) {
 					hT.expand();
-					// headerText.removeClass(minClass);
-					// toggleIcon.removeClass('ui-icon-carat-d').addClass('ui-icon-carat-u');
 				} else {
 					hT.contract();
 				}
@@ -124,7 +111,6 @@ var viz = {
 			return hT;
 		},
 		forceExpand: function() {
-			//if (this.headerText.hasClass(this.minClass)) {
 			if (this.icon.hasClass(this.expandIconClass)) {
 				this.expand();
 			}

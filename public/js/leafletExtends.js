@@ -51,18 +51,26 @@ var initLeafletExtensions = function() {
 				console.log("ERROR: LatestPos not found");
 			}
 
-			//if (this.playerRef.team == 'ins') {
-			this.darkLockedCheck();
-			//}
+			if (this.playerRef.team == 'ins') {
+				this.darkLockedCheck();
+			}
 			//this.updateTag();
 			//this.setLatLng([posObj.lat, posObj.lng]);
 			if (options !== undefined) {
 				this.setStyle(options);
 			}
 
-			if (!this.playerRef.goneDark) {
-				this.bounce(1);
+			switch (this.playerRef.status) {
+				case 'locked':
+				case 'dark':
+					break;
+				default:
+					this.bounce(1);
 			}
+
+			// if (!this.playerRef.goneDark || !this.playerRef.lockedOut) {
+			// 	this.bounce(1);
+			// }
 			console.log("Marker refreshed to: " + this.playerRef.latestPos.lat + ", " + this.playerRef.latestPos.lng);
 		},
 
@@ -149,7 +157,7 @@ var initLeafletExtensions = function() {
 			thisMarker.setIcon(icon);
 			thisMarker.setOpacity(opacity);
 
-			if (zIndexOffset !== 0){
+			if (zIndexOffset !== 0) {
 				thisMarker.setZIndexOffset(zIndexOffset);
 			}
 
@@ -336,8 +344,8 @@ var initLeafletExtensions = function() {
 			}
 		},
 
-		clearAnimation: function(){
-			var a=this;
+		clearAnimation: function() {
+			var a = this;
 			a.animRunning = false;
 			$(a.domElement).removeClass(a.animateClass);
 		}
