@@ -1,10 +1,5 @@
 (function() { //module.exports = function() {
 
-	// var include = require('./moduleLoader.js');
-
-	// var colors = include('colors');
-	// var log = include('log');
-	// var util = include('util');
 
 	var playSettings = {
 		trackIntervalS: 3,
@@ -48,7 +43,7 @@
 
 	//module.exports = function(players) {
 	var players = {
-		
+
 	};
 
 	var hubs = [{
@@ -197,6 +192,38 @@
 			}
 
 			console.log("Hub " + h.id + " AlertState set to: " + h.alertState);
+		},
+		updateAttackingPlayers: function(player, addOrRemove) {
+			var h = this;
+			var foundIndex = -1;
+
+			log("Checking for " + player.userID + " in attacking players for " + h.id, colors.standout);
+
+			for (var i = 0; i < h.attackingPlayers.length; i++) {
+				if (player.userID == h.attackingPlayers[i]) {
+					foundIndex = i;
+					break;
+				}
+			}
+
+			var update = {
+				add: function() {
+					if (foundIndex < 0) {
+						h.attackingPlayers.push(player.userID);
+						log("Adding " + player.userID + "to Attacking Players for " + h.id, colors.standout);
+					}
+				},
+				remove: function() {
+					if (foundIndex >= 0) {
+						h.attackingPlayers.splice(i, 1);
+						log("Removed " + player.userID + "from attacking players; new length is: ", colors.standout);
+						log(h.attackingPlayers.length, colors.standout);
+					}
+
+				}
+			};
+
+			update[addOrRemove]();
 		}
 
 	};
@@ -242,7 +269,7 @@
 
 		//'teamPickMethod': 'alternate',
 		'teams': {
-			get pickMethod(){
+			get pickMethod() {
 				return state.settings.teamPickMethod;
 			},
 			//'pickMethod': settings.teamPickMethod,
@@ -297,6 +324,7 @@
 				//only push enabled hubs - easy activation deactivation for testing
 				if (hub.enabled) {
 
+					hub['index'] = +i;
 					hub['id'] = +i + 1;
 					util.myExtend(hub, hubStartStats);
 
@@ -319,7 +347,7 @@
 		},
 
 		getPlayerBySocketID: function(sID) {
-			log("Searching for player with socketID "+ sID);
+			log("Searching for player with socketID " + sID);
 			var toReturn;
 
 			for (var uID in state.players) {

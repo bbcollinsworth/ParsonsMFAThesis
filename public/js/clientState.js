@@ -8,7 +8,13 @@ var clientState = {
 	tracking: false,
 	posStored: false,
 	centeredOnPlayer: false,
-
+	getHubByName: function(name){
+		for (var i in hubs){
+			if (hubs[i].name === name){
+				return hubs[i];
+			}
+		}
+	},
 	intro: {
 		content: {},
 		run: function() { //team) {

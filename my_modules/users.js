@@ -1,17 +1,12 @@
-
-module.exports = function(users, _socket) {
+module.exports = function(users, _emit) { //, _socket) {
 
 	var include = require('./moduleLoader.js');
-
-	// var colors = include('colors');
-	// var log = include('log');
 	var gameState = include('gameState');
-	// var util = include('util');
-	
-	// log("GameState from userModule is: ");
-	// log(gameState);
 
-	var socket = _socket;
+	var emitTo = _emit;
+	var socket = emitTo.storedSocket;
+	// log("Stored socket is");
+	// log(emitModule.storedSocket);
 
 	var user = {
 		//stores properties of new user
@@ -59,7 +54,7 @@ module.exports = function(users, _socket) {
 				'lockedOut': false,
 			};
 
-			util.myExtend(user,userProps);
+			util.myExtend(user, userProps);
 			// for (prop in userProps) {
 			// 	user[prop] = userProps[prop];
 			// }
@@ -69,8 +64,9 @@ module.exports = function(users, _socket) {
 
 		},
 		//switches user socket when reconnecting to server
-		update: function(newSocket) {
-			socket = newSocket;
+		update: function(newEmit) {
+			emitTo = newEmit;
+			socket = emitTo.storedSocket;
 			user['socketID'] = socket.id;
 			log(user.userID + " socket updated to: " + socket.id, colors.green);
 		},
@@ -109,10 +105,49 @@ module.exports = function(users, _socket) {
 				//*****NOTE: NO SKIP HERE
 				locArray = user.locationData;
 			}
-			
+
 			log(locArray.length + " of " + user.locationData.length + " LocDataPoints being sent to Gov", colors.standout);
 
 			return locArray;
+		},
+
+		getHubsByDistance: function() {
+
+			log("Finding hubs by distance to " + user.userID, colors.standout);
+
+			var hubsObj = {};
+
+			var hubs = gameState.hubs;
+
+			for (i in hubs) {
+				//is key same as index? Testing killing hub 3 seemed to work
+				if (hubs[i].live) {
+					hubsObj[i] = {
+						"latitude": hubs[i].lat,
+						"longitude": hubs[i].lng //,
+						//"name": hubs[i].name
+					};
+				}
+
+			}
+
+			var sortedHubs = geolib.orderByDistance({
+				"latitude": user.locationData[0].lat,
+				"longitude": user.locationData[0].lng
+			}, hubsObj);
+
+			for (i in sortedHubs) {
+				var matchingHub = hubs[sortedHubs[i].key];
+				for (prop in matchingHub) {
+					sortedHubs[i][prop] = matchingHub[prop];
+				}
+			}
+
+			log("Sorted hubs by distance: ");
+			log(sortedHubs);
+
+			return sortedHubs;
+
 		},
 
 		setDark: function() {
@@ -120,6 +155,41 @@ module.exports = function(users, _socket) {
 			log("Player " + user.userID + " has gone dark.", colors.err);
 			user.goneDark = true;
 			user.trackActive = false;
+			user.stopHacking();
+		},
+
+		stopHacking: function(attackedHub) {
+
+			var clearHack = function(aHub) {
+				aHub.updateAttackingPlayers(user, 'remove');
+
+				if (aHub.attackingPlayers.length < 1) {
+					aHub.alertState = 0;
+					log("Fully clearing hack for " + aHub.name,colors.standout);
+					emitTo.team('gov', 'hubAttackStopped', {
+						hubName: aHub.name,
+						hubID: aHub.id,
+						hubIndex: aHub.index,//res.hubIndex,
+						hubAlertState: aHub.alertState,
+						latestHubInfo: aHub
+					});
+				}
+			};
+
+			if (attackedHub !== undefined) {
+				clearHack(attackedHub);
+			} else {
+				//for (var h in gameState.hubs) {
+				gameState.hubs.forEach(function(hub) {
+					//var aHub = gameState.hubs[h];
+					for (var p in hub.attackingPlayers) {
+						if (user.userID == hub.attackingPlayers[p]) {
+							clearHack(hub);
+						}
+					}
+				});
+			}
+			//};
 		},
 
 		clearDark: function() {
@@ -130,6 +200,7 @@ module.exports = function(users, _socket) {
 
 		lockout: function() {
 			user.lockedOut = true;
+			user.stopHacking();
 			log("Player " + user.userID + "lockout status is: " + user.lockedOut, colors.orange);
 		},
 

@@ -1,20 +1,21 @@
-module.exports = function(io, socket) {
+module.exports = function(io, _socket) {
 
-	var colors = require('colors');
-	var log = require('./logWithColor.js');
-
-	colors.setTheme({
-		sendingMsg: 'magenta'
-	});
-	//var socket;
-
-	return {
+	var s = {
+		'storedSocket': _socket,
 		//emits to THIS user (i.e. socket.id)
 		socket: function(tag, emitObj) {
 			emitObj['tag'] = tag;
-			io.to(socket.id).emit('serverMsg', emitObj);
+			//io.to(socket.id).emit('serverMsg', emitObj);
+			_socket.emit('serverMsg', emitObj);
+			log('Sending ' + tag + ' to ' + _socket.id, colors.sendingMsg);
+		},
+
+		socketVol: function(tag, emitObj) {
+			emitObj['tag'] = tag;
+			//io.to(socket.id).emit('serverMsg', emitObj);
+			_socket.volatile.emit('serverMsg', emitObj);
 			//console.
-			log('Sending ' + tag + ' to ' + socket.id, colors.sendingMsg);
+			log('Sending ' + tag + ' to ' + _socket.id, colors.sendingMsg);
 		},
 		//emits to a specified user
 		user: function(user, tag, emitObj) {
@@ -38,4 +39,6 @@ module.exports = function(io, socket) {
 			log('Sending ' + tag + ' to all players', colors.sendingMsg);
 		}
 	};
+
+	return s;
 };

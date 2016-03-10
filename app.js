@@ -16,18 +16,9 @@ var admin = io.of('/admin');
 var include = require('./my_modules/moduleLoader.js');
 
 include('globalModules');
-
-// var geolib = include('geolib');
-// var colors = include('colors');
-// var log = include('log');
-// var emitModule = include('emit');
-// var userModule = include('users');
 var gameState = include('gameState');
 
 gameState.createGameSession(Date.now());
-
-// gameState['gameStartTime'] = Date.now();
-// gameState['gameID'] = "game"+gameState.gameStartTime;
 
 
 app.use(bodyParser.json());
@@ -141,64 +132,80 @@ io.on('connection', function(socket) {
 		}, gameState.trackingInterval);
 	};
 
-	var getHubsByDistance = function() {
+	// var getHubsByDistance = function() {
 
-		log("Finding hubs by distance to " + player.userID, colors.standout);
+	// 	log("Finding hubs by distance to " + player.userID, colors.standout);
 
-		var hubsObj = {};
+	// 	var hubsObj = {};
 
-		for (i in hubs) {
-			//is key same as index? Testing killing hub 3 seemed to work
-			if (hubs[i].live) {
-				hubsObj[i] = {
-					"latitude": hubs[i].lat,
-					"longitude": hubs[i].lng //,
-					//"name": hubs[i].name
-				};
-			}
+	// 	for (i in hubs) {
+	// 		//is key same as index? Testing killing hub 3 seemed to work
+	// 		if (hubs[i].live) {
+	// 			hubsObj[i] = {
+	// 				"latitude": hubs[i].lat,
+	// 				"longitude": hubs[i].lng //,
+	// 				//"name": hubs[i].name
+	// 			};
+	// 		}
 
+	// 	}
+
+	// 	var sortedHubs = geolib.orderByDistance({
+	// 		"latitude": player.locationData[0].lat,
+	// 		"longitude": player.locationData[0].lng
+	// 	}, hubsObj);
+
+	// 	for (i in sortedHubs) {
+	// 		var matchingHub = hubs[sortedHubs[i].key];
+	// 		for (prop in matchingHub) {
+	// 			sortedHubs[i][prop] = matchingHub[prop];
+	// 		}
+	// 	}
+
+	// 	log("Sorted hubs by distance: ");
+	// 	log(sortedHubs);
+
+	// 	return sortedHubs;
+
+	// };
+
+	// var updateAttackingPlayers = function(aHub, removePlayer) {
+	// 	log("Checking for " + player.userID + " in attacking players for " + aHub.id);
+	// 	var playerFound = false;
+	// 	for (i in aHub.attackingPlayers) {
+	// 		if (player.userID == aHub.attackingPlayers[i]) {
+	// 			playerFound = true;
+
+	// 			if (removePlayer) {
+	// 				aHub.attackingPlayers.splice(i, 1);
+	// 				log("Removed " + player.userID + "from attacking players; new length is: ", colors.standout);
+	// 				log(aHub.attackingPlayers.length, colors.standout);
+
+	// 			}
+	// 			break;
+	// 		}
+	// 	}
+	// 	if (!removePlayer && !playerFound) {
+	// 		aHub.attackingPlayers.push(player.userID);
+	// 		log("Adding " + player.userID + "to Attacking Players for " + aHub.id, colors.magenta);
+	// 	}
+
+	// };
+
+	var stopHack = function(attackedHub) {
+		attackedHub.updateAttackingPlayers(player, 'remove');
+
+		if (attackedHub.attackingPlayers.length < 1) {
+			attackedHub.alertState = 0;
+			emitTo.team('gov', 'hubAttackStopped', {
+				hubName: attackedHub.name,
+				hubID: attackedHub.id,
+				hubIndex: res.hubIndex,
+				hubAlertState: attackedHub.alertState,
+				latestHubInfo: attackedHub
+			});
 		}
-
-		var sortedHubs = geolib.orderByDistance({
-			"latitude": player.locationData[0].lat,
-			"longitude": player.locationData[0].lng
-		}, hubsObj);
-
-		for (i in sortedHubs) {
-			var matchingHub = hubs[sortedHubs[i].key];
-			for (prop in matchingHub) {
-				sortedHubs[i][prop] = matchingHub[prop];
-			}
-		}
-
-		log("Sorted hubs by distance: ");
-		log(sortedHubs);
-
-		return sortedHubs;
-
-	};
-
-	var updateAttackingPlayers = function(aHub, removePlayer) {
-		log("Checking for " + player.userID + " in attacking players for " + aHub.id);
-		var playerFound = false;
-		for (i in aHub.attackingPlayers) {
-			if (player.userID == aHub.attackingPlayers[i]) {
-				playerFound = true;
-
-				if (removePlayer) {
-					aHub.attackingPlayers.splice(i, 1);
-					log("Removed " + player.userID + "from attacking players; new length is: ", colors.standout);
-					log(aHub.attackingPlayers.length, colors.standout);
-
-				}
-				break;
-			}
-		}
-		if (!removePlayer && !playerFound) {
-			aHub.attackingPlayers.push(player.userID);
-			log("Adding " + player.userID + "to Attacking Players for " + aHub.id, colors.magenta);
-		}
-
+		// body...
 	};
 
 	//=================================
@@ -244,7 +251,7 @@ io.on('connection', function(socket) {
 			},
 
 			newPlayer: function() {
-				player = userModule(players, socket); //instantiate new player object
+				player = userModule(players, emitTo); //socket); //instantiate new player object
 				var team = gameState.getTeam(res.teamHash); //create player
 				player.create(team);
 				player.addToTeam(team);
@@ -265,7 +272,7 @@ io.on('connection', function(socket) {
 
 			returningPlayer: function() {
 				log('Requesting update of player ' + players[res.userID].userID, colors.italic);
-				players[res.userID].update(socket);
+				players[res.userID].update(emitTo); //socket);
 				player = players[res.userID];
 				player.addToTeam(player.team);
 				log("'Player' for socket " + socket.id + " is now:", colors.yellow.inverse);
@@ -418,7 +425,7 @@ io.on('connection', function(socket) {
 
 			detectHubs: function() {
 				emitTo.socket('hubsByDistance', {
-					hubsByDistance: getHubsByDistance()
+					hubsByDistance: player.getHubsByDistance()
 				});
 			},
 
@@ -457,7 +464,7 @@ io.on('connection', function(socket) {
 
 				} else {
 
-					updateAttackingPlayers(attackedHub, false);
+					attackedHub.updateAttackingPlayers(player,'add');
 					// var decr = attackedHub.hackTime / attackedHub.hackProgressInterval;
 					// console.log("Decrements are: " + decr);
 					// //...then divide 100 by that to get health decrement:
@@ -485,20 +492,38 @@ io.on('connection', function(socket) {
 				}
 			},
 
-			playerLeftHubRange: function() {
-				var attackedHub = hubs[res.hubIndex];
-				updateAttackingPlayers(attackedHub, true);
+			hackInterrupted: function() {
+				player.stopHacking(hubs[res.hubIndex]);
+				// var attackedHub = hubs[res.hubIndex];
+				// attackedHub.updateAttackingPlayers(player, true);
 
-				if (attackedHub.attackingPlayers.length < 1) {
-					attackedHub.alertState = 0;
-					emitTo.team('gov', 'hubAttackStopped', {
-						hubName: attackedHub.name,
-						hubID: attackedHub.id,
-						hubIndex: res.hubIndex,
-						hubAlertState: attackedHub.alertState,
-						latestHubInfo: attackedHub
-					});
-				}
+				// if (attackedHub.attackingPlayers.length < 1) {
+				// 	attackedHub.alertState = 0;
+				// 	emitTo.team('gov', 'hubAttackStopped', {
+				// 		hubName: attackedHub.name,
+				// 		hubID: attackedHub.id,
+				// 		hubIndex: res.hubIndex,
+				// 		hubAlertState: attackedHub.alertState,
+				// 		latestHubInfo: attackedHub
+				// 	});
+				// }
+			},
+
+			playerLeftHubRange: function() {
+				player.stopHacking(hubs[res.hubIndex]);
+				// var attackedHub = hubs[res.hubIndex];
+				// attackedHub.updateAttackingPlayers(player, true);
+
+				// if (attackedHub.attackingPlayers.length < 1) {
+				// 	attackedHub.alertState = 0;
+				// 	emitTo.team('gov', 'hubAttackStopped', {
+				// 		hubName: attackedHub.name,
+				// 		hubID: attackedHub.id,
+				// 		hubIndex: res.hubIndex,
+				// 		hubAlertState: attackedHub.alertState,
+				// 		latestHubInfo: attackedHub
+				// 	});
+				// }
 			}
 
 		};
@@ -526,6 +551,15 @@ io.on('connection', function(socket) {
 		try {
 			//player.removeFromTeam(player.team);
 			clearInterval(tracking);
+
+			// for (var h in hubs){
+			// 	for (var p in hubs[h].attackingPlayers){
+			// 		var droppedPlayer = gameState.getPlayerBySocketID(socket.id);
+			// 		if (droppedPlayer.userID == hubs[h].attackingPlayers[p]){
+			// 			stopHack(hubs[h],droppedPlayer);
+			// 		}
+			// 	}
+			// };
 			gameState.getPlayerBySocketID(socket.id).disconnect();
 			//player.disconnect();
 		} catch (err) {

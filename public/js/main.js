@@ -376,9 +376,10 @@ app.attachSocketEvents = function() { //callback) {
 
 				hubAttackStopped: function() {
 					customLog("Hub attack stop received");
-					var i = res.hubIndex;
-					hubs[i].update(res.latestHubInfo);
-					hubs[i].stopFlash();
+					//var i = res.hubIndex;
+					var hub = clientState.getHubByName(res.latestHubInfo.name);
+					hub.update(res.latestHubInfo);
+					hub.stopFlash();
 					// if (hubs[i].flashing){
 
 					// }
