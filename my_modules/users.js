@@ -44,6 +44,7 @@ module.exports = function(users, _emit) { //, _socket) {
 				},
 				'locationData': [],
 				'lastLocRequest': {},
+				'hubAttacking': {},
 				'captureData': {
 					//# of responses received to fast capture pings
 					resCount: 0,
