@@ -19,7 +19,23 @@ var convertTimestamp = function(t, withSeconds) {
 };
 
 var customLog = function(message) {
-	console.log(message);
+
+	//Attempt to generate error for stack trace, unless that's not supported
+	try {
+		var stack = new Error().stack;
+		var parsedStack = stack.toString().split("at ")[2].split("/");
+		//logSource = logSource.split("/");
+		var logSource = " ( " + parsedStack[parsedStack.length - 1] + " )";
+
+		if (typeof message === 'object') {
+			console.log(message);
+			console.log(logSource);
+		} else {
+			console.log(message + logSource);
+		}
+	} catch (err) {
+		console.log(message);
+	}
 
 	//var isJSONstring = true;
 
@@ -64,7 +80,8 @@ var customLog = function(message) {
 			tag: 'clientLogMsg',
 			content: safeLog.content,
 			stringified: safeLog.JSONstring,
-			time: convertTimestamp(Date.now(), true)
+			time: convertTimestamp(Date.now(), true),
+			trace: logSource
 		});
 	}
 };
@@ -95,10 +112,10 @@ var startup = {
 		};
 
 		window.myExtend = function(originalObj, updateObj) {
-			var descriptor,prop;
+			var descriptor, prop;
 			for (prop in updateObj) {
 				descriptor = Object.getOwnPropertyDescriptor(updateObj, prop);
-                Object.defineProperty(originalObj, prop, descriptor);
+				Object.defineProperty(originalObj, prop, descriptor);
 				//originalObj[key] = propsToUpdateObj[key];
 			}
 		};
@@ -138,7 +155,7 @@ var startup = {
 
 			viz.headerStyles.update(styling);
 
-			if (('headerToggle' in app)&& styling !== viz.headerStyles.current) {
+			if (('headerToggle' in app) && styling !== viz.headerStyles.current) {
 				app.headerToggle.forceExpand();
 			}
 
@@ -244,50 +261,22 @@ var startup = {
 			var readyCounter = 60;
 
 			var waitFunction = function() {
-				//var waitForReady = setInterval(function() {
+
 				if (clientState.mapLoaded) {
-					//clearInterval(waitForReady);
 					app.initialized();
 
 				} else if (readyCounter > 0) {
-					//if (!clientState.mapLoaded) {
-					//customLog("Waiting for map.");
-					//}
 					readyCounter--;
 					customLog(readyCounter * 0.5 + "seconds");
 					setTimeout(waitFunction, 500);
+
 				} else {
 					customLog("Not ready. Reloading");
-					//clearInterval(waitForReady);
 					window.location.reload();
 				}
 			};
 
 			setTimeout(waitFunction, 500);
-
-			//var waitForReady = setInterval(function() {
-			//var waitForReady = setTimeout(waitFunction
-			//function() {
-
-			// 	customLog("Waiting for ready state...");
-			// 	if (clientState.mapLoaded) {
-			// 		//clearInterval(waitForReady);
-			// 		app.initialized();
-
-			// 	} else if (readyCounter > 0) {
-			// 		//if (!clientState.mapLoaded) {
-			// 		customLog("Waiting for map.");
-			// 		//}
-			// 		readyCounter--;
-			// 		customLog(readyCounter * 0.5 + "seconds");
-			// 	} else {
-			// 		customLog("Not ready. Reloading");
-			// 		clearInterval(waitForReady);
-			// 		window.location.reload();
-			// 	}
-			// }
-			//	, 500);
-
 		}
 	},
 

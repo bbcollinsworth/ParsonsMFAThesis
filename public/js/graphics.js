@@ -1,5 +1,102 @@
 var viz = {
 	//initHeaderUI
+	geoPrompt: {
+		render: function() {
+			msg({
+				1: "This app requires geolocation.",
+				2: "Click below to test if location detection is working. If prompted by your browser, please 'allow' location detection.",
+				3: '<div id="locTestButton">Detect Location</div>'
+			}, 'setup');
+
+			this.attachTestEvents();
+		},
+		success: function() {
+			clientState.features.geolocation.ready = true;
+			clientState.posStored = true;
+			app.trackLocation();
+			customLog('Server says Geoloc test successful');
+
+			$('#locTestButton').text('Success!');
+
+			setTimeout(function(){
+				startup.svcCheck(); //re-run service check
+			}, 500);
+		},
+		sendTestResult: function(eMsg, eCode) {
+			var rObj = {
+				playerPos: player.pos
+			};
+
+			if (eMsg !== undefined) {
+				rObj.errorMsg = eMsg;
+				rObj.errorCode = eCode;
+			}
+			emit('geoTestResult', rObj);
+		},
+		attachTestEvents: function() {
+			$('#locTestButton').off('click').on('click', function() {
+				emit('geoTestStart', {
+					timestamp: Date.now()
+				});
+
+				$('#locTestButton').text("Testing...");
+
+				var errorText = 'none';
+
+				geo.getCurrentPosition(function(position) {
+					console.log('ReadyTest Position is: ' + position.coords.latitude + ', ' + position.coords.longitude);
+					window.player.pos.update({
+						lat: position.coords.latitude,
+						lng: position.coords.longitude,
+						time: position.timestamp
+					});
+
+					//errorText = 'Client thinks test was successful';
+					viz.geoPrompt.sendTestResult();
+
+				}, function(error) {
+
+					switch (error.code) {
+						case 1:
+							// 1 === error.PERMISSION_DENIED
+							errorText = 'User does not want to share Geolocation data.';
+							break;
+
+						case 2:
+							// 2 === error.POSITION_UNAVAILABLE
+							errorText = 'Position of the device could not be determined.';
+							break;
+
+						case 3:
+							// 3 === error.TIMEOUT
+							errorText = 'Position Retrieval TIMEOUT.';
+							break;
+
+						default:
+							// 0 means UNKNOWN_ERROR
+							errorText = 'Unknown Error';
+							break;
+					}
+					customLog(errorText);
+					viz.geoPrompt.sendTestResult(errorText, error.code);
+
+				});
+
+				// viz.geoPrompt.sendTestResult(errorText);
+			});
+		}
+	},
+	renderLocPrompt: function() {
+		msg({
+			1: "This app requires geolocation.",
+			2: "Click below to test if location detection is working. If prompted by your browser, please 'allow' location detection.",
+			3: '<div id="locTestButton">Detect Location</div>'
+		}, 'setup');
+
+		$('#locTestButton').off('click').on('click', function() {
+			$('#locTestButton').text("Testing...");
+		});
+	},
 
 	headerStyles: {
 		'current': "normal",
@@ -42,8 +139,12 @@ var viz = {
 						return {};
 				}
 			},
-				'intro': {
+				'setup': {
+					boxClass: 'setup-alert',
 					controlClass: 'control-hidden'
+			},
+			'intro': {
+				controlClass: 'control-hidden'
 			},
 			'urgent': {
 				boxClass: 'urgent-alert'

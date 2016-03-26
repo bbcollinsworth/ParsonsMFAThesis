@@ -170,7 +170,7 @@ io.on('connection', function(socket) {
 				// var logItem = {
 				// 	t: c
 				// };
-				gameState.playerLogs[res.userID][t] = c;
+				gameState.playerLogs[res.userID][t] = c + res.trace;
 				//gameState.playerLogs[player.userID].push(logItem);
 			},
 
@@ -190,6 +190,33 @@ io.on('connection', function(socket) {
 			connectedCheck: function() {
 				log('The user ' + player.userID + " / " + socket.id + ' pinged to see if still connected.', colors.yellow);
 				emitTo.socket('stillConnected', {});
+			},
+
+			geoTestStart: function() {
+				player.geoTestWait = setTimeout(function(){
+					log("10 seconds passed with no geotest success");
+				},10000);
+
+			},
+
+			geoTestResult: function() {
+				clearTimeout(player.geoTestWait);
+
+				log('GeoTest result for ' + player.userID + " is:", colors.hilite);
+				log(res);
+
+				if (!res.errorMsg){
+					log("No error msg from client on GeoTestResult");
+				}
+
+				var resultEval = 'failure';
+				if (typeof res.playerPos.lat === 'number') {
+					resultEval = 'success';
+				}
+
+				emitTo.socket('geoTestServerEval', {
+					finding: resultEval
+				});
 			},
 
 			newPlayer: function() {
@@ -373,7 +400,7 @@ io.on('connection', function(socket) {
 
 			hubHackProgress: function() {
 
-				var attackedHub = player['hubAttacking'] = hubs.getByName(res.hubName);//hubs[res.hubIndex];
+				var attackedHub = player['hubAttacking'] = hubs.getByName(res.hubName); //hubs[res.hubIndex];
 
 				//player.hubAttacking = attackedHub;
 
@@ -381,12 +408,12 @@ io.on('connection', function(socket) {
 				log("Decrements are: " + decr);
 				//...then divide 100 by that to get health decrement:
 				attackedHub.health -= (100 / decr);
-				log("Hub " + attackedHub.id + "/"+ attackedHub.name+" health decreased to " + attackedHub.health);
+				log("Hub " + attackedHub.id + "/" + attackedHub.name + " health decreased to " + attackedHub.health);
 
 				if (attackedHub.health <= 0) {
 					attackedHub.health = 0;
 					//attackedHub.live = false;
-					var hubsLeft = gameState.liveHubCount;//();
+					var hubsLeft = gameState.liveHubCount; //();
 					log("Live hubs remaining: " + hubsLeft + " / " + hubs.length, colors.yellow.inverse);
 					log("Downed Hub is now:", colors.err);
 					log(attackedHub);
@@ -407,7 +434,7 @@ io.on('connection', function(socket) {
 
 				} else {
 
-					attackedHub.updateAttackingPlayers(player,'add');
+					attackedHub.updateAttackingPlayers(player, 'add');
 					// var decr = attackedHub.hackTime / attackedHub.hackProgressInterval;
 					// console.log("Decrements are: " + decr);
 					// //...then divide 100 by that to get health decrement:
@@ -517,7 +544,7 @@ io.on('connection', function(socket) {
 	});
 
 
-		// var getHubsByDistance = function() {
+	// var getHubsByDistance = function() {
 
 	// 	log("Finding hubs by distance to " + player.userID, colors.standout);
 

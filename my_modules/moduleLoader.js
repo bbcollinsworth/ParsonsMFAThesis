@@ -24,7 +24,8 @@ module.exports = function(moduleToLoad) {
 			temp.setTheme({
 				err: 'bgRed',
 				standout: 'bgMagenta',
-				sendingMsg: 'magenta'
+				sendingMsg: 'magenta',
+				hilite: 'bgYellow'
 			});
 			return temp;
 		},

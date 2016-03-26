@@ -98,6 +98,15 @@
 
 }
 
+#locTestButton {
+	text-transform: uppercase;
+	background-color: gray;
+	padding: 0.4em;
+	color: white;
+	font-size: 1.5em;
+	margin: auto;
+}
+
 #nextButton {
 	background-color: gray;
 	padding: 0.4em;
@@ -118,6 +127,12 @@
 	box-shadow: 10px 0px 30px 0px rgba(0,0,0,0.3);
 	text-shadow: none;
 	border: 0px;
+}
+
+#alertBox.setup-alert {
+	height: 100vh;
+	padding-top: 40%;
+	font-weight: 400;
 }
 
 #alertBox.ins-alert-styling {

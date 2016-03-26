@@ -8,9 +8,9 @@ var clientState = {
 	tracking: false,
 	posStored: false,
 	centeredOnPlayer: false,
-	getHubByName: function(name){
-		for (var i in hubs){
-			if (hubs[i].name === name){
+	getHubByName: function(name) {
+		for (var i in hubs) {
+			if (hubs[i].name === name) {
 				return hubs[i];
 			}
 		}
@@ -113,7 +113,7 @@ var clientState = {
 			//latestPos: player.locData[0],
 			oldestTime: player.oldestTime,
 			locData: player.locData,
-			get latestPos(){
+			get latestPos() {
 				return this.locData[0];
 			},
 			updateLocData: function(newData) {
@@ -182,45 +182,54 @@ var clientState = {
 			ready: false,
 			setup: navigator.geolocation,
 			readyTest: function() {
-				setTimeout(function() {
-					navigator.geolocation.getCurrentPosition(function(position) {
-						console.log('ReadyTest Position is: ' + position.coords.latitude + ', ' + position.coords.longitude);
-						window.player.pos.update({
-							lat: position.coords.latitude,
-							lng: position.coords.longitude,
-							time: position.timestamp
-						});
-						clientState.features.geolocation.ready = true;
-						clientState.posStored = true;
-						//centerOnPlayer();
-						app.trackLocation();
-						console.log('Geoloc test successful');
+				viz.geoPrompt.render();
 
-						startup.svcCheck(); //re-run service check
-					}, function(error) {
-						switch (error.code) {
-							case 1:
-								// 1 === error.PERMISSION_DENIED
-								console.log('User does not want to share Geolocation data.');
-								break;
+				// setTimeout(function() {
+				// 	navigator.geolocation.getCurrentPosition(function(position) {
+				// 		console.log('ReadyTest Position is: ' + position.coords.latitude + ', ' + position.coords.longitude);
+				// 		window.player.pos.update({
+				// 			lat: position.coords.latitude,
+				// 			lng: position.coords.longitude,
+				// 			time: position.timestamp
+				// 		});
 
-							case 2:
-								// 2 === error.POSITION_UNAVAILABLE
-								console.log('Position of the device could not be determined.');
-								break;
+				// 		emit('geoTestResult', {
+				// 			playerPos: player.pos
+				// 		});
 
-							case 3:
-								// 3 === error.TIMEOUT
-								console.log('Position Retrieval TIMEOUT.');
-								break;
 
-							default:
-								// 0 means UNKNOWN_ERROR
-								console.log('Unknown Error');
-								break;
-						}
-					});
-				}, 1000);
+				// 		//viz.renderLocPrompt();
+
+				// 		// clientState.features.geolocation.ready = true;
+				// 		// clientState.posStored = true;
+				// 		// app.trackLocation();
+				// 		// console.log('Geoloc test successful');
+
+				// 		// startup.svcCheck(); //re-run service check
+				// 	}, function(error) {
+				// 		switch (error.code) {
+				// 			case 1:
+				// 				// 1 === error.PERMISSION_DENIED
+				// 				console.log('User does not want to share Geolocation data.');
+				// 				break;
+
+				// 			case 2:
+				// 				// 2 === error.POSITION_UNAVAILABLE
+				// 				console.log('Position of the device could not be determined.');
+				// 				break;
+
+				// 			case 3:
+				// 				// 3 === error.TIMEOUT
+				// 				console.log('Position Retrieval TIMEOUT.');
+				// 				break;
+
+				// 			default:
+				// 				// 0 means UNKNOWN_ERROR
+				// 				console.log('Unknown Error');
+				// 				break;
+				// 		}
+				// 	});
+				// }, 1000);
 			}
 		},
 		deviceorientation: {
@@ -270,8 +279,10 @@ var clientState = {
 			setup: localStorage,
 			// setup: localStorage,
 			readyTest: function() {
-				console.log("Current localStorage is: ");
-				console.log(localStorage);
+				customLog("Current localStorage is: ");
+				customLog(localStorage);
+				// console.log("Current localStorage is: ");
+				// console.log(localStorage);
 				this.ready = true;
 				//console.log('Ready test called for localStorage but no test.');
 			},

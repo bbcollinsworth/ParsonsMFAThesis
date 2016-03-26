@@ -150,6 +150,27 @@ app.handleSocketMsg = function(res, err) {
 			startup.svcCheck();
 		},
 
+		geoTestServerEval: function() {
+			// var evalAction = {
+			// 	success: function() {
+			// 		clientState.features.geolocation.ready = true;
+			// 		clientState.posStored = true;
+			// 		app.trackLocation();
+			// 		console.log('Geoloc test successful');
+
+			// 		startup.svcCheck(); //re-run service check
+			// 	}
+			// };
+
+			// evalAction[res.finding]();
+			try {
+			viz.geoPrompt[res.finding]();
+		} catch(err){
+			customLog("Error: no function to execute for that GeoTest server finding");
+			customLog(err);
+		}
+		},
+
 		returningReadyCheck: function() {
 
 			player.team = res.team;
