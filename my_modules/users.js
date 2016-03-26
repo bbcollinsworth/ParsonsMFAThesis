@@ -190,8 +190,11 @@ module.exports = function(users, _emit) { //, _socket) {
 
 				delete user.hubAttacking;
 				//user.hubAttacking = {};
+				log("user.hubAttacking is now:",colors.bgYellow);
+				log(user);
 
 				aHub.updateAttackingPlayers(user, 'remove');
+
 
 				if (aHub.attackerCount < 1) {
 				//if (aHub.attackingPlayers.length < 1) {
