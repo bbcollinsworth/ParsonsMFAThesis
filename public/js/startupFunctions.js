@@ -94,11 +94,20 @@ var startup = {
 			return this + "<br />";
 		};
 
-		window.myExtend = function(originalObj, propsToUpdateObj) {
-			for (key in propsToUpdateObj) {
-				originalObj[key] = propsToUpdateObj[key];
+		window.myExtend = function(originalObj, updateObj) {
+			var descriptor,prop;
+			for (prop in updateObj) {
+				descriptor = Object.getOwnPropertyDescriptor(updateObj, prop);
+                Object.defineProperty(originalObj, prop, descriptor);
+				//originalObj[key] = propsToUpdateObj[key];
 			}
 		};
+		// window.myExtend = function(originalObj, propsToUpdateObj) {
+		// 	for (key in propsToUpdateObj) {
+
+		// 		originalObj[key] = propsToUpdateObj[key];
+		// 	}
+		// };
 
 		window.reverseForIn = function(obj, f) {
 			var arr = [];
@@ -148,7 +157,7 @@ var startup = {
 			}
 
 			$('#footerText').html(msgHTML);
-		}
+		};
 
 	},
 

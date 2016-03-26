@@ -367,6 +367,11 @@
 	//left: 0;
 }
 
+.hub-area {
+	-webkit-filter: blur(2px);
+	filter: blur(2px);
+}
+
 .ping-circle {
 	//background-color: white;
 	border-radius: 50%;

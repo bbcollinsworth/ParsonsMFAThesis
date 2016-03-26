@@ -1,14 +1,5 @@
 module.exports = function(moduleToLoad) {
 
-	// var state = require('./gameState.js');
-	// state.setupHubs();
-
-	// var globalModules = {
-	// 	util: 
-	// 	require('util');
-
-	// };
-
 	var modules = {
 		globalModules: function() {
 			var g = {
@@ -20,7 +11,7 @@ module.exports = function(moduleToLoad) {
 				'userModule': modules.users()
 			};
 
-			for (var key in g){
+			for (var key in g) {
 				GLOBAL[key] = g[key];
 			}
 
@@ -39,9 +30,12 @@ module.exports = function(moduleToLoad) {
 		},
 		util: function() {
 			var temp = require('util');
-			temp.myExtend = function(originalObj, propsToUpdateObj) {
-				for (key in propsToUpdateObj) {
-					originalObj[key] = propsToUpdateObj[key];
+			temp.myExtend = function(originalObj, updateObj) {
+				var descriptor, prop;
+				for (prop in updateObj) {
+					descriptor = Object.getOwnPropertyDescriptor(updateObj, prop);
+					Object.defineProperty(originalObj, prop, descriptor);
+					//originalObj[key] = propsToUpdateObj[key];
 				}
 			};
 			return temp;

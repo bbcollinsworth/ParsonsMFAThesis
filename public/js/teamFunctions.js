@@ -221,7 +221,7 @@ var ins = {
 			emit('hubHackProgress', {
 				hubID: ins.targetHub.id,
 				hubName: ins.targetHub.name,
-				hubIndex: ins.targetHub.key,
+				//hubIndex: ins.targetHub.key,
 				timestamp: Date.now() //,
 			});
 
@@ -444,6 +444,9 @@ var gov = {
 					if (!players[userID].goneDark) {
 						tagText = "now";
 					}
+					//OTHER TEXT TO FILL IN... SWITCH ON STATUS
+					//Gone dark as of
+					//locked out at
 					players[userID].marker.updateTagText({
 						'text': {
 							ln1: "(As of " + tagText + ")"

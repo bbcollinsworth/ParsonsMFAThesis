@@ -44,7 +44,7 @@ module.exports = function(users, _emit) { //, _socket) {
 				},
 				'locationData': [],
 				'lastLocRequest': {},
-				'hubAttacking': {},
+				//'hubAttacking': {},
 				'captureData': {
 					//# of responses received to fast capture pings
 					resCount: 0,
@@ -120,29 +120,54 @@ module.exports = function(users, _emit) { //, _socket) {
 
 			var hubs = gameState.hubs;
 
-			for (i in hubs) {
-				//is key same as index? Testing killing hub 3 seemed to work
-				if (hubs[i].live) {
-					hubsObj[i] = {
-						"latitude": hubs[i].lat,
-						"longitude": hubs[i].lng //,
+			gameState.hubs.forEach(function(hub,i){
+				if (hub.live) {
+					hubsObj[hub.name] = {
+						"latitude": hub.lat,
+						"longitude": hub.lng //,
 						//"name": hubs[i].name
 					};
 				}
-
-			}
+			});
 
 			var sortedHubs = geolib.orderByDistance({
 				"latitude": user.locationData[0].lat,
 				"longitude": user.locationData[0].lng
 			}, hubsObj);
 
-			for (i in sortedHubs) {
-				var matchingHub = hubs[sortedHubs[i].key];
+			for (var i=0; i<sortedHubs.length;i++){
+				// var matchingHub = hubs[sortedHubs[i].key];
+				log("Looking to match hub " + sortedHubs[i].key);
+				var matchingHub = hubs.getByName(sortedHubs[i].key);
+				log("Match hub found! " + matchingHub.name,colors.bgYellow);
 				for (prop in matchingHub) {
 					sortedHubs[i][prop] = matchingHub[prop];
 				}
 			}
+		
+			// for (i in hubs) {
+			// 	//is key same as index? Testing killing hub 3 seemed to work
+			// 	if (hubs[i].live) {
+			// 		hubsObj[i] = {
+			// 			"latitude": hubs[i].lat,
+			// 			"longitude": hubs[i].lng //,
+			// 			//"name": hubs[i].name
+			// 		};
+			// 	}
+
+			// }
+
+			// var sortedHubs = geolib.orderByDistance({
+			// 	"latitude": user.locationData[0].lat,
+			// 	"longitude": user.locationData[0].lng
+			// }, hubsObj);
+
+			// for (i in sortedHubs) {
+			// 	var matchingHub = hubs[sortedHubs[i].key];
+			// 	for (prop in matchingHub) {
+			// 		sortedHubs[i][prop] = matchingHub[prop];
+			// 	}
+			// }
 
 			log("Sorted hubs by distance: ");
 			log(sortedHubs);
@@ -162,34 +187,44 @@ module.exports = function(users, _emit) { //, _socket) {
 		stopHacking: function(attackedHub) {
 
 			var clearHack = function(aHub) {
+
+				delete user.hubAttacking;
+				//user.hubAttacking = {};
+
 				aHub.updateAttackingPlayers(user, 'remove');
 
-				if (aHub.attackingPlayers.length < 1) {
+				if (aHub.attackerCount < 1) {
+				//if (aHub.attackingPlayers.length < 1) {
 					aHub.alertState = 0;
-					log("Fully clearing hack for " + aHub.name,colors.standout);
+					log("Fully clearing hack for " + aHub.name, colors.standout);
 					emitTo.team('gov', 'hubAttackStopped', {
 						hubName: aHub.name,
 						hubID: aHub.id,
-						hubIndex: aHub.index,//res.hubIndex,
+						hubIndex: aHub.index, //res.hubIndex,
 						hubAlertState: aHub.alertState,
 						latestHubInfo: aHub
 					});
 				}
 			};
 
-			if (attackedHub !== undefined) {
-				clearHack(attackedHub);
-			} else {
-				//for (var h in gameState.hubs) {
-				gameState.hubs.forEach(function(hub) {
-					//var aHub = gameState.hubs[h];
-					for (var p in hub.attackingPlayers) {
-						if (user.userID == hub.attackingPlayers[p]) {
-							clearHack(hub);
-						}
-					}
-				});
+			if (user.hubAttacking){
+			clearHack(user.hubAttacking);
 			}
+
+			// if (attackedHub !== undefined) {
+			// 	clearHack(attackedHub);
+			// } else {
+
+			// 	//for (var h in gameState.hubs) {
+			// 	gameState.hubs.forEach(function(hub) {
+			// 		//var aHub = gameState.hubs[h];
+			// 		for (var p in hub.attackingPlayers) {
+			// 			if (user.userID == hub.attackingPlayers[p]) {
+			// 				clearHack(hub);
+			// 			}
+			// 		}
+			// 	});
+			// }
 			//};
 		},
 

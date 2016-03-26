@@ -84,7 +84,7 @@ io.on('connection', function(socket) {
 
 	var checkPlayerType = function() {
 		var existingUserIDs = [];
-		for (p in players) {
+		for (var p in players) {
 			log("Existing player: " + players[p].userID);
 			existingUserIDs.push(players[p].userID);
 
@@ -431,19 +431,20 @@ io.on('connection', function(socket) {
 
 			hubHackProgress: function() {
 
-				var attackedHub = hubs[res.hubIndex];
+				var attackedHub = player['hubAttacking'] = hubs.getByName(res.hubName);//hubs[res.hubIndex];
+
+				//player.hubAttacking = attackedHub;
 
 				var decr = attackedHub.hackTime / attackedHub.hackProgressInterval;
 				log("Decrements are: " + decr);
 				//...then divide 100 by that to get health decrement:
 				attackedHub.health -= (100 / decr);
-				log("Hub " + attackedHub.id + " health decreased to " + attackedHub.health);
-
+				log("Hub " + attackedHub.id + "/"+ attackedHub.name+" health decreased to " + attackedHub.health);
 
 				if (attackedHub.health <= 0) {
 					attackedHub.health = 0;
-					attackedHub.live = false;
-					var hubsLeft = gameState.liveHubCount();
+					//attackedHub.live = false;
+					var hubsLeft = gameState.liveHubCount;//();
 					log("Live hubs remaining: " + hubsLeft + " / " + hubs.length, colors.yellow.inverse);
 					log("Downed Hub is now:", colors.err);
 					log(attackedHub);
@@ -493,7 +494,8 @@ io.on('connection', function(socket) {
 			},
 
 			hackInterrupted: function() {
-				player.stopHacking(hubs[res.hubIndex]);
+				player.stopHacking();
+				// player.stopHacking(hubs[res.hubIndex]);
 				// var attackedHub = hubs[res.hubIndex];
 				// attackedHub.updateAttackingPlayers(player, true);
 
@@ -510,7 +512,7 @@ io.on('connection', function(socket) {
 			},
 
 			playerLeftHubRange: function() {
-				player.stopHacking(hubs[res.hubIndex]);
+				player.stopHacking();
 				// var attackedHub = hubs[res.hubIndex];
 				// attackedHub.updateAttackingPlayers(player, true);
 

@@ -456,7 +456,8 @@ var viz = {
 	// ====== HUB VISUALIZATION SETUP ==============//
 	hubOptions: {
 		area: {
-			'stroke': false
+			'stroke': false,
+			'className': 'hub-area'
 		},
 		marker: {
 			'weight': 3
@@ -514,6 +515,9 @@ var viz = {
 				h.flashing = false;
 				if (h.flasher) {
 					clearInterval(h.flasher);
+					h.area.setStyle({
+						fillColor: '#0033ff'
+					});
 				}
 			},
 			setFlashByAlertState: function() {

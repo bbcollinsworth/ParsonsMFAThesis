@@ -158,37 +158,53 @@
 		get decrement() {
 			return 100 / this.hackTime;
 		},
-		live: true,
+		//live: true,
 		// getHackTime: function() {
 		// 	return hubStats.hackTimeInMinutes * 60000;
 		// }, //in milliseconds
-		// get live(){
-		// 	if (this.health > 0){
-		// 		return true;
-		// 	} else {
-		// 		return false;
-		// 	}
-		// },
+		get live() {
+			if (this.health > 0) {
+				return true;
+			} else {
+				return false;
+			}
+		},
+		get attackerCount() {
+			var count = 0;
+			for (uID in state.players) {
+				if (state.players[uID].hubAttacking === this) {
+					log(uID + " is attacking hub " + this.id + "/" + this.name, colors.bgYellow);
+
+					count++;
+				}
+			};
+			log("Total attacking players for '"+this.name +"': " + count);
+			return count;
+		},
 		alertState: 0,
 		setAlertState: function() {
 			var h = this;
 
-			switch (Math.floor(h.health / 25)) {
-				case 0: //hubHealth < 25%
-					h.alertState = 4;
-					break;
-				case 1: //hubHealth < 50%
-					h.alertState = 3;
-					break;
-				case 2: //hubHealth < 75%
-					h.alertState = 2;
-					break;
-				case 3: //hubHealth < 100%
-					h.alertState = 1;
-					break;
-				default:
-					h.alertState = 0;
-					break;
+			if (h.attackingPlayers < 1) {
+				h.alertState = 0;
+			} else {
+
+				switch (Math.floor(h.health / 25)) {
+					case 0: //hubHealth < 25%
+						h.alertState = 4;
+						break;
+					case 1: //hubHealth < 50%
+						h.alertState = 3;
+						break;
+					case 2: //hubHealth < 75%
+						h.alertState = 2;
+						break;
+					case 3: //hubHealth < 100%
+						h.alertState = 1;
+						break;
+					default:
+						h.alertState = 0;
+				}
 			}
 
 			console.log("Hub " + h.id + " AlertState set to: " + h.alertState);
@@ -316,20 +332,33 @@
 
 			log("Setup hubs called", colors.err);
 
+			state.hubs.getByName = function(hubName) {
+				for (var i = 0; i < state.hubs.length; i++) {
+					if (state.hubs[i].name === hubName) {
+						return state.hubs[i];
+					}
+				}
+			};
+
 			//hubs.forEach()
-			for (i in hubs) {
+			hubs.forEach(function(hub, i) {
+				//for (i in hubs) {
 				//state.hubs.forEach(function(hub){
-				var hub = hubs[i];
+				//var hub = hubs[i];
 
 				//only push enabled hubs - easy activation deactivation for testing
 				if (hub.enabled) {
 
-					hub['index'] = +i;
-					hub['id'] = +i + 1;
+					
 					util.myExtend(hub, hubStartStats);
 
 					state.hubs.push(hub);
+
+					hub['index'] = state.hubs.indexOf(hub);
+					hub['id'] = +hub.index + 1;
 				}
+
+				//hub[]
 
 				// hub['id'] = +i + 1;
 				// hub['health'] = 100.0;
@@ -343,7 +372,8 @@
 				// hub['setAlertState'] = hubStats.setAlertState;
 				// hub['attackingPlayers'] = hubStats.attackingPlayers;
 
-			} //);
+			});
+
 		},
 
 		getPlayerBySocketID: function(sID) {
@@ -386,7 +416,7 @@
 			var existingTeamMembers = 0;
 
 			//var players = state.players;
-			for (p in state.players) {
+			for (var p in state.players) {
 				log("Team for " + state.players[p].userID + " is " + state.players[p].team);
 				if (state.players[p].team == t) {
 					existingTeamMembers++;
@@ -403,15 +433,29 @@
 			return existingTeamMembers;
 		},
 
-		liveHubCount: function() {
+		get liveHubCount() {
 			var liveHubs = 0;
-			for (var h in hubs) {
-				if (hubs[h].live) {
+			hubs.forEach(function(hub) {
+				//for (var h in hubs) {
+				if (hub.live) {
+					//if (hubs[h].live) {
 					liveHubs++;
 				}
-			}
+			});
 			return liveHubs;
 		},
+
+		// liveHubCount: function() {
+		// 	var liveHubs = 0;
+		// 	hubs.forEach(function(hub)) {
+		// 		//for (var h in hubs) {
+		// 		if (hub.live) {
+		// 			//if (hubs[h].live) {
+		// 			liveHubs++;
+		// 		}
+		// 	}
+		// 	return liveHubs;
+		// },
 
 		'preStart': {
 			text: {
