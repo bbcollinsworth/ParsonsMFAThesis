@@ -132,81 +132,23 @@ io.on('connection', function(socket) {
 		}, gameState.trackingInterval);
 	};
 
-	// var getHubsByDistance = function() {
 
-	// 	log("Finding hubs by distance to " + player.userID, colors.standout);
 
-	// 	var hubsObj = {};
+	// var stopHack = function(attackedHub) {
+	// 	attackedHub.updateAttackingPlayers(player, 'remove');
 
-	// 	for (i in hubs) {
-	// 		//is key same as index? Testing killing hub 3 seemed to work
-	// 		if (hubs[i].live) {
-	// 			hubsObj[i] = {
-	// 				"latitude": hubs[i].lat,
-	// 				"longitude": hubs[i].lng //,
-	// 				//"name": hubs[i].name
-	// 			};
-	// 		}
-
+	// 	if (attackedHub.attackingPlayers.length < 1) {
+	// 		attackedHub.alertState = 0;
+	// 		emitTo.team('gov', 'hubAttackStopped', {
+	// 			hubName: attackedHub.name,
+	// 			hubID: attackedHub.id,
+	// 			hubIndex: res.hubIndex,
+	// 			hubAlertState: attackedHub.alertState,
+	// 			latestHubInfo: attackedHub
+	// 		});
 	// 	}
-
-	// 	var sortedHubs = geolib.orderByDistance({
-	// 		"latitude": player.locationData[0].lat,
-	// 		"longitude": player.locationData[0].lng
-	// 	}, hubsObj);
-
-	// 	for (i in sortedHubs) {
-	// 		var matchingHub = hubs[sortedHubs[i].key];
-	// 		for (prop in matchingHub) {
-	// 			sortedHubs[i][prop] = matchingHub[prop];
-	// 		}
-	// 	}
-
-	// 	log("Sorted hubs by distance: ");
-	// 	log(sortedHubs);
-
-	// 	return sortedHubs;
-
+	// 	// body...
 	// };
-
-	// var updateAttackingPlayers = function(aHub, removePlayer) {
-	// 	log("Checking for " + player.userID + " in attacking players for " + aHub.id);
-	// 	var playerFound = false;
-	// 	for (i in aHub.attackingPlayers) {
-	// 		if (player.userID == aHub.attackingPlayers[i]) {
-	// 			playerFound = true;
-
-	// 			if (removePlayer) {
-	// 				aHub.attackingPlayers.splice(i, 1);
-	// 				log("Removed " + player.userID + "from attacking players; new length is: ", colors.standout);
-	// 				log(aHub.attackingPlayers.length, colors.standout);
-
-	// 			}
-	// 			break;
-	// 		}
-	// 	}
-	// 	if (!removePlayer && !playerFound) {
-	// 		aHub.attackingPlayers.push(player.userID);
-	// 		log("Adding " + player.userID + "to Attacking Players for " + aHub.id, colors.magenta);
-	// 	}
-
-	// };
-
-	var stopHack = function(attackedHub) {
-		attackedHub.updateAttackingPlayers(player, 'remove');
-
-		if (attackedHub.attackingPlayers.length < 1) {
-			attackedHub.alertState = 0;
-			emitTo.team('gov', 'hubAttackStopped', {
-				hubName: attackedHub.name,
-				hubID: attackedHub.id,
-				hubIndex: res.hubIndex,
-				hubAlertState: attackedHub.alertState,
-				latestHubInfo: attackedHub
-			});
-		}
-		// body...
-	};
 
 	//=================================
 	//CLIENT MESSAGE HANDLER:
@@ -573,5 +515,66 @@ io.on('connection', function(socket) {
 		log('current connected users: ' + io.sockets.sockets.length);
 
 	});
+
+
+		// var getHubsByDistance = function() {
+
+	// 	log("Finding hubs by distance to " + player.userID, colors.standout);
+
+	// 	var hubsObj = {};
+
+	// 	for (i in hubs) {
+	// 		//is key same as index? Testing killing hub 3 seemed to work
+	// 		if (hubs[i].live) {
+	// 			hubsObj[i] = {
+	// 				"latitude": hubs[i].lat,
+	// 				"longitude": hubs[i].lng //,
+	// 				//"name": hubs[i].name
+	// 			};
+	// 		}
+
+	// 	}
+
+	// 	var sortedHubs = geolib.orderByDistance({
+	// 		"latitude": player.locationData[0].lat,
+	// 		"longitude": player.locationData[0].lng
+	// 	}, hubsObj);
+
+	// 	for (i in sortedHubs) {
+	// 		var matchingHub = hubs[sortedHubs[i].key];
+	// 		for (prop in matchingHub) {
+	// 			sortedHubs[i][prop] = matchingHub[prop];
+	// 		}
+	// 	}
+
+	// 	log("Sorted hubs by distance: ");
+	// 	log(sortedHubs);
+
+	// 	return sortedHubs;
+
+	// };
+
+	// var updateAttackingPlayers = function(aHub, removePlayer) {
+	// 	log("Checking for " + player.userID + " in attacking players for " + aHub.id);
+	// 	var playerFound = false;
+	// 	for (i in aHub.attackingPlayers) {
+	// 		if (player.userID == aHub.attackingPlayers[i]) {
+	// 			playerFound = true;
+
+	// 			if (removePlayer) {
+	// 				aHub.attackingPlayers.splice(i, 1);
+	// 				log("Removed " + player.userID + "from attacking players; new length is: ", colors.standout);
+	// 				log(aHub.attackingPlayers.length, colors.standout);
+
+	// 			}
+	// 			break;
+	// 		}
+	// 	}
+	// 	if (!removePlayer && !playerFound) {
+	// 		aHub.attackingPlayers.push(player.userID);
+	// 		log("Adding " + player.userID + "to Attacking Players for " + aHub.id, colors.magenta);
+	// 	}
+
+	// };
 
 });
