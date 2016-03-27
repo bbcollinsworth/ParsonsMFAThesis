@@ -10,15 +10,16 @@ var app = {
 
 	initialized: function() {
 		clientState.initialized = true;
-		//clientState.readyCheckRunning = false;
+		viz.hide('#footerText');
+
 		msg("Server and map initialized.");
 		emit('clientInitialized', {});
 	},
 
 	ready: function() {
-		$('#footerText').css({
-			'display': 'none'
-		});
+		// $('#footerText').css({
+		// 	'display': 'none'
+		// });
 		//CATCH IF NOT FIRED IN GEOLOC READY-TEST
 		app.trackLocation();
 		app.addStyling[player.team]();

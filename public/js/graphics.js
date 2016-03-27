@@ -1,5 +1,10 @@
 var viz = {
-	//initHeaderUI
+
+	hide: function(elToHide) {
+		$(elToHide).css({
+			'display': 'none'
+		});
+	},
 	geoPrompt: {
 		shouldRefresh: false,
 		fillMsg: function(msgObj, tryRefresh) {
@@ -33,7 +38,7 @@ var viz = {
 				viz.geoPrompt.fillMsg({
 					1: "<span class=\"setup-header\">ERROR: </span>Geolocation is currently <b>blocked</b> for this website or browser. Please go into the browser's settings and <b>allow geolocation</b>, then test again.",
 					2: "<span class=\"setup-header\">If you're using an iPHONE:</span>Go to SETTINGS > PRIVACY > LOCATION SERVICES and set this browser to 'while using.'"
-				},true);
+				}, true);
 			},
 		},
 		sendTestResult: function(eMsg, eCode) {
@@ -54,6 +59,9 @@ var viz = {
 					//assumes result of last test has been stored
 					window.location.reload();
 				} else {
+
+					viz.enableFullScreen();
+
 					emit('geoTestStart', {
 						timestamp: Date.now()
 					});
@@ -99,18 +107,32 @@ var viz = {
 			});
 		}
 	},
-	renderLocPrompt: function() {
-		msg({
-			1: "This app requires geolocation.",
-			2: "Click below to test if location detection is working. If prompted by your browser, please 'allow' location detection.",
-			3: '<div id="locTestButton">Detect Location</div>'
-		}, 'setup');
-
-		$('#locTestButton').off('click').on('click', function() {
-			$('#locTestButton').text("Testing...");
-		});
+	//thanks to MDN: https://developer.mozilla.org/en-US/docs/Web/API/Fullscreen_API
+	enableFullScreen: function() {
+		// if (!document.fullscreenElement && // alternative standard method
+		// 	!document.mozFullScreenElement && !document.webkitFullscreenElement && !document.msFullscreenElement) { // current working methods
+		if (document.documentElement.requestFullscreen) {
+			document.documentElement.requestFullscreen();
+		} else if (document.documentElement.msRequestFullscreen) {
+			document.documentElement.msRequestFullscreen();
+		} else if (document.documentElement.mozRequestFullScreen) {
+			document.documentElement.mozRequestFullScreen();
+		} else if (document.documentElement.webkitRequestFullscreen) {
+			document.documentElement.webkitRequestFullscreen(Element.ALLOW_KEYBOARD_INPUT);
+		}
+		// } else {
+		// 	if (document.exitFullscreen) {
+		// 		document.exitFullscreen();
+		// 	} else if (document.msExitFullscreen) {
+		// 		document.msExitFullscreen();
+		// 	} else if (document.mozCancelFullScreen) {
+		// 		document.mozCancelFullScreen();
+		// 	} else if (document.webkitExitFullscreen) {
+		// 		document.webkitExitFullscreen();
+		// 	}
+		// }
 	},
-
+	//initHeaderUI
 	headerStyles: {
 		'current': "normal",
 		update: function(style) {
