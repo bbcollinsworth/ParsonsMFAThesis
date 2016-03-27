@@ -187,59 +187,9 @@ var clientState = {
 				if (storage.lastGeoTestResult){
 					screenToRender = storage.lastGeoTestResult;
 				}
-				// } catch(err){
-				// 	customLog("Error in getting stored GeoTest");
-				// 	customLog(err);
-				// }
-				console.log("Screen to render = " + screenToRender);
+
+				customLog("Screen to render = " + screenToRender);
 				viz.geoPrompt.render[screenToRender]();
-
-				// setTimeout(function() {
-				// 	navigator.geolocation.getCurrentPosition(function(position) {
-				// 		console.log('ReadyTest Position is: ' + position.coords.latitude + ', ' + position.coords.longitude);
-				// 		window.player.pos.update({
-				// 			lat: position.coords.latitude,
-				// 			lng: position.coords.longitude,
-				// 			time: position.timestamp
-				// 		});
-
-				// 		emit('geoTestResult', {
-				// 			playerPos: player.pos
-				// 		});
-
-
-				// 		//viz.renderLocPrompt();
-
-				// 		// clientState.features.geolocation.ready = true;
-				// 		// clientState.posStored = true;
-				// 		// app.trackLocation();
-				// 		// console.log('Geoloc test successful');
-
-				// 		// startup.svcCheck(); //re-run service check
-				// 	}, function(error) {
-				// 		switch (error.code) {
-				// 			case 1:
-				// 				// 1 === error.PERMISSION_DENIED
-				// 				console.log('User does not want to share Geolocation data.');
-				// 				break;
-
-				// 			case 2:
-				// 				// 2 === error.POSITION_UNAVAILABLE
-				// 				console.log('Position of the device could not be determined.');
-				// 				break;
-
-				// 			case 3:
-				// 				// 3 === error.TIMEOUT
-				// 				console.log('Position Retrieval TIMEOUT.');
-				// 				break;
-
-				// 			default:
-				// 				// 0 means UNKNOWN_ERROR
-				// 				console.log('Unknown Error');
-				// 				break;
-				// 		}
-				// 	});
-				// }, 1000);
 			}
 		},
 		deviceorientation: {

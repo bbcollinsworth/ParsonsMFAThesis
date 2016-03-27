@@ -109,18 +109,19 @@ var viz = {
 	},
 	//thanks to MDN: https://developer.mozilla.org/en-US/docs/Web/API/Fullscreen_API
 	enableFullScreen: function() {
-		// if (!document.fullscreenElement && // alternative standard method
-		// 	!document.mozFullScreenElement && !document.webkitFullscreenElement && !document.msFullscreenElement) { // current working methods
-		if (document.documentElement.requestFullscreen) {
-			document.documentElement.requestFullscreen();
-		} else if (document.documentElement.msRequestFullscreen) {
-			document.documentElement.msRequestFullscreen();
-		} else if (document.documentElement.mozRequestFullScreen) {
-			document.documentElement.mozRequestFullScreen();
-		} else if (document.documentElement.webkitRequestFullscreen) {
-			document.documentElement.webkitRequestFullscreen(Element.ALLOW_KEYBOARD_INPUT);
+		if (!document.fullscreenElement && // alternative standard method
+			!document.mozFullScreenElement && !document.webkitFullscreenElement && !document.msFullscreenElement) { // current working methods
+			if (document.documentElement.requestFullscreen) {
+				document.documentElement.requestFullscreen();
+			} else if (document.documentElement.msRequestFullscreen) {
+				document.documentElement.msRequestFullscreen();
+			} else if (document.documentElement.mozRequestFullScreen) {
+				document.documentElement.mozRequestFullScreen();
+			} else if (document.documentElement.webkitRequestFullscreen) {
+				document.documentElement.webkitRequestFullscreen(Element.ALLOW_KEYBOARD_INPUT);
+			}
 		}
-		// } else {
+		//else {
 		// 	if (document.exitFullscreen) {
 		// 		document.exitFullscreen();
 		// 	} else if (document.msExitFullscreen) {
