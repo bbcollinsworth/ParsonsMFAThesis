@@ -135,6 +135,12 @@
 	font-weight: 400;
 }
 
+.setup-header {
+	display: block;
+	line-height: 2em;
+	font-weight: bold;
+}
+
 #alertBox.ins-alert-styling {
 	color: white;
 	background-color: rgba(0,0,0,0.8);

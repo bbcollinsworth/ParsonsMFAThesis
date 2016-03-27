@@ -356,6 +356,7 @@ var startup = {
 		customLog(vibrate);
 		vibrate(1000);
 
+		storage = initialize('localstorage');
 		geo = initialize('geolocation');
 		heading = initialize('deviceorientation');
 		//this should add the following function as a window event handler
@@ -364,7 +365,7 @@ var startup = {
 		});
 		customLog("Location Svcs initialized");
 
-		storage = initialize('localstorage');
+		// storage = initialize('localstorage');
 
 	},
 
@@ -432,6 +433,8 @@ var startup = {
 			});
 
 			$('#svcCheckList').listview("refresh");
+
+			//if (featuresList.)
 
 			if (allServicesReady) {
 

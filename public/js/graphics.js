@@ -1,26 +1,40 @@
 var viz = {
 	//initHeaderUI
 	geoPrompt: {
-		render: function() {
-			msg({
-				1: "This app requires geolocation.",
-				2: "Click below to test if location detection is working. If prompted by your browser, please 'allow' location detection.",
-				3: '<div id="locTestButton">Detect Location</div>'
-			}, 'setup');
+		shouldRefresh: false,
+		fillMsg: function(msgObj, tryRefresh) {
+			msgObj['btn'] = '<div id="locTestButton">Detect Location</div>';
 
-			this.attachTestEvents();
+			msg(msgObj, 'setup');
+
+			this.attachTestEvents(tryRefresh);
 		},
-		success: function() {
-			clientState.features.geolocation.ready = true;
-			clientState.posStored = true;
-			app.trackLocation();
-			customLog('Server says Geoloc test successful');
+		render: {
+			initial: function() {
+				viz.geoPrompt.fillMsg({
+					1: "This app requires geolocation.",
+					2: "Click below to test if location detection is working. <b>If prompted by your browser, please 'allow' location detection.</b>"
+				});
+			},
+			success: function() {
+				clientState.features.geolocation.ready = true;
+				clientState.posStored = true;
+				app.trackLocation();
+				customLog('Server says Geoloc test successful');
 
-			$('#locTestButton').text('Success!');
+				$('#locTestButton').text('Success!');
 
-			setTimeout(function(){
-				startup.svcCheck(); //re-run service check
-			}, 500);
+				setTimeout(function() {
+					startup.svcCheck(); //re-run service check
+				}, 500);
+			},
+			blocked: function() {
+				// storage.setItem('lastGeoTestResult', 'blocked');
+				viz.geoPrompt.fillMsg({
+					1: "<span class=\"setup-header\">ERROR: </span>Geolocation is currently <b>blocked</b> for this website or browser. Please go into the browser's settings and <b>allow geolocation</b>, then test again.",
+					2: "<span class=\"setup-header\">If you're using an iPHONE:</span>Go to SETTINGS > PRIVACY > LOCATION SERVICES and set this browser to 'while using.'"
+				},true);
+			},
 		},
 		sendTestResult: function(eMsg, eCode) {
 			var rObj = {
@@ -33,56 +47,55 @@ var viz = {
 			}
 			emit('geoTestResult', rObj);
 		},
-		attachTestEvents: function() {
+		attachTestEvents: function(refresh) {
 			$('#locTestButton').off('click').on('click', function() {
-				emit('geoTestStart', {
-					timestamp: Date.now()
-				});
 
-				$('#locTestButton').text("Testing...");
-
-				var errorText = 'none';
-
-				geo.getCurrentPosition(function(position) {
-					console.log('ReadyTest Position is: ' + position.coords.latitude + ', ' + position.coords.longitude);
-					window.player.pos.update({
-						lat: position.coords.latitude,
-						lng: position.coords.longitude,
-						time: position.timestamp
+				if (viz.geoPrompt.shouldRefresh) {
+					//assumes result of last test has been stored
+					window.location.reload();
+				} else {
+					emit('geoTestStart', {
+						timestamp: Date.now()
 					});
 
-					//errorText = 'Client thinks test was successful';
-					viz.geoPrompt.sendTestResult();
+					$('#locTestButton').text("Testing...");
 
-				}, function(error) {
+					var errorText = 'none';
 
-					switch (error.code) {
-						case 1:
-							// 1 === error.PERMISSION_DENIED
-							errorText = 'User does not want to share Geolocation data.';
-							break;
+					geo.getCurrentPosition(function(position) {
+						console.log('ReadyTest Position is: ' + position.coords.latitude + ', ' + position.coords.longitude);
+						window.player.pos.update({
+							lat: position.coords.latitude,
+							lng: position.coords.longitude,
+							time: position.timestamp
+						});
 
-						case 2:
-							// 2 === error.POSITION_UNAVAILABLE
-							errorText = 'Position of the device could not be determined.';
-							break;
+						//errorText = 'Client thinks test was successful';
+						viz.geoPrompt.sendTestResult();
 
-						case 3:
-							// 3 === error.TIMEOUT
-							errorText = 'Position Retrieval TIMEOUT.';
-							break;
+					}, function(error) {
 
-						default:
-							// 0 means UNKNOWN_ERROR
-							errorText = 'Unknown Error';
-							break;
-					}
-					customLog(errorText);
-					viz.geoPrompt.sendTestResult(errorText, error.code);
+						switch (error.code) {
+							case 1: // 1 === error.PERMISSION_DENIED
+								errorText = 'User does not want to share Geolocation data.';
+								break;
+							case 2: // 2 === error.POSITION_UNAVAILABLE
+								errorText = 'Position of the device could not be determined.';
+								break;
+							case 3: // 3 === error.TIMEOUT
+								errorText = 'Position Retrieval TIMEOUT.';
+								break;
+							default: // 0 means UNKNOWN_ERROR
+								errorText = 'Unknown Error';
+								break;
+						}
+						customLog(errorText);
+						viz.geoPrompt.sendTestResult(errorText, error.code);
 
-				});
+					});
 
-				// viz.geoPrompt.sendTestResult(errorText);
+					// viz.geoPrompt.sendTestResult(errorText);
+				}
 			});
 		}
 	},

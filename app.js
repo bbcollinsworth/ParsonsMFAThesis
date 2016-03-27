@@ -193,9 +193,10 @@ io.on('connection', function(socket) {
 			},
 
 			geoTestStart: function() {
-				player.geoTestWait = setTimeout(function(){
-					log("10 seconds passed with no geotest success");
-				},10000);
+				log(player.userID + " clicked GeoTest");
+				player.geoTestWait = setTimeout(function() {
+					log("10 seconds passed since geotest clicked");
+				}, 10000);
 
 			},
 
@@ -205,17 +206,34 @@ io.on('connection', function(socket) {
 				log('GeoTest result for ' + player.userID + " is:", colors.hilite);
 				log(res);
 
-				if (!res.errorMsg){
+				var resultEval;
+				var refreshOnNextTest = false;
+
+				if (!res.errorMsg) {
 					log("No error msg from client on GeoTestResult");
+					if (typeof res.playerPos.lat === 'number') {
+						resultEval = 'success';
+					} else {
+						resultEval = 'failUnknown';
+					}
+				} else {
+					switch (res.errorCode) {
+						case 1:
+							resultEval = 'blocked';
+							refreshOnNextTest = 'true';
+							break;
+						default:
+							resultEval = 'failUnknown';
+							break;
+					}
 				}
 
-				var resultEval = 'failure';
-				if (typeof res.playerPos.lat === 'number') {
-					resultEval = 'success';
-				}
+				//var resultEval = 'failure';
+				log("Sending GeoTest finding " + resultEval + " to " + player.userID);
 
 				emitTo.socket('geoTestServerEval', {
-					finding: resultEval
+					finding: resultEval,
+					shouldRefresh: refreshOnNextTest
 				});
 			},
 

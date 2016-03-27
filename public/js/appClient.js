@@ -163,12 +163,16 @@ app.handleSocketMsg = function(res, err) {
 			// };
 
 			// evalAction[res.finding]();
+			storage.setItem('lastGeoTestResult', res.finding);
+			//Server tells client whether clicking test again should refresh page:
+			viz.geoPrompt.shouldRefresh = res.shouldRefresh;
+
 			try {
-			viz.geoPrompt[res.finding]();
-		} catch(err){
-			customLog("Error: no function to execute for that GeoTest server finding");
-			customLog(err);
-		}
+				viz.geoPrompt.render[res.finding]();
+			} catch (err) {
+				customLog("Error: no function to execute for that GeoTest server finding");
+				customLog(err);
+			}
 		},
 
 		returningReadyCheck: function() {

@@ -182,7 +182,17 @@ var clientState = {
 			ready: false,
 			setup: navigator.geolocation,
 			readyTest: function() {
-				viz.geoPrompt.render();
+				var screenToRender = 'initial';
+				
+				if (storage.lastGeoTestResult){
+					screenToRender = storage.lastGeoTestResult;
+				}
+				// } catch(err){
+				// 	customLog("Error in getting stored GeoTest");
+				// 	customLog(err);
+				// }
+				console.log("Screen to render = " + screenToRender);
+				viz.geoPrompt.render[screenToRender]();
 
 				// setTimeout(function() {
 				// 	navigator.geolocation.getCurrentPosition(function(position) {
