@@ -92,6 +92,8 @@ var startup = {
 
 		initLeafletExtensions();
 
+		window.scrollTo(0,1);
+
 		//custom map function
 		Math.map = function(varToMap, varMin, varMax, mapToMin, mapToMax, clamp) {
 			var mappedValue = mapToMin + (mapToMax - mapToMin) * ((varToMap - varMin) / (varMax - varMin));
