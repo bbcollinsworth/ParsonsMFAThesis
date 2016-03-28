@@ -444,12 +444,24 @@ var gov = {
 					if (!players[userID].goneDark) {
 						tagText = "now";
 					}
+
+					var textLn = "";
+					switch (players[userID].status) {
+						case 'dark':
+							textLn = "(Dark at " + tagText + ")";
+							break;
+						case 'locked':
+							textLn = "[Device locked]";
+							break;
+						default:
+							textLn = "(As of " + tagText + ")";
+					}
 					//OTHER TEXT TO FILL IN... SWITCH ON STATUS
 					//Gone dark as of
 					//locked out at
 					players[userID].marker.updateTagText({
 						'text': {
-							ln1: "(As of " + tagText + ")"
+							ln1: textLn
 						}
 					});
 				}
@@ -465,6 +477,7 @@ var gov = {
 
 			for (id in players) {
 				customLog("Status for " + players[id].localID + " is " + players[id].status);
+
 				switch (players[id].status) {
 					case 'active':
 						liveSuspectFound = true;

@@ -8,27 +8,27 @@ var clientState = {
 	tracking: false,
 	posStored: false,
 	centeredOnPlayer: false,
-	getHubByName: function(name) {
-		for (var i in hubs) {
-			if (hubs[i].name === name) {
-				return hubs[i];
-			}
-		}
-	},
-	intro: {
-		content: {},
-		run: function() { //team) {
-			var intro = this.content; //clientState.intro.content;
-			var team = player.team;
-			msg(intro[team].screen1);
-			$('#nextButton').off('click').on('click', function() {
-				msg(intro[team].screen2);
-				$('#nextButton').off('click').on('click', function() {
-					$('#app').trigger('introComplete');
-				});
-			});
-		}
-	},
+	// getHubByName: function(name) {
+	// 	for (var i in hubs) {
+	// 		if (hubs[i].name === name) {
+	// 			return hubs[i];
+	// 		}
+	// 	}
+	// },
+	// intro: {
+	// 	content: {},
+	// 	run: function() { //team) {
+	// 		var intro = this.content; //clientState.intro.content;
+	// 		var team = player.team;
+	// 		msg(intro[team].screen1);
+	// 		$('#nextButton').off('click').on('click', function() {
+	// 			msg(intro[team].screen2);
+	// 			$('#nextButton').off('click').on('click', function() {
+	// 				$('#app').trigger('introComplete');
+	// 			});
+	// 		});
+	// 	}
+	// },
 	allPlayers: {
 		localCount: {
 			'agent': 0,
@@ -60,6 +60,8 @@ var clientState = {
 				if (!('captureCircle' in p.marker)) {
 					p.marker.addCaptureCircle();
 					p.marker.captureCircle.animate();
+
+					//MOVE THIS TO CAPTURE CIRCLE ANIMATE FUNCTION?
 					$(p.marker.captureCircle.domElement).on('animationend oAnimationEnd webkitAnimationEnd', function() {
 						gov.captureComplete(p);
 					});

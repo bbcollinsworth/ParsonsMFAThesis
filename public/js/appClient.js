@@ -17,9 +17,6 @@ var app = {
 	},
 
 	ready: function() {
-		// $('#footerText').css({
-		// 	'display': 'none'
-		// });
 		//CATCH IF NOT FIRED IN GEOLOC READY-TEST
 		app.trackLocation();
 		app.addStyling[player.team]();
@@ -38,6 +35,29 @@ var app = {
 			$('#alertBox').addClass('ins-alert-styling');
 		}
 
+	},
+
+	getHubByName: function(name) {
+		for (var i in hubs) {
+			if (hubs[i].name === name) {
+				return hubs[i];
+			}
+		}
+	},
+
+	intro: {
+		content: {},
+		run: function() { //team) {
+			var intro = this.content; //clientState.intro.content;
+			var team = player.team;
+			msg(intro[team].screen1);
+			$('#nextButton').off('click').on('click', function() {
+				msg(intro[team].screen2);
+				$('#nextButton').off('click').on('click', function() {
+					$('#app').trigger('introComplete');
+				});
+			});
+		}
 	},
 
 	trackLocation: function() {
@@ -195,7 +215,7 @@ app.handleSocketMsg = function(res, err) {
 		},
 
 		insStartData: function() {
-			clientState.intro.content = res.introContent;
+			app.intro.content = res.introContent;
 
 			customLog("My lockout State is: " + res.playerLockedOut);
 			if (res.playerLockedOut) {
@@ -203,7 +223,7 @@ app.handleSocketMsg = function(res, err) {
 				//window.alert("FAILURE: State Agents have locked your device!");
 				ins.renderLockout();
 			} else if (!res.playStarted) {
-				clientState.intro.run('ins');
+				app.intro.run('ins');
 				//runIntro('ins');
 
 				$('#app').off('introComplete').on('introComplete', function() {
@@ -216,11 +236,11 @@ app.handleSocketMsg = function(res, err) {
 		},
 
 		govStartData: function() {
-			clientState.intro.content = res.introContent;
+			app.intro.content = res.introContent;
 			gov.renderHubs(res.hubs);
 
 			if (!res.playStarted) {
-				clientState.intro.run('gov');
+				app.intro.run('gov');
 
 				$('#app').off('introComplete').on('introComplete', function() {
 					emit('introCompleted', {});
@@ -298,7 +318,7 @@ app.handleSocketMsg = function(res, err) {
 		hubAttackUpdate: function() {
 			customLog("Hub attack update received");
 			customLog(res);
-			var hub = clientState.getHubByName(res.latestHubInfo.name); //hubs[res.latestHubInfo.index];
+			var hub = app.getHubByName(res.latestHubInfo.name); //hubs[res.latestHubInfo.index];
 			hub.update(res.latestHubInfo);
 			hub.setFlashByAlertState();
 
@@ -323,7 +343,7 @@ app.handleSocketMsg = function(res, err) {
 		hubAttackStopped: function() {
 			customLog("Hub attack stop received");
 			//var i = res.hubIndex;
-			var hub = clientState.getHubByName(res.latestHubInfo.name);
+			var hub = app.getHubByName(res.latestHubInfo.name);
 			hub.update(res.latestHubInfo);
 			hub.stopFlash();
 			// if (hubs[i].flashing){
@@ -338,10 +358,10 @@ app.handleSocketMsg = function(res, err) {
 		hubDown: function() {
 			switch (player.team) {
 				case "gov":
-					var downHub = clientState.getHubByName(res.hub.name);
+					var downHub = app.getHubByName(res.hub.name);
 					downHub.update(res.hub);
 					downHub.stopFlash();
-					//downHub.shutDown();
+					//downHub.shutDown(); //moved into stopflash
 					window.alert("Hackers have taken down a security hub!");
 					break;
 				case "ins":
