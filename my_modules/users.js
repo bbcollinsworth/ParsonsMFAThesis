@@ -86,7 +86,7 @@ module.exports = function(users, _emit) { //, _socket) {
 			if (user.locationData.length > 0) {
 				return user.locationData[0];
 			} else {
-				return;
+				return null;
 			}
 		},
 
@@ -120,7 +120,7 @@ module.exports = function(users, _emit) { //, _socket) {
 
 			var hubs = gameState.hubs;
 
-			gameState.hubs.forEach(function(hub,i){
+			gameState.hubs.forEach(function(hub, i) {
 				if (hub.live) {
 					hubsObj[hub.name] = {
 						"latitude": hub.lat,
@@ -135,16 +135,16 @@ module.exports = function(users, _emit) { //, _socket) {
 				"longitude": user.locationData[0].lng
 			}, hubsObj);
 
-			for (var i=0; i<sortedHubs.length;i++){
+			for (var i = 0; i < sortedHubs.length; i++) {
 				// var matchingHub = hubs[sortedHubs[i].key];
 				log("Looking to match hub " + sortedHubs[i].key);
 				var matchingHub = hubs.getByName(sortedHubs[i].key);
-				log("Match hub found! " + matchingHub.name,colors.bgYellow);
+				log("Match hub found! " + matchingHub.name, colors.bgYellow);
 				for (prop in matchingHub) {
 					sortedHubs[i][prop] = matchingHub[prop];
 				}
 			}
-		
+
 			// for (i in hubs) {
 			// 	//is key same as index? Testing killing hub 3 seemed to work
 			// 	if (hubs[i].live) {
@@ -184,34 +184,45 @@ module.exports = function(users, _emit) { //, _socket) {
 			user.stopHacking();
 		},
 
-		stopHacking: function(attackedHub) {
+		// finishHacking: function(attackedHub) {
+		// 	delete user.hubAttacking;
+		// 	//user.hubAttacking = {};
+		// 	log("Hack finished", colors.alert);
+		// 	log("user.hubAttacking is now:", colors.bgYellow);
+		// 	log(user);
+		// },
+
+		stopHacking: function() {
 
 			var clearHack = function(aHub) {
 
 				delete user.hubAttacking;
 				//user.hubAttacking = {};
-				log("user.hubAttacking is now:",colors.bgYellow);
+				log("user.hubAttacking is now:", colors.bgYellow);
 				log(user);
 
-				aHub.updateAttackingPlayers(user, 'remove');
+				//aHub.updateAttackingPlayers(user, 'remove');
 
 
 				if (aHub.attackerCount < 1) {
-				//if (aHub.attackingPlayers.length < 1) {
+					//if (aHub.attackingPlayers.length < 1) {
 					aHub.alertState = 0;
 					log("Fully clearing hack for " + aHub.name, colors.standout);
-					emitTo.team('gov', 'hubAttackStopped', {
-						hubName: aHub.name,
-						hubID: aHub.id,
-						hubIndex: aHub.index, //res.hubIndex,
-						hubAlertState: aHub.alertState,
-						latestHubInfo: aHub
-					});
+
+					if (aHub.live) {
+						emitTo.team('gov', 'hubAttackStopped', {
+							hubName: aHub.name,
+							hubID: aHub.id,
+							hubIndex: aHub.index, //res.hubIndex,
+							hubAlertState: aHub.alertState,
+							latestHubInfo: aHub
+						});
+					}
 				}
 			};
 
-			if (user.hubAttacking){
-			clearHack(user.hubAttacking);
+			if (user.hubAttacking) {
+				clearHack(user.hubAttacking);
 			}
 
 			// if (attackedHub !== undefined) {

@@ -279,9 +279,10 @@
 }
 
 #scanButton.scanIcon {
-	background-color: rgba(255,255,255,0.5);
+	/*background-color: rgba(255,255,255,0.5);*/
+	background-color: rgba(0,0,0,0.7);
 	background-repeat: no-repeat;
-	background-image: url("cssImages/sidescan.svg");
+	background-image: url("cssImages/sidescan-white.svg");
 	background-size: contain;
 }
 
@@ -290,23 +291,24 @@
 }
 
 #scanButton.hackReady {
-	border: 6px solid #FFDA44;
+	border: 6px solid #FD2D2D;//#FFDA44;
 	width: 80px;
 	height: 80px;
-	background-color: rgba(255,255,255,0.5);
+	background-color: rgba(0,0,0,0.7);
 	background-repeat: no-repeat;
-	background-image: url("cssImages/bolt-assym.svg");
+	background-image: url("cssImages/bolt-thin-red.svg");
 	background-size: contain;
 }
 
 #scanButton.uploadProgress {
-	background-color: rgba(255,255,255,0.5);
+	background-color: rgba(0,0,0,0.7);
 	width: 80px;
 	height: 80px;
 	//color: #FFDA44;
 	font-size: 1.8em;
 	line-height: 2.8em;
 	font-weight: 100;
+	text-shadow: none;
 }
 
 #scanButton.hackComplete {
@@ -314,6 +316,7 @@
 	width: 80px;
 	height: 80px;
 	background-color: rgba(255,255,255,0.5);
+	/*background-color: rgba(0,0,0,0.7);*/
 	background-repeat: no-repeat;
 	background-image: url("cssImages/exclamation.svg");
 	background-size: contain;

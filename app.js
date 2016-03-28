@@ -358,6 +358,10 @@ io.on('connection', function(socket) {
 
 					if (locArray.length > 0 && locArray[0] !== null) {
 
+						log("Adding suspect locData for " + players[p].userID);
+						log("Loc array zero is :");
+						log(locArray[0]);
+
 						newLocData[players[p].userID] = {
 							team: players[p].team,
 							type: players[p].type,
@@ -430,6 +434,7 @@ io.on('connection', function(socket) {
 
 				if (attackedHub.health <= 0) {
 					attackedHub.health = 0;
+					player.stopHacking();
 					//attackedHub.live = false;
 					var hubsLeft = gameState.liveHubCount; //();
 					log("Live hubs remaining: " + hubsLeft + " / " + hubs.length, colors.yellow.inverse);
@@ -443,6 +448,7 @@ io.on('connection', function(socket) {
 					});
 					setTimeout(function() {
 						emitTo.all('hubDown', {
+							hub: attackedHub,
 							hubName: attackedHub.name,
 							hubID: attackedHub.id,
 							hubIndex: res.hubIndex,

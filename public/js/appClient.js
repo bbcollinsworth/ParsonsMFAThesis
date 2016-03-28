@@ -152,18 +152,7 @@ app.handleSocketMsg = function(res, err) {
 		},
 
 		geoTestServerEval: function() {
-			// var evalAction = {
-			// 	success: function() {
-			// 		clientState.features.geolocation.ready = true;
-			// 		clientState.posStored = true;
-			// 		app.trackLocation();
-			// 		console.log('Geoloc test successful');
 
-			// 		startup.svcCheck(); //re-run service check
-			// 	}
-			// };
-
-			// evalAction[res.finding]();
 			storage.setItem('lastGeoTestResult', res.finding);
 			//Server tells client whether clicking test again should refresh page:
 			viz.geoPrompt.shouldRefresh = res.shouldRefresh;
@@ -177,14 +166,11 @@ app.handleSocketMsg = function(res, err) {
 		},
 
 		returningReadyCheck: function() {
-
 			player.team = res.team;
+
 			if (res.introComplete || res.svcCheckComplete) {
-				// 	$('#app').trigger('ready');
-				// } else if (storage.svcCheckComplete) {
 				$('#footerText').html('');
 				app.ready();
-				//$('#app').trigger('ready');
 			} else {
 				startup.svcCheck();
 			}
@@ -239,11 +225,9 @@ app.handleSocketMsg = function(res, err) {
 				$('#app').off('introComplete').on('introComplete', function() {
 					emit('introCompleted', {});
 					gov.renderUI();
-					//attachEvents();
 				});
 			} else {
 				gov.renderUI();
-				//attachEvents();
 			}
 
 		},
@@ -354,8 +338,10 @@ app.handleSocketMsg = function(res, err) {
 		hubDown: function() {
 			switch (player.team) {
 				case "gov":
-					hubs[res.hubIndex].stopFlash();
-					hubs[res.hubIndex].shutDown();
+					var downHub = clientState.getHubByName(res.hub.name);
+					downHub.update(res.hub);
+					downHub.stopFlash();
+					//downHub.shutDown();
 					window.alert("Hackers have taken down a security hub!");
 					break;
 				case "ins":

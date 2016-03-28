@@ -523,72 +523,12 @@ var viz = {
 		$('#container').append(c);
 	},
 
-	// captureSetup: {
-	// 	radius: 80,
-	// 	options: {
-	// 		'radius': 80,
-	// 		'className': "captureCircle",
-	// 		'fillColor': '#ff0000',
-	// 		'fillOpacity': '0.1',
-	// 		'weight': 10,
-	// 		'color': '#ff0000',
-	// 		'opacity': '0.9',
-	// 		'dashArray': '10,30',
-	// 		'lineCap': 'square',
-	// 		'lineJoin': 'square'
-	// 	}
-	// },
-
 	addCaptureCircle: function(pos) {
 		var c = L.captureCircle([pos.lat, pos.lng], viz.captureSetup.options);
-		// c.startRadius = +window.height*0.7;
-		// console.log('start radius set to: ' + c.startRadius);
-		//c.addTo(map);
 		return c;
 	},
 
-	// drawCaptureCircle: function(pos) {
-	// 	var p = [pos.lat, pos.lng];
-	// 	var c = L.circleMarker(p, viz.captureSetup.options);
-	// 	c.setRadius(viz.captureSetup.radius);
 
-	// 	var screenOffset = map.latLngToContainerPoint(p);
-	// 	// screenOffset.x += viz.captureSetup.radius;
-	// 	// screenOffset.y += viz.captureSetup.radius;
-	// 	var rad = viz.captureSetup.radius;
-	// 	var α = 0,
-	// 		π = Math.PI,
-	// 		t = 30;
-
-	// 	//FUNCTION FOR PIE-TIMER
-	// 	c['draw'] = function() {
-	// 		α++;
-	// 		//α %= 360;
-	// 		var r = (α * π / 180),
-	// 			x = Math.sin(r) * rad,
-	// 			y = Math.cos(r) * -1 * rad,
-	// 			mid = (α > 180) ? 1 : 0,
-	// 			anim = 'M 0 0 v -' + rad + ' A' + rad + ' ' + rad + ' 1 ' + mid + ' 1 ' + x + ' ' + y + ' z';
-
-	// 		var circles = document.getElementsByClassName('captureCircle');
-	// 		var newCSS = {
-	// 			'transform': 'translate(' + screenOffset.x + ',' + screenOffset.y + ')',
-	// 			'd': anim
-	// 		};
-	// 		$.each(newCSS, function(key, value) {
-	// 			//WOULD NEED TO BE CHANGED TO DEAL WITH INDEX / ARRAY ISSUE OF CLASS
-	// 			circles[0].setAttribute(key, value);
-	// 		});
-
-	// 		if (α < 360) {
-	// 			setTimeout(c.draw, t); // Redraw
-	// 		}
-	// 	};
-
-	// 	c.addTo(map);
-	// 	c.draw();
-	// 	return c;
-	// },
 
 	// ====== HUB VISUALIZATION SETUP ==============//
 	hubOptions: {
@@ -616,7 +556,7 @@ var viz = {
 				'lvl4': false
 			},
 			update: function(hubDataFromServer) {
-				console.log("Data from server is: ");
+				console.log("UPDATING HUB. Data from server is: ");
 				console.log(hubDataFromServer);
 				$.extend(true, h, hubDataFromServer);
 				console.log("Hub " + h.name + " updated to:");
@@ -652,9 +592,13 @@ var viz = {
 				h.flashing = false;
 				if (h.flasher) {
 					clearInterval(h.flasher);
-					h.area.setStyle({
-						fillColor: '#0033ff'
-					});
+					if (h.live) {
+						h.area.setStyle({
+							fillColor: '#0033ff'
+						});
+					} else {
+						h.shutDown();
+					}
 				}
 			},
 			setFlashByAlertState: function() {
@@ -665,6 +609,7 @@ var viz = {
 				}
 			},
 			shutDown: function() {
+				customLog("Shutting down hub: " + this.name);
 				h.live = false;
 				h.area.setStyle({
 					'fillColor': viz.hubOptions.greyOut
@@ -898,7 +843,6 @@ var viz = {
 		return button;
 
 	}
-
 
 };
 

@@ -3,7 +3,7 @@
 
 	var playSettings = {
 		trackIntervalS: 3,
-		hackTimeM: 1,
+		hackTimeM: 0.5,
 		trailDurationM: 2,
 		dataSkipInterval: 3,
 		teamPickMethod: 'alternate',
@@ -18,7 +18,7 @@
 				'screen2': {
 					1: "Use this app to detect the mobile activity of suspected hackers nearby.",
 					2: "Sensitive security sites are marked in blue. You must intercept the hackers before they disable these sites.",
-					3: "If you can get within 20 meters of an active suspect, you can disable their device and stop their attacks.",
+					3: "Get within 20 meters of an active suspect to lock their device and stop their attacks.",
 					4: '<div id="nextButton">GO</div>'
 				}
 			},
@@ -128,9 +128,24 @@
 		lng: -73.992879
 	}, {
 		name: '15th St and 9th Ave NE corner',
-		enabled: false,
+		enabled: true,
 		lat: 40.741543,
 		lng: -74.004475
+	}, {
+		name: 'High Line at 14th',
+		enabled: true,
+		lat: 40.741969,
+		lng: -74.007770
+	}, {
+		name: 'Gansevoort and Greenwich patio',
+		enabled: true,
+		lat: 40.739530,
+		lng: -74.006278
+	}, {
+		name: '16th and 8th Ave park',
+		enabled: true,
+		lat: 40.741359,
+		lng: -74.002029
 	}, {
 		name: 'Washington Ave and Lincoln Pl',
 		enabled: true,
@@ -178,7 +193,7 @@
 					count++;
 				}
 			};
-			log("Total attacking players for '"+this.name +"': " + count);
+			log("Total attacking players for '" + this.name + "': " + count);
 			return count;
 		},
 		alertState: 0,
@@ -349,7 +364,7 @@
 				//only push enabled hubs - easy activation deactivation for testing
 				if (hub.enabled) {
 
-					
+
 					util.myExtend(hub, hubStartStats);
 
 					state.hubs.push(hub);

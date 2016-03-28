@@ -25,7 +25,8 @@ module.exports = function(moduleToLoad) {
 				err: 'bgRed',
 				standout: 'bgMagenta',
 				sendingMsg: 'magenta',
-				hilite: 'bgYellow'
+				hilite: 'bgYellow',
+				alert: 'bgYellow'
 			});
 			return temp;
 		},
