@@ -6,7 +6,7 @@
 		hackTimeM: 0.5,
 		trailDurationM: 2,
 		dataSkipInterval: 3,
-		teamPickMethod: 'alternate',
+		teamPickMethod: 'insIfNoHash', //'alternate',
 		introContent: {
 			'gov': {
 				'screen1': {
@@ -323,6 +323,11 @@
 				//IF playercount is above a certain number
 				//else return this.random()
 			},
+			insIfNoHash: function(){
+				this.lastAssigned = 'ins';
+				log('No hash so new player set to ' + this.lastAssigned, colors.standout);
+				return this.lastAssigned;
+			}
 		},
 
 		getTeam: function(hash) {
