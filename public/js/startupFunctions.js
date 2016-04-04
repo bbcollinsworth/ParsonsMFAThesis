@@ -74,7 +74,7 @@ var customLog = function(message) {
 
 	var safeLog = safeStringify(message);
 
-	if (clientState.connected) {
+	if (clientState.connected && app.settings.debugMode) {
 		socket.emit('clientMsg', {
 			userID: player.localID,
 			tag: 'clientLogMsg',
@@ -92,6 +92,7 @@ var startup = {
 
 		initLeafletExtensions();
 
+		//
 		window.scrollTo(0,1);
 
 		//custom map function

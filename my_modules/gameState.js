@@ -355,7 +355,6 @@
 				}
 			};
 
-			//hubs.forEach()
 			hubs.forEach(function(hub, i) {
 				//for (i in hubs) {
 				//state.hubs.forEach(function(hub){
@@ -372,20 +371,6 @@
 					hub['index'] = state.hubs.indexOf(hub);
 					hub['id'] = +hub.index + 1;
 				}
-
-				//hub[]
-
-				// hub['id'] = +i + 1;
-				// hub['health'] = 100.0;
-				// hub['hackRange'] = hubStats.hackRange;
-				// hub['hackTime'] = hubStats.hackTime; //hubStats.getHackTime();
-				// hub['hackProgressInterval'] = hubStats.hackProgressInterval;
-				// hub['decrement'] = 100.0 / hub.hackTime;
-				// hub['alertState'] = 0;
-				// //hub['live'] = true;
-				// hub['live'] = true;
-				// hub['setAlertState'] = hubStats.setAlertState;
-				// hub['attackingPlayers'] = hubStats.attackingPlayers;
 
 			});
 

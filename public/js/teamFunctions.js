@@ -203,7 +203,7 @@ var ins = {
 
 		if (d > ins.targetHub.attackRange) {
 			//update this with mobile alerts
-			window.alert("Hack interrupted!");
+			window.alert("Out of range. Hack interrupted!");
 			//clearInterval(ins.hubHackInterval);
 
 			emit('playerLeftHubRange', {
@@ -246,12 +246,12 @@ var gov = {
 	ui: {
 		text: {
 			'ping': {
-				1: "Press the button below for latest locations of tracked suspects and fellow agents.",
-				2: "(NOTE: Locations will only update when targets are using their mobile devices.)"
+				1: "Press the button below for latest locations of active suspects + fellow citizens. (Locations will only update when targets are using mobile devices.)",
+				2: "<b>Get within 20 meters of an active suspect to lock their mobile device.</b>"
 			},
+			'capturing': "Active suspect in range!<br />Locking their device...",
 			'inRange': "Active suspect in range! Click their marker to disable/lock their mobile device.",
 			'inRangeButDark': "Suspect may be in range, but has gone dark. A device can only be disabled when suspect is using it."
-
 		},
 		attachPingEvents: function() {
 			msg(gov.ui.text.ping);
@@ -260,6 +260,7 @@ var gov = {
 
 			$('#searchButton').off('click').on('click', function() {
 				//msg('Ping button clicked');
+				viz.headerToggle.contract();
 
 				var pingFunction = function() {
 					emit('findSuspects', {
@@ -354,30 +355,51 @@ var gov = {
 	//GETTING BIG... Move server-side?
 	suspectRangeCheck: function() {
 		var otherPlayers = clientState.allPlayers;
+		var capturableFound = false;
 
 		for (id in otherPlayers) {
 
+			//Check if other player on Ins team and not locked out already
 			if (otherPlayers[id].team == 'ins' && !otherPlayers[id].lockedOut) {
-
+				//calculate distance ot other player
 				var dist = player.distanceTo(otherPlayers[id].latestPos);
 				customLog("Distance to " + otherPlayers[id].localID + " is " + dist + "m");
 
-				if (dist <= gov.captureRange && !otherPlayers[id].goneDark) {
+				//check if capture criteria met. 
+				//When autocapture is on, will only return true when no capturable player has been found
+				//This prevents capturing multiple in-range players at once
+				var captureCriteriaMet = function(autoCapture) {
+						if (autoCapture) {
+							if (dist <= gov.captureRange && !otherPlayers[id].goneDark && !capturableFound) {
+								return true;
+							} else {
+								return false;
+							}
+						} else {
+							if (dist <= gov.captureRange && !otherPlayers[id].goneDark) {
+								return true;
+							} else {
+								return false;
+							}
+						}
+					}
+					//if (dist <= gov.captureRange && !otherPlayers[id].goneDark && !capturableFound) {
+				
+				if (captureCriteriaMet(app.settings.autoCapture)) {
+					capturableFound = true;
 					otherPlayers[id].inCaptureRange = true;
-					//otherPlayers[id].marker.attachCaptureEvents();
 					otherPlayers[id].attachCaptureEvents();
-					msg(gov.ui.text.inRange, 'urgent');
+					// msg(gov.ui.text.inRange, 'urgent'); //MOVED TO CAPTURE EVENTS FOR MORE CONTROL
 
 				} else if (dist <= gov.captureRange && otherPlayers[id].goneDark) {
 					//msg("Suspect may be in range, but has gone dark. Suspect must be using device to successfully initiate lockout");
 					if (otherPlayers[id].inCaptureRange) {
 						otherPlayers[id].inCaptureRange = false;
-						//otherPlayers[id].marker.clearCaptureEvents();
 						otherPlayers[id].clearCaptureEvents();
 						gov.ui.attachPingEvents();
 					}
 					msg(gov.ui.text.inRangeButDark);
-				} else { //if (otherPlayers[id].inCaptureRange) {
+				} else {
 					//TRYING WITH JUST ELSE...REATTACING EVENTS SHOULDN'T BE PROBLEM
 
 					otherPlayers[id].inCaptureRange = false;

@@ -1,4 +1,5 @@
 var clientState = {
+	settings: app.settings,
 	connected: false,
 	mapLoaded: false,
 	readyCheckRunning: false,
@@ -8,27 +9,7 @@ var clientState = {
 	tracking: false,
 	posStored: false,
 	centeredOnPlayer: false,
-	// getHubByName: function(name) {
-	// 	for (var i in hubs) {
-	// 		if (hubs[i].name === name) {
-	// 			return hubs[i];
-	// 		}
-	// 	}
-	// },
-	// intro: {
-	// 	content: {},
-	// 	run: function() { //team) {
-	// 		var intro = this.content; //clientState.intro.content;
-	// 		var team = player.team;
-	// 		msg(intro[team].screen1);
-	// 		$('#nextButton').off('click').on('click', function() {
-	// 			msg(intro[team].screen2);
-	// 			$('#nextButton').off('click').on('click', function() {
-	// 				$('#app').trigger('introComplete');
-	// 			});
-	// 		});
-	// 	}
-	// },
+	captureInProgress: false,
 	allPlayers: {
 		localCount: {
 			'agent': 0,
@@ -52,10 +33,9 @@ var clientState = {
 			inCaptureRange: false,
 			startCapture: function(p) {
 
-				//var p = this;
-
 				//IMPORTANT: NEED TO START WATCHING POS TO FIGURE OUT IF MOVING
 				console.log("Starting capture on " + p.localID);
+				//clientState.captureInProgress = true;
 
 				if (!('captureCircle' in p.marker)) {
 					p.marker.addCaptureCircle();
@@ -76,12 +56,22 @@ var clientState = {
 			},
 			attachCaptureEvents: function() {
 				var playerToCapture = this;
-				console.log("Attaching Capture Events to " + playerToCapture.localID);
 
-				playerToCapture.marker.off('click').on('click', function(e) {
+				//PROBABLY NOT NEEDED BECAUSE OF CHECK FOR CAPTURECIRCLE IN STARTCAPTURE FN
+				//if (!clientState.captureInProgress) {
+					console.log("Attaching Capture Events to " + playerToCapture.localID);
 
-					clientState.markerEvents.ins.startCapture(playerToCapture);
-				});
+					if (app.settings.autoCapture) {
+						msg(gov.ui.text.capturing, 'urgent');
+						clientState.markerEvents.ins.startCapture(playerToCapture);
+					} else {
+						msg(gov.ui.text.inRange, 'urgent');
+						playerToCapture.marker.off('click').on('click', function(e) {
+
+							clientState.markerEvents.ins.startCapture(playerToCapture);
+						});
+					}
+				//}
 			},
 
 			clearCaptureEvents: function() {
@@ -185,8 +175,8 @@ var clientState = {
 			setup: navigator.geolocation,
 			readyTest: function() {
 				var screenToRender = 'initial';
-				
-				if (storage.lastGeoTestResult){
+
+				if (storage.lastGeoTestResult) {
 					screenToRender = storage.lastGeoTestResult;
 				}
 

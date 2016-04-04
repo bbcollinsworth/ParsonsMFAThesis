@@ -1,4 +1,8 @@
 var app = {
+	settings: {
+		autoCapture: true,
+		debugMode: true
+	},
 
 	init: function() {
 		startup.setup();
@@ -260,7 +264,7 @@ app.handleSocketMsg = function(res, err) {
 		},
 
 		agentCloseWarning: function() {
-			window.alert("WARNING: State agents within " + res.distance + " meters.");
+			window.alert("WARNING: State agents within " + res.distance + " meters. Minimize phone use to avoid detection!");
 		},
 
 		lockoutAlert: function() {
