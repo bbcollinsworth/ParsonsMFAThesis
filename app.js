@@ -47,6 +47,8 @@ var hubs = gameState.hubs; //this should alter data in gamestate when altered
 gameState.setupHubs();
 log("Starting hubs are: ", colors.yellow.inverse);
 log(hubs);
+gameState.startingHubs = gameState.liveHubCount;
+log("Starting Hub count is: " + gameState.startingHubs, colors.alert);
 
 /*––––––––––– ADMIN SOCKET.IO starts here –––––––––––––––*/
 
@@ -128,6 +130,20 @@ io.on('connection', function(socket) {
 
 		}, gameState.trackingInterval);
 	};
+
+	var insWinCheck = function() {
+		var hubsDown = gameState.startingHubs - gameState.liveHubCount;
+		log("There are " + hubsDown + " Hubs down.", colors.alert);
+
+		if (hubsDown >= gameState.settings.hubDownTarget) {
+			log("Ins win condition met!");
+			emitTo.all('insWon', {});
+		}
+	}
+
+	var govWinCheck = function(){
+		
+	}
 
 	//=================================
 	//CLIENT MESSAGE HANDLER:
@@ -422,6 +438,8 @@ io.on('connection', function(socket) {
 							hubIndex: res.hubIndex,
 							liveHubsLeft: hubsLeft
 						});
+
+						setTimeout(insWinCheck,1000);
 					}, 1000);
 
 				} else {

@@ -373,7 +373,12 @@ app.handleSocketMsg = function(res, err) {
 					window.alert("SUCCESS: A surveillance site has been hacked!");
 					break;
 			}
+		},
+
+		insWon: function(){
+			window.alert("Security network down. The hackers have won!");
 		}
+
 	};
 
 	handle[res.tag]();

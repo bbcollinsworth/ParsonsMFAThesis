@@ -2,8 +2,9 @@
 
 
 	var playSettings = {
+		hubDownTarget: 3,
 		trackIntervalS: 3,
-		hackTimeM: 0.5,
+		hackTimeM: 3.0,
 		trailDurationM: 2,
 		dataSkipInterval: 3,
 		teamPickMethod: 'insIfNoHash', //'alternate',
@@ -48,27 +49,27 @@
 
 	var hubs = [{
 		name: 'tribeca bldg',
-		enabled: true,
+		enabled: false,
 		lat: 40.720000,
 		lng: -74.004604
 	}, {
 		name: 'by st johns park',
-		enabled: true,
+		enabled: false,
 		lat: 40.720708,
 		lng: -74.006922
 	}, {
 		name: 'by Canal plastics',
-		enabled: true,
+		enabled: false,
 		lat: 40.720651,
 		lng: -74.003274
 	}, {
 		name: 'church and ave of Americas',
-		enabled: true,
+		enabled: false,
 		lat: 40.718805,
 		lng: -74.005066
 	}, {
 		name: 'lispenard and Broadway',
-		enabled: true,
+		enabled: false,
 		lat: 40.719173,
 		lng: -74.002291
 	}, {
@@ -108,7 +109,7 @@
 		lng: -73.992364
 	}, {
 		name: 'University and 13th',
-		enabled: false,
+		enabled: true,
 		lat: 40.734386,
 		lng: -73.992503
 	}, {
@@ -128,32 +129,32 @@
 		lng: -73.992879
 	}, {
 		name: '15th St and 9th Ave NE corner',
-		enabled: true,
+		enabled: false,
 		lat: 40.741543,
 		lng: -74.004475
 	}, {
 		name: 'High Line at 14th',
-		enabled: true,
+		enabled: false,
 		lat: 40.741969,
 		lng: -74.007770
 	}, {
 		name: 'Gansevoort and Greenwich patio',
-		enabled: true,
+		enabled: false,
 		lat: 40.739530,
 		lng: -74.006278
 	}, {
 		name: '16th and 8th Ave park',
-		enabled: true,
+		enabled: false,
 		lat: 40.741359,
 		lng: -74.002029
 	}, {
 		name: 'Washington Ave and Lincoln Pl',
-		enabled: true,
+		enabled: false,
 		lat: 40.672643,
 		lng: -73.962675
 	}, {
 		name: 'McNair Park',
-		enabled: true,
+		enabled: false,
 		lat: 40.670774,
 		lng: -73.961985
 	}];
@@ -449,6 +450,9 @@
 			});
 			return liveHubs;
 		},
+
+		//startingHubs: this.liveHubCount,
+		downHubs: 0,
 
 		// liveHubCount: function() {
 		// 	var liveHubs = 0;
