@@ -14,26 +14,55 @@
 					1: "<b>Stopping cyber crime starts with you.</b>",
 					2: "At this moment, hackers are attempting to disable vital Government security systems in your area.",
 					3: "If they succeed, millions of lives could be at risk.",
-					4: '<div id="nextButton">OK</div>'
+					//4: '<div id="nextButton">OK</div>'
+					button: {
+						txt: 'OK',
+						id: 'nextButton',
+						onClick: 'nextIntroScreen'
+						// clickEvent: function(){
+						// 	msg(intro[team].screen2);
+						// }
+					}
 				},
 				'screen2': {
 					1: "Use this app to detect the mobile activity of suspected hackers nearby.",
-					2: "Sensitive security sites are marked in blue. You must intercept the hackers before they disable these sites.",
+					2: "Sensitive security sites are marked in blue. <b>Intercept all hackers before they disable these sites.</b>",
 					3: "Get within 20 meters of an active suspect to lock their device and stop their attacks.",
-					4: '<div id="nextButton">GO</div>'
+					//4: '<div id="nextButton">GO</div>'
+					button: {
+						txt: 'GO',
+						id: 'nextButton',
+						onClick: 'introComplete'
+						// clickEvent: function(){
+						// 	$('#app').trigger('introComplete');
+						// }
+					}
 				}
 			},
 			'ins': {
 				'screen1': {
 					1: "Big Data is Watching You.",
 					2: "Government and corporate surveillance systems constantly monitor the most intimate details of our lives.",
-					3: '<div id="nextButton">It\'s time to fight back.</div>'
+					//3: '<div id="nextButton">It\'s time to fight back.</div>'
+					button: {
+						txt: "It's time to fight back",
+						id: 'nextButton',
+						onClick: 'nextIntroScreen'
+					}
 				},
 				'screen2': {
 					1: "This app enables you to detect nearby surveillance sites with your mobile device.",
-					2: "If you get close enough, you can hack these sites and disrupt their data collection.",
-					3: "Be careful, though: using your phone may enable Government Operatives to track you down.",
-					4: '<div id="nextButton">START</div>'
+					2: "If you get close enough, you can hack these sites. <b>Hacking <u>at least 3 sites</u> will disrupt government data collection.</b>",
+					3: "BE CAREFUL: When your phone is active, you reveal your position to Government Operatives.",
+					//4: '<div id="nextButton">START</div>'
+					button: {
+						txt: 'START',
+						id: 'nextButton',
+						onClick: 'introComplete'
+						// clickEvent: function(){
+						// 	$('#app').trigger('introComplete');
+						// }
+					}
 				}
 			}
 		}
@@ -429,12 +458,6 @@
 				}
 			}
 
-			// for (u in users) {
-			// 	if (users[u].team == t) {
-			// 		existingTeamMembers++;
-			// 	}
-			// }
-
 			log('Team size is ' + existingTeamMembers, colors.standout);
 			return existingTeamMembers;
 		},
@@ -449,6 +472,19 @@
 				}
 			});
 			return liveHubs;
+		},
+
+		get liveInsCount() {
+			var count = 0;
+
+			for (p in state.players){
+				if (p.team == 'ins' && !p.lockedOut){
+					count++;
+				}
+			}
+			log('Live ins count is ' + count);
+			return count;
+
 		},
 
 		//startingHubs: this.liveHubCount,

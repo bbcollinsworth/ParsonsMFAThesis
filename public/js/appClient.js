@@ -55,12 +55,34 @@ var app = {
 			var intro = this.content; //clientState.intro.content;
 			var team = player.team;
 			msg(intro[team].screen1);
-			$('#nextButton').off('click').on('click', function() {
-				msg(intro[team].screen2);
-				$('#nextButton').off('click').on('click', function() {
-					$('#app').trigger('introComplete');
-				});
+			// $('#nextButton').off('click').on('click', function() {
+			// 	msg(intro[team].screen2);
+			// 	$('#nextButton').off('click').on('click', function() {
+			// 		$('#app').trigger('introComplete');
+			// 	});
+			// });
+
+			viz.popup({
+				1: "Alert text",
+				button: {
+					txt: 'OK',
+					id: 'alertBtn',
+					onClick: 'closePopup'
+				}
 			});
+		}
+	},
+
+	btnEvents: {
+		nextIntroScreen: function() {
+			var intro = app.intro.content[player.team];
+			msg(intro.screen2);
+		},
+		introComplete: function() {
+			$('#app').trigger('introComplete');
+		},
+		closePopup: function(){
+			$('.popup-alert').addClass('popup-invisible');
 		}
 	},
 
@@ -117,9 +139,8 @@ var app = {
 		if (!clientState.socketEventsAttached) {
 			clientState.socketEventsAttached = true;
 
-			//INCOMING SOCKET FUNCTIONS ==> defined in main.js
-			//app.socketEvents();
-			socket.on('serverMsg', app.handleSocketMsg);
+			//should this be cleared?
+			socket.off('serverMsg').on('serverMsg', app.handleSocketMsg);
 
 			//ONCE EVENTS ATTACHED, TELL SERVER WE'RE LISTENING
 			emit('clientListening', {});
@@ -264,7 +285,9 @@ app.handleSocketMsg = function(res, err) {
 		},
 
 		agentCloseWarning: function() {
-			window.alert("WARNING: State agents within " + res.distance + " meters. Minimize phone use to avoid detection!");
+			popup("WARNING: State agents within " + res.distance + " meters. Minimize phone use to avoid detection!");
+
+			// window.alert("WARNING: State agents within " + res.distance + " meters. Minimize phone use to avoid detection!");
 		},
 
 		lockoutAlert: function() {
@@ -375,13 +398,19 @@ app.handleSocketMsg = function(res, err) {
 			}
 		},
 
-		insWon: function(){
+		insWon: function() {
 			window.alert("Security network down. The hackers have won!");
+		},
+
+		govWon: function() {
+			window.alert("All hackers neutralized. The state has won!");
 		}
 
 	};
 
 	handle[res.tag]();
+	//does this help prevent double-messages?
+	//res = {};
 
 };
 

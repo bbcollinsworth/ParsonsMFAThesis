@@ -8,7 +8,11 @@ var viz = {
 	geoPrompt: {
 		shouldRefresh: false,
 		fillMsg: function(msgObj, tryRefresh) {
-			msgObj['btn'] = '<div id="locTestButton">Detect Location</div>';
+			//msgObj['btn'] = '<div id="locTestButton">Detect Location</div>';
+			msgObj['button'] = {
+				id: 'locTestButton',
+				txt: 'Detect Location'
+			};
 
 			msg(msgObj, 'setup');
 
@@ -60,7 +64,7 @@ var viz = {
 					window.location.reload();
 				} else {
 
-					viz.enableFullScreen();
+					//viz.enableFullScreen();
 
 					emit('geoTestStart', {
 						timestamp: Date.now()
@@ -121,18 +125,191 @@ var viz = {
 				document.documentElement.webkitRequestFullscreen(Element.ALLOW_KEYBOARD_INPUT);
 			}
 		}
-		//else {
-		// 	if (document.exitFullscreen) {
-		// 		document.exitFullscreen();
-		// 	} else if (document.msExitFullscreen) {
-		// 		document.msExitFullscreen();
-		// 	} else if (document.mozCancelFullScreen) {
-		// 		document.mozCancelFullScreen();
-		// 	} else if (document.webkitExitFullscreen) {
-		// 		document.webkitExitFullscreen();
-		// 	}
-		// }
+
 	},
+	// btnEvents: {
+	// 	nextIntroScreen: function(){
+	// 		msg(app.intro[player.team].screen2);
+	// 	},
+	// 	introComplete: function(){
+	// 		$('#app').trigger('introComplete');
+	// 	}
+	// },
+	makeMessage: function(text, msgType) {
+		//var madeMessage = "";
+		var made = {
+			message: "" //,
+		}
+
+		var attr = {
+			'popup': {
+				'defaultButton': {
+					'class': 'popup-button',
+					'txt': 'OK',
+					'onClick': 'closePopup'
+				}
+			},
+			'header': {
+
+			}
+		};
+
+		var isString = function() {
+			if (typeof text === 'string' || text instanceof String) {
+				return true;
+			} else {
+				return false;
+			}
+		}
+
+		if (isString()) {
+			made.message = '<p>' + text + '</p>';
+
+		} else {
+			for (line in text) {
+				if (line === 'button') {
+
+				} else {
+					made.message += '<p>' + text[line] + '</p>';
+				}
+			}
+		}
+
+		var makeButton = function(buttonInfo) {
+
+			var idString = "";
+			var classString = "";
+			var elToAttachEvent = "";
+
+			if ('class' in buttonInfo) {
+				classString = 'class="' + buttonInfo.class;
+				elToAttachEvent = '.' + buttonInfo.class;
+			} else {
+				classString = 'class="' + msgType + '-button"';
+				elToAttachEvent = '.' + msgType + '-button"';
+			}
+
+			if ('id' in buttonInfo) {
+				idString = 'id="' + buttonInfo.id + '"';
+				elToAttachEvent = '#' + buttonInfo.id;
+			}
+
+			made.message += '<div ' + idString + ' ' + classString + '>' + buttonInfo.txt + '</div>';
+
+			if ('onClick' in buttonInfo) {
+				made.event = {
+					element: elToAttachEvent,
+					fnName: buttonInfo.onClick
+				};
+			}
+
+		};
+
+		if (!isString() && ('button' in text)) {
+			makeButton(text.button);
+		} else if (msgType in attr) {
+			if ('defaultButton' in attr[msgType]) {
+				makeButton(attr[msgType].defaultButton);
+			}
+
+		}
+
+		console.log("Message to Show is: ");
+		console.log(made);
+		return made;
+	},
+	attachMsgEvents: function(eventInfo) {
+		console.log("Button in object: attaching event!");
+
+		$(eventInfo.element).off('click').on('click', app.btnEvents[eventInfo.fnName]);
+
+	},
+	headerMessage: function(text, styling) {
+
+		var msgHTML = viz.makeMessage(text, 'header');
+
+		$('#alertBodyText').html(msgHTML.message);
+
+		if ('event' in msgHTML) {
+			viz.attachMsgEvents(msgHTML.event);
+		}
+
+		viz.headerStyles.update(styling);
+
+		if (('headerToggle' in app) && styling !== viz.headerStyles.current) {
+			app.headerToggle.forceExpand();
+		}
+
+		viz.headerStyles.current = styling;
+
+	},
+	popup: function(text, styling) {
+		var multiLine = false;
+		if (typeof text === 'object' || text instanceof Object) {
+			multiLine = true;
+		}
+
+		var msgHTML = viz.makeMessage(text, 'popup');
+
+		// if (!multiLine){
+
+		// }
+
+		var renderedAlert = $('<div />', {
+			'class': 'popup-alert popup-invisible',
+			//'id':
+			'html': msgHTML.message //'<p>Alert content</p><div id="popupButton">OK</div>'
+		});
+		$('#container').append(renderedAlert);
+
+		$(renderedAlert).removeClass('popup-invisible').addClass('popup-visible');
+
+		if ('event' in msgHTML) {
+			viz.attachMsgEvents(msgHTML.event);
+		}
+
+		// var attachDefaultClosePopup = function() {
+		// 	viz.attachMsgEvents({
+		// 		txt: 'OK',
+		// 		id: 'alertBtn',
+		// 		onClick: 'closePopup'
+		// 	});
+		// }
+
+
+		// //NO NO -- NEED AUTOMATIC BUTTON ATTACH FOR SINGLE OR MULTI WITH NO BUTTON
+		// if (multiLine) {
+		// 	if ('button' in text) {
+		// 		viz.attachMsgEvents(text.button);
+		// 	} else {
+		// 		//attachDefaultClosePopup();
+		// 	}
+		// } else {
+		// 	attachDefaultClosePopup();
+		// }
+
+		//$('#alertBodyText').html(msgHTML);
+
+		// viz.headerStyles.update(styling);
+
+		// if (('headerToggle' in app) && styling !== viz.headerStyles.current) {
+		// 	app.headerToggle.forceExpand();
+		// }
+
+		// viz.headerStyles.current = styling;
+	},
+	// popup: {
+	// 	create: function() {
+
+	// 	},
+	// 	show: function() {
+	// 		var renderedAlert = $('<div />', {
+	// 			'class': 'popup-alert',
+	// 			'html': '<p>Alert content</p><div id="popupButton">OK</div>'
+	// 		});
+	// 		$('#container').append(renderedAlert);
+	// 	}
+	// },
 	//initHeaderUI
 	headerStyles: {
 		'current': "normal",

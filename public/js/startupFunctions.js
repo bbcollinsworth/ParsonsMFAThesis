@@ -18,14 +18,19 @@ var convertTimestamp = function(t, withSeconds) {
 	return formattedTime;
 };
 
-var customLog = function(message) {
+var customLog = function(msg, err) {
 
+	var message = msg;
+	if (typeof msg === 'object') {
+		message = $.extend({}, msg);
+	}
+	var logSource = "";
 	//Attempt to generate error for stack trace, unless that's not supported
 	try {
 		var stack = new Error().stack;
 		var parsedStack = stack.toString().split("at ")[2].split("/");
 		//logSource = logSource.split("/");
-		var logSource = " ( " + parsedStack[parsedStack.length - 1] + " )";
+		logSource = " ( " + parsedStack[parsedStack.length - 1] + " )";
 
 		if (typeof message === 'object') {
 			console.log(message);
@@ -33,43 +38,59 @@ var customLog = function(message) {
 		} else {
 			console.log(message + logSource);
 		}
-	} catch (err) {
+	} catch (error) {
 		console.log(message);
 	}
 
 	//var isJSONstring = true;
 
-	var safeStringify = function(object) {
-		var isJSONstring = true;
-		try {
-			return {
-				content: JSON.stringify(object),
-				JSONstring: isJSONstring
-			};
-		} catch (error) {
+	var safeStringify = function(obj) {
+		var isJSONstring = false;
+		var contentToReturn = "";
+		if (typeof obj === 'string' || obj === undefined) {
+			//console.log('this is a string or undefined!');
+			contentToReturn = obj;
+		} else if (typeof obj === 'object') {
+			//console.log('this is an object!');
 			isJSONstring = true;
-			console.log("Stringify error:");
-			console.log(error);
-			var simpleObject = {};
-			for (var prop in object) {
-				if (!object.hasOwnProperty(prop)) {
-					continue;
-				}
-				if (typeof(object[prop]) == 'object') {
-					continue;
-				}
-				if (typeof(object[prop]) == 'function') {
-					continue;
-				}
-				simpleObject[prop] = object[prop].toString();
+			try {
+				contentToReturn = JSON.stringify(obj); //,
+				// 	JSONstring: isJSONstring
+				// };
+			} catch (error) {
+				//isJSONstring = true;
+				console.log("Stringify error:");
+				console.log(error);
+				var simpleObject = {};
+				for (var prop in obj) {
+					if (!obj.hasOwnProperty(prop)) {
+						continue;
+					}
+					if (typeof(obj[prop]) == 'object') {
+						continue;
+					}
+					if (typeof(obj[prop]) == 'function') {
+						continue;
+					}
+					simpleObject[prop] = obj[prop]; //.toString();
 
+				}
+				contentToReturn = JSON.stringify(simpleObject);
+				// return {
+				// 	content JSON.stringify(simpleObject),
+				// 	JSONstring: isJSONstring
+				// };
 			}
-			return {
-				content: JSON.stringify(simpleObject),
-				JSONstring: isJSONstring
-			};
 			//return JSON.stringify(simpleObject); // returns cleaned up JSON
+		} else if (obj !== undefined){
+			//console.log('this is not an object!');
+			contentToReturn = obj.toString();
 		}
+
+		return {
+			content: contentToReturn,
+			JSONstring: isJSONstring
+		};
 	};
 
 	var safeLog = safeStringify(message);
@@ -81,7 +102,8 @@ var customLog = function(message) {
 			content: safeLog.content,
 			stringified: safeLog.JSONstring,
 			time: convertTimestamp(Date.now(), true),
-			trace: logSource
+			trace: logSource,
+			isError: err
 		});
 	}
 };
@@ -93,7 +115,11 @@ var startup = {
 		initLeafletExtensions();
 
 		//
-		window.scrollTo(0,1);
+		//window.scrollTo(0,1);
+
+		window.onerror = function(errorMsg, url, lineNumber, column, errorObj) {
+			customLog('/////////***ERROR***///////: ' + errorMsg + ' Script: ' + url + ' Line: ' + lineNumber + ' StackTrace: ' + errorObj, true);
+		};
 
 		//custom map function
 		Math.map = function(varToMap, varMin, varMax, mapToMin, mapToMax, clamp) {
@@ -142,28 +168,30 @@ var startup = {
 
 		$('#mobileHeader').trigger('create');
 
-		window.msg = function(text, styling) {
+		window.msg = viz.headerMessage;
+		window.popup = viz.popop;
+		// function(text, styling) {
 
-			var msgHTML = "";
+		// 	var msgHTML = "";
 
-			if (typeof text === 'string' || text instanceof String) {
-				msgHTML = '<p>' + text + '</p>';
-			} else {
-				for (line in text) {
-					msgHTML += '<p>' + text[line] + '</p>';
-				}
-			}
+		// 	if (typeof text === 'string' || text instanceof String) {
+		// 		msgHTML = '<p>' + text + '</p>';
+		// 	} else {
+		// 		for (line in text) {
+		// 			msgHTML += '<p>' + text[line] + '</p>';
+		// 		}
+		// 	}
 
-			$('#alertBodyText').html(msgHTML);
+		// 	$('#alertBodyText').html(msgHTML);
 
-			viz.headerStyles.update(styling);
+		// 	viz.headerStyles.update(styling);
 
-			if (('headerToggle' in app) && styling !== viz.headerStyles.current) {
-				app.headerToggle.forceExpand();
-			}
+		// 	if (('headerToggle' in app) && styling !== viz.headerStyles.current) {
+		// 		app.headerToggle.forceExpand();
+		// 	}
 
-			viz.headerStyles.current = styling;
-		};
+		// 	viz.headerStyles.current = styling;
+		// };
 
 		window.footerMsg = function(text, styling) {
 			var msgHTML = "";

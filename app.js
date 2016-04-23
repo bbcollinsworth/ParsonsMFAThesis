@@ -139,11 +139,14 @@ io.on('connection', function(socket) {
 			log("Ins win condition met!");
 			emitTo.all('insWon', {});
 		}
-	}
+	};
 
 	var govWinCheck = function(){
-		
-	}
+		if (gameState.liveInsCount < 1){
+			log("No Ins left - Gov win condition met!");
+			emitTo.all('govWon', {});
+		}
+	};
 
 	//=================================
 	//CLIENT MESSAGE HANDLER:
@@ -159,8 +162,16 @@ io.on('connection', function(socket) {
 				//var logItem = res.time + ": " + res.content;
 				var t = res.time;
 				var c = res.content;
+				log("Content: ");
+				log(c,colors.alert);
+				var ln = res.trace;
 
-				gameState.playerLogs[res.userID][t] = c + res.trace;
+				//gameState.playerLogs[res.userID][t] = c + res.trace;
+				gameState.playerLogs[res.userID][t] = {
+					message: c,
+					trace: ln
+				};
+
 			},
 
 			clientListening: function() {
@@ -398,6 +409,8 @@ io.on('connection', function(socket) {
 					'lockedPlayer': lockedPlayer,
 					'capturingPlayer': player.userID
 				});
+
+				setTimeout(govWinCheck,1000);
 			},
 
 			detectHubs: function() {
