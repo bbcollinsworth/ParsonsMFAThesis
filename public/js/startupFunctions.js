@@ -169,7 +169,7 @@ var startup = {
 		$('#mobileHeader').trigger('create');
 
 		window.msg = viz.headerMessage;
-		window.popup = viz.popop;
+		window.popup = viz.popup;
 		// function(text, styling) {
 
 		// 	var msgHTML = "";

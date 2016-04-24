@@ -7,12 +7,17 @@ var viz = {
 	},
 	geoPrompt: {
 		shouldRefresh: false,
+		button: {
+			id: 'locTestButton',
+			txt: 'Detect Location'
+		},
 		fillMsg: function(msgObj, tryRefresh) {
 			//msgObj['btn'] = '<div id="locTestButton">Detect Location</div>';
-			msgObj['button'] = {
-				id: 'locTestButton',
-				txt: 'Detect Location'
-			};
+			msgObj['button'] = viz.geoPrompt.button;
+			// {
+			// 	id: 'locTestButton',
+			// 	txt: 'Detect Location'
+			// };
 
 			msg(msgObj, 'setup');
 
@@ -127,19 +132,12 @@ var viz = {
 		}
 
 	},
-	// btnEvents: {
-	// 	nextIntroScreen: function(){
-	// 		msg(app.intro[player.team].screen2);
-	// 	},
-	// 	introComplete: function(){
-	// 		$('#app').trigger('introComplete');
-	// 	}
-	// },
+
 	makeMessage: function(text, msgType) {
 		//var madeMessage = "";
 		var made = {
 			message: "" //,
-		}
+		};
 
 		var attr = {
 			'popup': {
@@ -154,26 +152,14 @@ var viz = {
 			}
 		};
 
+		//INTERNAL FUNCTIONS =====================
 		var isString = function() {
 			if (typeof text === 'string' || text instanceof String) {
 				return true;
 			} else {
 				return false;
 			}
-		}
-
-		if (isString()) {
-			made.message = '<p>' + text + '</p>';
-
-		} else {
-			for (line in text) {
-				if (line === 'button') {
-
-				} else {
-					made.message += '<p>' + text[line] + '</p>';
-				}
-			}
-		}
+		};
 
 		var makeButton = function(buttonInfo) {
 
@@ -181,12 +167,15 @@ var viz = {
 			var classString = "";
 			var elToAttachEvent = "";
 
+			var setClass = function(btnClass){
+				classString = 'class="' + btnClass + '"';
+				elToAttachEvent = '.' + btnClass;
+			};
+
 			if ('class' in buttonInfo) {
-				classString = 'class="' + buttonInfo.class;
-				elToAttachEvent = '.' + buttonInfo.class;
+				setClass(buttonInfo.class);
 			} else {
-				classString = 'class="' + msgType + '-button"';
-				elToAttachEvent = '.' + msgType + '-button"';
+				setClass(msgType+'-button');
 			}
 
 			if ('id' in buttonInfo) {
@@ -204,11 +193,27 @@ var viz = {
 			}
 
 		};
+		//===========================================
+		//MESSAGE MAKING PROCESS:
+
+		if (isString()) {
+			made.message = '<p>' + text + '</p>';
+		} else {
+			for (line in text) {
+				if (line === 'button') {
+					//skip
+				} else {
+					made.message += '<p>' + text[line] + '</p>';
+				}
+			}
+		}
 
 		if (!isString() && ('button' in text)) {
 			makeButton(text.button);
 		} else if (msgType in attr) {
+			console.log("Type " + msgType + " found!");
 			if ('defaultButton' in attr[msgType]) {
+				console.log("Adding default button for " + msgType);
 				makeButton(attr[msgType].defaultButton);
 			}
 
@@ -222,6 +227,28 @@ var viz = {
 		console.log("Button in object: attaching event!");
 
 		$(eventInfo.element).off('click').on('click', app.btnEvents[eventInfo.fnName]);
+
+	},
+	popup: function(text, styling) {
+		var multiLine = false;
+		if (typeof text === 'object' || text instanceof Object) {
+			multiLine = true;
+		}
+
+		var msgHTML = viz.makeMessage(text, 'popup');
+
+		var renderedAlert = $('<div />', {
+			'class': 'popup-alert popup-invisible',
+			//'id':
+			'html': msgHTML.message //'<p>Alert content</p><div id="popupButton">OK</div>'
+		});
+		$('#container').append(renderedAlert);
+
+		$(renderedAlert).removeClass('popup-invisible').addClass('popup-visible');
+
+		if ('event' in msgHTML) {
+			viz.attachMsgEvents(msgHTML.event);
+		}
 
 	},
 	headerMessage: function(text, styling) {
@@ -243,74 +270,6 @@ var viz = {
 		viz.headerStyles.current = styling;
 
 	},
-	popup: function(text, styling) {
-		var multiLine = false;
-		if (typeof text === 'object' || text instanceof Object) {
-			multiLine = true;
-		}
-
-		var msgHTML = viz.makeMessage(text, 'popup');
-
-		// if (!multiLine){
-
-		// }
-
-		var renderedAlert = $('<div />', {
-			'class': 'popup-alert popup-invisible',
-			//'id':
-			'html': msgHTML.message //'<p>Alert content</p><div id="popupButton">OK</div>'
-		});
-		$('#container').append(renderedAlert);
-
-		$(renderedAlert).removeClass('popup-invisible').addClass('popup-visible');
-
-		if ('event' in msgHTML) {
-			viz.attachMsgEvents(msgHTML.event);
-		}
-
-		// var attachDefaultClosePopup = function() {
-		// 	viz.attachMsgEvents({
-		// 		txt: 'OK',
-		// 		id: 'alertBtn',
-		// 		onClick: 'closePopup'
-		// 	});
-		// }
-
-
-		// //NO NO -- NEED AUTOMATIC BUTTON ATTACH FOR SINGLE OR MULTI WITH NO BUTTON
-		// if (multiLine) {
-		// 	if ('button' in text) {
-		// 		viz.attachMsgEvents(text.button);
-		// 	} else {
-		// 		//attachDefaultClosePopup();
-		// 	}
-		// } else {
-		// 	attachDefaultClosePopup();
-		// }
-
-		//$('#alertBodyText').html(msgHTML);
-
-		// viz.headerStyles.update(styling);
-
-		// if (('headerToggle' in app) && styling !== viz.headerStyles.current) {
-		// 	app.headerToggle.forceExpand();
-		// }
-
-		// viz.headerStyles.current = styling;
-	},
-	// popup: {
-	// 	create: function() {
-
-	// 	},
-	// 	show: function() {
-	// 		var renderedAlert = $('<div />', {
-	// 			'class': 'popup-alert',
-	// 			'html': '<p>Alert content</p><div id="popupButton">OK</div>'
-	// 		});
-	// 		$('#container').append(renderedAlert);
-	// 	}
-	// },
-	//initHeaderUI
 	headerStyles: {
 		'current': "normal",
 		update: function(style) {
@@ -319,7 +278,8 @@ var viz = {
 			var refresh = function(styleKey, removeOrAdd) {
 				var classTypes = {
 					'boxClass': '#alertBox',
-					'controlClass': '#alertBoxControl'
+					'controlClass': '#alertBoxControl',
+					'buttonClass': '.header-button'
 				};
 
 				for (key in classTypes) {
@@ -346,15 +306,17 @@ var viz = {
 				switch (player.team) {
 					case 'gov':
 						return {
-							controlClass: 'ui-alt-icon'
+							//boxClass: 'gov-default-alert',
+							controlClass: 'ui-alt-icon',
+							buttonClass: 'gov-header-button'
 						};
 					default:
 						return {};
 				}
 			},
-				'setup': {
-					boxClass: 'setup-alert',
-					controlClass: 'control-hidden'
+			'setup': {
+				boxClass: 'setup-alert',
+				controlClass: 'control-hidden'
 			},
 			'intro': {
 				controlClass: 'control-hidden'

@@ -17,7 +17,7 @@
 					//4: '<div id="nextButton">OK</div>'
 					button: {
 						txt: 'OK',
-						id: 'nextButton',
+						//id: 'nextButton',
 						onClick: 'nextIntroScreen'
 						// clickEvent: function(){
 						// 	msg(intro[team].screen2);
@@ -31,7 +31,7 @@
 					//4: '<div id="nextButton">GO</div>'
 					button: {
 						txt: 'GO',
-						id: 'nextButton',
+						//id: 'nextButton',
 						onClick: 'introComplete'
 						// clickEvent: function(){
 						// 	$('#app').trigger('introComplete');
@@ -46,7 +46,7 @@
 					//3: '<div id="nextButton">It\'s time to fight back.</div>'
 					button: {
 						txt: "It's time to fight back",
-						id: 'nextButton',
+						//id: 'nextButton',
 						onClick: 'nextIntroScreen'
 					}
 				},
@@ -57,7 +57,7 @@
 					//4: '<div id="nextButton">START</div>'
 					button: {
 						txt: 'START',
-						id: 'nextButton',
+						//id: 'nextButton',
 						onClick: 'introComplete'
 						// clickEvent: function(){
 						// 	$('#app').trigger('introComplete');

@@ -1,6 +1,6 @@
 var app = {
 	settings: {
-		autoCapture: true,
+		autoCapture: false,
 		debugMode: true
 	},
 
@@ -31,8 +31,9 @@ var app = {
 	},
 
 	addStyling: {
+		//why here and not in viz.headerstyles?
 		gov: function() {
-
+			$('#alertBox').addClass('gov-alert-styling');
 		},
 		ins: function() {
 			$('#app').addClass('ins-app-styling');
@@ -62,14 +63,15 @@ var app = {
 			// 	});
 			// });
 
-			viz.popup({
-				1: "Alert text",
-				button: {
-					txt: 'OK',
-					id: 'alertBtn',
-					onClick: 'closePopup'
-				}
-			});
+			popup("Alert text");
+			// popup({
+			// 	1: "Alert text",
+			// 	button: {
+			// 		txt: 'OK',
+			// 		id: 'alertBtn',
+			// 		onClick: 'closePopup'
+			// 	}
+			// });
 		}
 	},
 
@@ -358,7 +360,9 @@ app.handleSocketMsg = function(res, err) {
 					break;
 				case 1:
 					//THIS SHOULD NOT have if test
-					window.alert("WARNING: A security hub is under attack.");
+					popup("WARNING: A security hub is under attack.");
+
+					// window.alert("WARNING: A security hub is under attack.");
 					hub.alerts.lvl1 = true;
 					break;
 				default:
