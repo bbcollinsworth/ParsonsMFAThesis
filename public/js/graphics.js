@@ -143,8 +143,10 @@ var viz = {
 			'popup': {
 				'defaultButton': {
 					'class': 'popup-button',
+					'id': 'popupButton' + viz.popupCount,
 					'txt': 'OK',
-					'onClick': 'closePopup'
+					'onClick': 'closePopup',
+					'args': '#popupID' + viz.popupCount
 				}
 			},
 			'header': {
@@ -167,15 +169,15 @@ var viz = {
 			var classString = "";
 			var elToAttachEvent = "";
 
-			var setClass = function(btnClass){
-				classString = 'class="' + btnClass + '"';
+			var setClass = function(btnClass) {
+				classString = 'class="' + btnClass + ' '+ btnClass + '-'+ player.team + '"';
 				elToAttachEvent = '.' + btnClass;
 			};
 
 			if ('class' in buttonInfo) {
 				setClass(buttonInfo.class);
 			} else {
-				setClass(msgType+'-button');
+				setClass(msgType + '-button'); //+ viz.popupCount);
 			}
 
 			if ('id' in buttonInfo) {
@@ -190,6 +192,9 @@ var viz = {
 					element: elToAttachEvent,
 					fnName: buttonInfo.onClick
 				};
+				if ('args' in buttonInfo) {
+					made.event.args = buttonInfo.args;
+				}
 			}
 
 		};
@@ -226,21 +231,28 @@ var viz = {
 	attachMsgEvents: function(eventInfo) {
 		console.log("Button in object: attaching event!");
 
-		$(eventInfo.element).off('click').on('click', app.btnEvents[eventInfo.fnName]);
+		$(eventInfo.element).off('click').on('click', function() {
+			app.btnEvents[eventInfo.fnName](eventInfo.args);
+		});
 
 	},
+	popupCount: 0,
 	popup: function(text, styling) {
-		var multiLine = false;
-		if (typeof text === 'object' || text instanceof Object) {
-			multiLine = true;
-		}
+
+		//this.teamStyle = {
+		teamStyle = {
+			'gov': 'popup-gov',
+			'ins': 'popup-ins'
+		};
+
+		viz.popupCount += 1;
 
 		var msgHTML = viz.makeMessage(text, 'popup');
 
 		var renderedAlert = $('<div />', {
-			'class': 'popup-alert popup-invisible',
-			//'id':
-			'html': msgHTML.message //'<p>Alert content</p><div id="popupButton">OK</div>'
+			'class': 'popup-alert popup-invisible ' + teamStyle[player.team],
+			'id': 'popupID' + viz.popupCount,
+			'html': '<div class="popup-icon popup-icon-'+player.team+'">!</div>'+msgHTML.message //'<p>Alert content</p><div id="popupButton">OK</div>'
 		});
 		$('#container').append(renderedAlert);
 
@@ -314,9 +326,9 @@ var viz = {
 						return {};
 				}
 			},
-			'setup': {
-				boxClass: 'setup-alert',
-				controlClass: 'control-hidden'
+				'setup': {
+					boxClass: 'setup-alert',
+					controlClass: 'control-hidden'
 			},
 			'intro': {
 				controlClass: 'control-hidden'
@@ -413,7 +425,7 @@ var viz = {
 		agent: {
 			'marker-size': 'medium',
 			'marker-symbol': 'police',
-			'marker-color': '#0000ff',
+			'marker-color': '#00003c',
 			'className': 'agent-marker'
 		}
 	},

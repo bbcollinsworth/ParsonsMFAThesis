@@ -203,7 +203,7 @@ var ins = {
 
 		if (d > ins.targetHub.attackRange) {
 			//update this with mobile alerts
-			window.alert("Out of range. Hack interrupted!");
+			popup("Out of range. Hack interrupted!");
 			//clearInterval(ins.hubHackInterval);
 
 			emit('playerLeftHubRange', {

@@ -64,14 +64,6 @@ var app = {
 			// });
 
 			popup("Alert text");
-			// popup({
-			// 	1: "Alert text",
-			// 	button: {
-			// 		txt: 'OK',
-			// 		id: 'alertBtn',
-			// 		onClick: 'closePopup'
-			// 	}
-			// });
 		}
 	},
 
@@ -83,8 +75,12 @@ var app = {
 		introComplete: function() {
 			$('#app').trigger('introComplete');
 		},
-		closePopup: function(){
-			$('.popup-alert').addClass('popup-invisible');
+		closePopup: function(popupID){
+			$(popupID).addClass('popup-invisible').removeClass('popup-visible');
+			setTimeout(function(){
+				$(popupID).remove();
+			},2000);
+			//$('.popup-alert').addClass('popup-invisible');
 		}
 	},
 
@@ -247,7 +243,7 @@ app.handleSocketMsg = function(res, err) {
 			customLog("My lockout State is: " + res.playerLockedOut);
 			if (res.playerLockedOut) {
 				customLog('lockout Alert received');
-				//window.alert("FAILURE: State Agents have locked your device!");
+				//popup("FAILURE: State Agents have locked your device!");
 				ins.renderLockout();
 			} else if (!res.playStarted) {
 				app.intro.run('ins');
@@ -289,12 +285,12 @@ app.handleSocketMsg = function(res, err) {
 		agentCloseWarning: function() {
 			popup("WARNING: State agents within " + res.distance + " meters. Minimize phone use to avoid detection!");
 
-			// window.alert("WARNING: State agents within " + res.distance + " meters. Minimize phone use to avoid detection!");
+			// popup("WARNING: State agents within " + res.distance + " meters. Minimize phone use to avoid detection!");
 		},
 
 		lockoutAlert: function() {
 			customLog('lockout Alert received');
-			window.alert("FAILURE: State Agents have locked your device!");
+			popup("FAILURE: State Agents have locked your device!");
 			ins.renderLockout();
 		},
 
@@ -310,12 +306,12 @@ app.handleSocketMsg = function(res, err) {
 						customLog("Locking out player: ");
 						customLog(players[lP.userID]);
 						setTimeout(function() {
-							window.alert("UPDATE: A suspect has been successfully neutralized.");
+							popup("UPDATE: A suspect has been successfully neutralized.");
 							gov.ui.attachPingEvents();
 						}, 750);
 						break;
 					case "ins":
-						window.alert("ALERT: A fellow hacker has been neutralized.");
+						popup("ALERT: A fellow hacker has been neutralized.");
 						break;
 					default:
 						break;
@@ -354,7 +350,7 @@ app.handleSocketMsg = function(res, err) {
 			switch (hub.alertState) {
 				case 3:
 					if (!hub.alerts.lvl3) {
-						window.alert("WARNING: Security hub attack 50% complete.");
+						popup("WARNING: Security hub attack 50% complete.");
 						hub.alerts.lvl3 = true;
 					}
 					break;
@@ -362,7 +358,7 @@ app.handleSocketMsg = function(res, err) {
 					//THIS SHOULD NOT have if test
 					popup("WARNING: A security hub is under attack.");
 
-					// window.alert("WARNING: A security hub is under attack.");
+					// popup("WARNING: A security hub is under attack.");
 					hub.alerts.lvl1 = true;
 					break;
 				default:
@@ -393,21 +389,21 @@ app.handleSocketMsg = function(res, err) {
 					downHub.update(res.hub);
 					downHub.stopFlash();
 					//downHub.shutDown(); //moved into stopflash
-					window.alert("Hackers have taken down a security hub!");
+					popup("Hackers have taken down a security hub!");
 					break;
 				case "ins":
 				default:
-					window.alert("SUCCESS: A surveillance site has been hacked!");
+					popup("SUCCESS: A surveillance site has been hacked!");
 					break;
 			}
 		},
 
 		insWon: function() {
-			window.alert("Security network down. The hackers have won!");
+			popup("Security network down. The hackers have won!");
 		},
 
 		govWon: function() {
-			window.alert("All hackers neutralized. The state has won!");
+			popup("All hackers neutralized. The state has won!");
 		}
 
 	};
