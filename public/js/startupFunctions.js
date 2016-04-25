@@ -148,12 +148,6 @@ var startup = {
 				//originalObj[key] = propsToUpdateObj[key];
 			}
 		};
-		// window.myExtend = function(originalObj, propsToUpdateObj) {
-		// 	for (key in propsToUpdateObj) {
-
-		// 		originalObj[key] = propsToUpdateObj[key];
-		// 	}
-		// };
 
 		window.reverseForIn = function(obj, f) {
 			var arr = [];
@@ -170,28 +164,6 @@ var startup = {
 
 		window.msg = viz.headerMessage;
 		window.popup = viz.popup;
-		// function(text, styling) {
-
-		// 	var msgHTML = "";
-
-		// 	if (typeof text === 'string' || text instanceof String) {
-		// 		msgHTML = '<p>' + text + '</p>';
-		// 	} else {
-		// 		for (line in text) {
-		// 			msgHTML += '<p>' + text[line] + '</p>';
-		// 		}
-		// 	}
-
-		// 	$('#alertBodyText').html(msgHTML);
-
-		// 	viz.headerStyles.update(styling);
-
-		// 	if (('headerToggle' in app) && styling !== viz.headerStyles.current) {
-		// 		app.headerToggle.forceExpand();
-		// 	}
-
-		// 	viz.headerStyles.current = styling;
-		// };
 
 		window.footerMsg = function(text, styling) {
 			var msgHTML = "";
@@ -325,7 +297,7 @@ var startup = {
 				storage.clear();
 				customLog("ID older than server start time found; cleared localStorage to: ");
 				customLog(storage);
-				window.location.reload();
+				//window.location.reload();
 			} else {
 				for (var i in allIDs) {
 					if (storage.userID == allIDs[i]) {
