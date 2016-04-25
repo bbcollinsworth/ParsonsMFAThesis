@@ -239,9 +239,9 @@ var clientState = {
 				//console.log('Ready test called for localStorage but no test.');
 			},
 			errorReturn: {
-				set: function(key, val) {
+				setItem: function(key, val) {
 					try {
-						localStorage.set(key, value);
+						localStorage.setItem(key, value);
 					} catch (error) {
 						console.log("Local Storage error: ");
 						console.log(error);
