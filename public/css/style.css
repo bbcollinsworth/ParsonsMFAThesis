@@ -143,6 +143,7 @@
 }
 
 #alertBox.gov-alert-styling {
+	background: rgba(255,255,255,0.7) url("cssImages/NSAlogo.png") no-repeat center;
 	color: rgba(0,0,60,0.7);
 }
 

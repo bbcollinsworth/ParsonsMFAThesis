@@ -162,8 +162,8 @@ io.on('connection', function(socket) {
 				//var logItem = res.time + ": " + res.content;
 				var t = res.time;
 				var c = res.content;
-				log("Content: ");
-				log(c,colors.alert);
+				//log("Content: ");
+				//log(c,colors.alert);
 				var ln = res.trace;
 
 				//gameState.playerLogs[res.userID][t] = c + res.trace;
@@ -210,6 +210,9 @@ io.on('connection', function(socket) {
 					log("No error msg from client on GeoTestResult");
 					if (typeof res.playerPos.lat === 'number') {
 						resultEval = 'success';
+						player.locationData.unshift(res.playerPos);
+						log("With GeoTest success, player Location updated to: ", colors.bgGreen);
+						log(player.locationData);
 					} else {
 						resultEval = 'failUnknown';
 					}

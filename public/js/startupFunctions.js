@@ -214,13 +214,13 @@ var startup = {
 		var thisHash = location.hash;
 		msg('Hash is ' + thisHash);
 		var parsedHash = thisHash.split("&");
-		parsedHash[0] = parsedHash[0].slice(1, 100);
-		msg('Parsed hash is ' + parsedHash[0] + ', ' + parsedHash[1]);
-		customLog("Hash:");
-		customLog(parsedHash[0]);
+		teamHash = parsedHash[0].slice(1, 2);
+		msg('Parsed hash is ' + teamHash + ', ' + parsedHash[1]);
+		customLog("Hash is:");
+		customLog(teamHash);
 		customLog(parsedHash[1]);
 
-		teamHash = parsedHash[0];
+		//teamHash = parsedHash[0];
 		uniqueHash = parsedHash[1];
 		//NEED TO DO LOCALSTORAGE CHECK
 		if (clientState.features.localstorage.supported) {

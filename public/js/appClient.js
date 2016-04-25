@@ -56,14 +56,8 @@ var app = {
 			var intro = this.content; //clientState.intro.content;
 			var team = player.team;
 			msg(intro[team].screen1);
-			// $('#nextButton').off('click').on('click', function() {
-			// 	msg(intro[team].screen2);
-			// 	$('#nextButton').off('click').on('click', function() {
-			// 		$('#app').trigger('introComplete');
-			// 	});
-			// });
 
-			popup("Alert text");
+			//popup("Alert text");
 		}
 	},
 

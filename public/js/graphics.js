@@ -11,7 +11,7 @@ var viz = {
 			id: 'locTestButton',
 			txt: 'Detect Location'
 		},
-		fillMsg: function(msgObj, tryRefresh) {
+		fillMsg: function(msgObj){//, tryRefresh) {
 			//msgObj['btn'] = '<div id="locTestButton">Detect Location</div>';
 			msgObj['button'] = viz.geoPrompt.button;
 			// {
@@ -21,7 +21,7 @@ var viz = {
 
 			msg(msgObj, 'setup');
 
-			this.attachTestEvents(tryRefresh);
+			this.attachTestEvents();//tryRefresh);
 		},
 		render: {
 			initial: function() {
@@ -47,7 +47,7 @@ var viz = {
 				viz.geoPrompt.fillMsg({
 					1: "<span class=\"setup-header\">ERROR: </span>Geolocation is currently <b>blocked</b> for this website or browser. Please go into the browser's settings and <b>allow geolocation</b>, then test again.",
 					2: "<span class=\"setup-header\">If you're using an iPHONE:</span>Go to SETTINGS > PRIVACY > LOCATION SERVICES and set this browser to 'while using.'"
-				}, true);
+				});//, true);
 			},
 		},
 		sendTestResult: function(eMsg, eCode) {
@@ -61,7 +61,7 @@ var viz = {
 			}
 			emit('geoTestResult', rObj);
 		},
-		attachTestEvents: function(refresh) {
+		attachTestEvents: function() {//refresh) {
 			$('#locTestButton').off('click').on('click', function() {
 
 				if (viz.geoPrompt.shouldRefresh) {
@@ -216,7 +216,7 @@ var viz = {
 		if (!isString() && ('button' in text)) {
 			makeButton(text.button);
 		} else if (msgType in attr) {
-			console.log("Type " + msgType + " found!");
+			//console.log("Type " + msgType + " found!");
 			if ('defaultButton' in attr[msgType]) {
 				console.log("Adding default button for " + msgType);
 				makeButton(attr[msgType].defaultButton);
@@ -224,8 +224,8 @@ var viz = {
 
 		}
 
-		console.log("Message to Show is: ");
-		console.log(made);
+		// console.log("Message to Show is: ");
+		// console.log(made);
 		return made;
 	},
 	attachMsgEvents: function(eventInfo) {
