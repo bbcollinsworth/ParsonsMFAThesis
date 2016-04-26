@@ -34,6 +34,7 @@ var app = {
 		//why here and not in viz.headerstyles?
 		gov: function() {
 			$('#alertBox').addClass('gov-alert-styling');
+			$('#headerBackdrop').addClass('gov-backdrop');
 		},
 		ins: function() {
 			$('#app').addClass('ins-app-styling');

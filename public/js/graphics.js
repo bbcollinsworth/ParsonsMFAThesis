@@ -237,6 +237,7 @@ var viz = {
 
 	},
 	popupCount: 0,
+	popupBaseZ: 5000,
 	popup: function(text, styling) {
 
 		//this.teamStyle = {
@@ -252,7 +253,10 @@ var viz = {
 		var renderedAlert = $('<div />', {
 			'class': 'popup-alert popup-invisible ' + teamStyle[player.team],
 			'id': 'popupID' + viz.popupCount,
-			'html': '<div class="popup-icon popup-icon-'+player.team+'">!</div>'+msgHTML.message //'<p>Alert content</p><div id="popupButton">OK</div>'
+			'html': '<div class="popup-icon popup-icon-'+player.team+'">!</div>'+msgHTML.message, //'<p>Alert content</p><div id="popupButton">OK</div>'
+			'css': {
+				'z-index': viz.popupBaseZ-viz.popupCount
+			}
 		});
 		$('#container').append(renderedAlert);
 

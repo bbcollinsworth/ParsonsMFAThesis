@@ -124,7 +124,7 @@
 #alertBox.ui-collapsible-content {
 	//font-family: 'Open Sans',sans-serif;
 	font-weight: 400;
-	background-color: rgba(255,255,255,0.7);
+	background-color: rgba(255,255,255,0.75);
 	box-shadow: 10px 0px 30px 0px rgba(0,0,0,0.3);
 	text-shadow: none;
 	border: 0px;
@@ -142,9 +142,19 @@
 	font-weight: bold;
 }
 
+#headerBackdrop {
+
+}
+
+/*#headerBackdrop*/ 
+.gov-backdrop {
+	background: url("cssImages/NSAlogo.png") no-repeat center;
+	opacity: 1;
+}
+
 #alertBox.gov-alert-styling {
-	background: rgba(255,255,255,0.7) url("cssImages/NSAlogo.png") no-repeat center;
-	color: rgba(0,0,60,0.7);
+	/*background: rgba(255,255,255,0.7) url("cssImages/NSAlogo.png") no-repeat center;*/
+	color: rgba(0,0,60,0.9);
 }
 
 #alertBox.ins-alert-styling {

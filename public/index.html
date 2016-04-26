@@ -32,13 +32,16 @@
   <div data-role="page" id="app">
     <div id="map"></div>
     <div data-role="header" id="mobileHeader" data-position="fixed" data-inset="false" data-fullscreen="false" data-tap-toggle="false">
-      <div id ="alertBox" class="header-inner">
-      <!-- <div id ="alertBox" data-role="collapsible" data-collapsed="false" data-transition="slidedown" data-inset="true" data-iconpos="right"> -->
-        <!-- <h1 id="alertPopoutText">&nbsp;</h1> -->
-        <div id="alertPopoutSpace">
-          <!-- <div id="alertBoxControl" class="alert-control ui-btn ui-corner-all ui-icon-carat-d ui-btn-icon-notext ui-nodisc-icon ui-alt-icon"></div> -->
+      <div id="headerBackdrop" class="header-backdrop">
+        <div id ="alertBox" class="header-inner">
+
+          <!-- <div id ="alertBox" data-role="collapsible" data-collapsed="false" data-transition="slidedown" data-inset="true" data-iconpos="right"> -->
+          <!-- <h1 id="alertPopoutText">&nbsp;</h1> -->
+          <div id="alertPopoutSpace">
+            <!-- <div id="alertBoxControl" class="alert-control ui-btn ui-corner-all ui-icon-carat-d ui-btn-icon-notext ui-nodisc-icon ui-alt-icon"></div> -->
+          </div>
+          <div id="alertBodyText">Alert Text</div>
         </div>
-        <div id="alertBodyText">Alert Text</div>
       </div>
     </div>
 
@@ -54,7 +57,7 @@
   </div> 
 
   <script type="text/javascript" src="/socket.io/socket.io.js"></script>
-   <script type="text/javascript" src="js/leaflet.smoothmarkerbouncing.js" /></script>
+  <script type="text/javascript" src="js/leaflet.smoothmarkerbouncing.js" /></script>
   <script type="text/javascript" src="js/leafletExtends.js"></script>
   <script type="text/javascript" src="js/clientState.js"></script>
   <script type="text/javascript" src="js/startupFunctions.js"></script>
