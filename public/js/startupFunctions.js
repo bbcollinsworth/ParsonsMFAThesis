@@ -244,11 +244,13 @@ var startup = {
 				storage.clear();
 				customLog("ID older than server start time found; cleared localStorage to: ");
 				customLog(storage);
-				window.location.reload();
+				//window.location.reload();
 			} else {
 				clientState.firstConnectTime = Date.now();
-				app.attachSocketEvents(); //(cb);
+				//app.attachSocketEvents(); //(cb);
 			}
+
+			app.attachSocketEvents();
 		});
 
 	},
