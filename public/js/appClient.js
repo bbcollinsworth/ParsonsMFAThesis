@@ -39,6 +39,7 @@ var app = {
 		ins: function() {
 			$('#app').addClass('ins-app-styling');
 			$('#alertBox').addClass('ins-alert-styling');
+			$('#headerBackdrop').addClass('ins-backdrop');
 		}
 
 	},

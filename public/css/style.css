@@ -108,13 +108,7 @@
 	margin: auto;
 }
 
-#nextButton {
-	background-color: gray;
-	padding: 0.4em;
-	color: white;
-	font-size: 1.5em;
-	margin: auto;
-}
+
 
 .ui-collapsible-heading {
 	text-align: left;
@@ -124,7 +118,7 @@
 #alertBox.ui-collapsible-content {
 	//font-family: 'Open Sans',sans-serif;
 	font-weight: 400;
-	background-color: rgba(255,255,255,0.75);
+	background-color: rgba(255,255,255,0.8);
 	box-shadow: 10px 0px 30px 0px rgba(0,0,0,0.3);
 	text-shadow: none;
 	border: 0px;
@@ -143,13 +137,23 @@
 }
 
 #headerBackdrop {
-
+	//position: absolute;
+	//top: 0;
+	//left: 0;
+	//min-width: 100%;
+	//min-height: 100%;
+	//opacity: 0.2;
+	//pointer-events: none;
 }
 
 /*#headerBackdrop*/ 
 .gov-backdrop {
 	background: url("cssImages/NSAlogo.png") no-repeat center;
-	opacity: 1;
+	//opacity: 1;
+}
+
+.ins-backdrop {
+	background: url("cssImages/insBackdropTransp.png") no-repeat center;
 }
 
 #alertBox.gov-alert-styling {
@@ -159,7 +163,7 @@
 
 #alertBox.ins-alert-styling {
 	color: white;
-	background-color: rgba(0,0,0,0.8);
+	background-color: rgba(0,0,0,0.5);
 	font-weight: 100;
 }
 
