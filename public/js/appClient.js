@@ -1,6 +1,6 @@
 var app = {
 	settings: {
-		autoCapture: true,
+		autoCapture: false,
 		debugMode: true
 	},
 
