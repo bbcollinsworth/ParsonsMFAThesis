@@ -24,10 +24,35 @@ var app = {
 		//CATCH IF NOT FIRED IN GEOLOC READY-TEST
 		app.trackLocation();
 		app.addStyling[player.team]();
+		app.loadAudio();
 
 		emit('readyToPlay', {
 			svcCheckComplete: true
 		});
+
+	},
+
+	loadAudio: function() {
+		var setToLoad = viz.audio[player.team];
+		for (file in setToLoad) {
+			customLog("Loading audio: " + setToLoad[file].url);
+			setToLoad[file].ready = false;
+			var audioDOM = $('<audio />', {
+				'preload': "auto",
+				'src': setToLoad[file].url,
+				'id': setToLoad[file].id,
+				'class': setToLoad[file].class | 'audio-element'
+			});
+
+			$('#container').append(audioDOM);
+
+			setToLoad[file].domEl = document.getElementById(setToLoad[file].id);
+
+			setToLoad[file].domEl.oncanplaythrough = function() {
+				console.log("Audio " + setToLoad[file].id + " ready to play!");
+				setToLoad[file].ready = true;
+			};
+		}
 	},
 
 	addStyling: {
@@ -71,12 +96,46 @@ var app = {
 		introComplete: function() {
 			$('#app').trigger('introComplete');
 		},
-		closePopup: function(popupID){
+		closePopup: function(popupID) {
 			$(popupID).addClass('popup-invisible').removeClass('popup-visible');
-			setTimeout(function(){
+			setTimeout(function() {
 				$(popupID).remove();
-			},2000);
+			}, 2000);
 			//$('.popup-alert').addClass('popup-invisible');
+		},
+		showAudioMessage: function(toPlay, clicked) {
+
+			app.btnEvents.closePopup(clicked.parent());
+
+			var randomDelay = 500 + Math.random() * 1000;
+
+			setTimeout(function() {
+				if (toPlay in viz.audio[player.team]) {
+					popup(viz.audioPopup(viz.audio[player.team][toPlay]));
+				} else {
+					customLog("Error: Audio file instructed by server not available for play");
+				}
+			},randomDelay);
+
+		},
+		playAudio: function(audioObj, clicked) {
+
+			var thisAudio = audioObj.domEl;
+			if (audioObj.ready) {
+				console.log("audio " + audioObj.id + " ready to play - playing!");
+				thisAudio.play();
+
+				app.btnEvents.closePopup(clicked.parent());
+			} else {
+				customLog("audio not ready");
+				$(clicked).html("Loading...");
+
+				thisAudio.oncanplaythrough = function() {
+					customLog("now audio ready - playing");
+					thisAudio.play();
+					app.btnEvents.closePopup(clicked.parent());
+				};
+			}
 		}
 	},
 
@@ -290,6 +349,14 @@ app.handleSocketMsg = function(res, err) {
 			ins.renderLockout();
 		},
 
+		// playMessage: function() {
+		// 	if (res.toPlay in viz.audio[player.team]) {
+		// 		popup(viz.audioPopup(viz.audio[player.team][res.toPlay]));
+		// 	} else {
+		// 		customLog("Error: Audio file instructed by server not available for play");
+		// 	}
+		// },
+
 		playerLockoutsUpdate: function() {
 			var lP = res.lockedPlayer;
 			var players = clientState.allPlayers;
@@ -302,7 +369,22 @@ app.handleSocketMsg = function(res, err) {
 						customLog("Locking out player: ");
 						customLog(players[lP.userID]);
 						setTimeout(function() {
-							popup("UPDATE: A suspect has been successfully neutralized.");
+
+							var popBtn = {
+								'txt': 'OK',
+								onClick: 'closePopup'
+							};
+
+							if (res.lockedSuspects == 1) {
+								popBtn.onClick = 'showAudioMessage';
+								popBtn.args = 'file1';
+							}
+
+							popup({
+								1: "UPDATE: <br />A suspect has been successfully neutralized.",
+								'button': popBtn
+							});
+
 							gov.ui.attachPingEvents();
 						}, 750);
 						break;

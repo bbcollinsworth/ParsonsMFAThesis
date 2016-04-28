@@ -1,5 +1,30 @@
 var viz = {
 
+	audio: {
+		'gov': {
+			'file1': {
+				'url': 'audio/GovMsg1.mp3',
+				'id': '#GovMsg1',
+				'played': false
+			}
+		},
+		'ins': {
+
+		}
+	},
+	audioPopup: function(fileToPlay) {
+		var msgObj = {
+			1: "You have a new message.",
+			2: "<i>(Put on headphones or turn up speaker.)</i>",
+			'button': {
+				txt: 'LISTEN',
+				onClick: 'playAudio',
+				args: fileToPlay
+			}
+		};
+
+		return msgObj;
+	},
 	hide: function(elToHide) {
 		$(elToHide).css({
 			'display': 'none'
@@ -11,17 +36,13 @@ var viz = {
 			id: 'locTestButton',
 			txt: 'Detect Location'
 		},
-		fillMsg: function(msgObj){//, tryRefresh) {
+		fillMsg: function(msgObj) { //, tryRefresh) {
 			//msgObj['btn'] = '<div id="locTestButton">Detect Location</div>';
 			msgObj['button'] = viz.geoPrompt.button;
-			// {
-			// 	id: 'locTestButton',
-			// 	txt: 'Detect Location'
-			// };
 
 			msg(msgObj, 'setup');
 
-			this.attachTestEvents();//tryRefresh);
+			this.attachTestEvents(); //tryRefresh);
 		},
 		render: {
 			initial: function() {
@@ -47,7 +68,7 @@ var viz = {
 				viz.geoPrompt.fillMsg({
 					1: "<span class=\"setup-header\">ERROR: </span>Geolocation is currently <b>blocked</b> for this website or browser. Please go into the browser's settings and <b>allow geolocation</b>, then test again.",
 					2: "<span class=\"setup-header\">If you're using an iPHONE:</span>Go to SETTINGS > PRIVACY > LOCATION SERVICES and set this browser to 'while using.'"
-				});//, true);
+				}); //, true);
 			},
 		},
 		sendTestResult: function(eMsg, eCode) {
@@ -61,7 +82,7 @@ var viz = {
 			}
 			emit('geoTestResult', rObj);
 		},
-		attachTestEvents: function() {//refresh) {
+		attachTestEvents: function() { //refresh) {
 			$('#locTestButton').off('click').on('click', function() {
 
 				if (viz.geoPrompt.shouldRefresh) {
@@ -142,6 +163,7 @@ var viz = {
 		var attr = {
 			'popup': {
 				'defaultButton': {
+					'alwaysAttach': true,
 					'class': 'popup-button',
 					'id': 'popupButton' + viz.popupCount,
 					'txt': 'OK',
@@ -170,7 +192,7 @@ var viz = {
 			var elToAttachEvent = "";
 
 			var setClass = function(btnClass) {
-				classString = 'class="' + btnClass + ' '+ btnClass + '-'+ player.team + '"';
+				classString = 'class="' + btnClass + ' ' + btnClass + '-' + player.team + '"';
 				elToAttachEvent = '.' + btnClass;
 			};
 
@@ -213,15 +235,18 @@ var viz = {
 			}
 		}
 
+		var buttonMade = false;
 		if (!isString() && ('button' in text)) {
 			makeButton(text.button);
+			buttonMade = true;
 		} else if (msgType in attr) {
 			//console.log("Type " + msgType + " found!");
 			if ('defaultButton' in attr[msgType]) {
+				//if (attr[msgType].defaultButton.alwaysAttach || !buttonMade){
 				console.log("Adding default button for " + msgType);
 				makeButton(attr[msgType].defaultButton);
-			}
 
+			}
 		}
 
 		// console.log("Message to Show is: ");
@@ -232,7 +257,8 @@ var viz = {
 		console.log("Button in object: attaching event!");
 
 		$(eventInfo.element).off('click').on('click', function() {
-			app.btnEvents[eventInfo.fnName](eventInfo.args);
+			//will this be ok?
+			app.btnEvents[eventInfo.fnName](eventInfo.args,$(this));
 		});
 
 	},
@@ -253,9 +279,9 @@ var viz = {
 		var renderedAlert = $('<div />', {
 			'class': 'popup-alert popup-invisible ' + teamStyle[player.team],
 			'id': 'popupID' + viz.popupCount,
-			'html': '<div class="popup-icon popup-icon-'+player.team+'">!</div>'+msgHTML.message, //'<p>Alert content</p><div id="popupButton">OK</div>'
+			'html': '<div class="popup-icon popup-icon-' + player.team + '">!</div>' + msgHTML.message, //'<p>Alert content</p><div id="popupButton">OK</div>'
 			'css': {
-				'z-index': viz.popupBaseZ-viz.popupCount
+				'z-index': viz.popupBaseZ - viz.popupCount
 			}
 		});
 		$('#container').append(renderedAlert);

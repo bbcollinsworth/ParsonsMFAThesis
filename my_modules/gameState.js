@@ -477,7 +477,8 @@
 		get liveInsCount() {
 			var count = 0;
 
-			for (p in state.players){
+			for (var i in state.players){
+				var p = state.players[i];
 				if (p.team == 'ins' && !p.lockedOut){
 					count++;
 				}
@@ -485,6 +486,19 @@
 			log('Live ins count is ' + count);
 			return count;
 
+		},
+
+		get lockoutCount(){
+			var count = 0;
+
+			for (var i in state.players){
+				var p = state.players[i];
+				if (p.team == 'ins' && p.lockedOut){
+					count++;
+				}
+			}
+			log('Ins locked out count is ' + count);
+			return count;
 		},
 
 		//startingHubs: this.liveHubCount,

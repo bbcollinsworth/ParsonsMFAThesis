@@ -246,7 +246,7 @@ var gov = {
 	ui: {
 		text: {
 			'ping': {
-				1: "Press the button below for latest locations of active suspects + fellow citizens. (Locations will only update when targets are using mobile devices.)",
+				1: "Press the button below for latest locations of active suspects + allies. (Locations will only update when targets are using mobile devices.)",
 				2: "<b>Get within 20 meters of an active suspect to lock their mobile device.</b>"
 			},
 			'capturing': "Active suspect in range!<br />Locking their device...",

@@ -47,6 +47,10 @@
 	background-color: rgba(0,0,0,0.7);
 }
 
+.audio-element {
+	display: none;
+}
+
 
 #mobileHeader, #mobileFooter {
 	width: inherit;
@@ -268,6 +272,7 @@
 }
 
 .popup-button-gov {
+	text-transform: uppercase;
 	background-color: white;
 	color: rgba(0,0,60,0.8);
 }

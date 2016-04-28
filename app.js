@@ -141,11 +141,17 @@ io.on('connection', function(socket) {
 		}
 	};
 
-	var govWinCheck = function(){
-		if (gameState.liveInsCount < 1){
+	var govWinCheck = function() {
+		if (gameState.liveInsCount < 1) {
 			log("No Ins left - Gov win condition met!");
 			emitTo.all('govWon', {});
-		}
+		} //else 
+
+		// if (gameState.lockoutCount == 1) {
+		// 	emitTo.team('gov', 'playMessage', {
+		// 		toPlay: 'file1'
+		// 	});
+		// }
 	};
 
 	//=================================
@@ -254,6 +260,8 @@ io.on('connection', function(socket) {
 					newID: player.userID,
 					team: player.team
 				});
+
+				//var check = gameState.liveInsCount;
 
 			},
 
@@ -410,10 +418,12 @@ io.on('connection', function(socket) {
 
 				emitTo.all('playerLockoutsUpdate', {
 					'lockedPlayer': lockedPlayer,
-					'capturingPlayer': player.userID
+					'capturingPlayer': player.userID,
+					'liveSuspects': gameState.liveInsCount,
+					'lockedSuspects': gameState.lockoutCount
 				});
 
-				setTimeout(govWinCheck,1000);
+				setTimeout(govWinCheck, 1000);
 			},
 
 			detectHubs: function() {
@@ -455,7 +465,7 @@ io.on('connection', function(socket) {
 							liveHubsLeft: hubsLeft
 						});
 
-						setTimeout(insWinCheck,1000);
+						setTimeout(insWinCheck, 1000);
 					}, 1000);
 
 				} else {
