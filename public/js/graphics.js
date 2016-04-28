@@ -6,10 +6,24 @@ var viz = {
 				'url': 'audio/GovMsg1.mp3',
 				'id': '#GovMsg1',
 				'played': false
+			},
+			'file2': {
+				'url': 'audio/GovMsg2.mp3',
+				'id': '#GovMsg2',
+				'played': false
 			}
 		},
 		'ins': {
-
+			'file1': {
+				'url': 'audio/InsMsg1.mp3',
+				'id': '#InsMsg1',
+				'played': false
+			},
+			'file2': {
+				'url': 'audio/InsMsg2.mp3',
+				'id': '#InsMsg2',
+				'played': false
+			}
 		}
 	},
 	audioPopup: function(fileToPlay) {

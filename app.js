@@ -462,7 +462,9 @@ io.on('connection', function(socket) {
 							hubName: attackedHub.name,
 							hubID: attackedHub.id,
 							hubIndex: res.hubIndex,
-							liveHubsLeft: hubsLeft
+							liveHubsLeft: hubsLeft,
+							hubsHacked: gameState.hackedHubCount,
+							hackTarget: gameState.settings.hubDownTarget
 						});
 
 						setTimeout(insWinCheck, 1000);

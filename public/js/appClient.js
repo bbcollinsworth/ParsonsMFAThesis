@@ -1,6 +1,6 @@
 var app = {
 	settings: {
-		autoCapture: false,
+		autoCapture: true,
 		debugMode: true
 	},
 
@@ -115,26 +115,38 @@ var app = {
 				} else {
 					customLog("Error: Audio file instructed by server not available for play");
 				}
-			},randomDelay);
+			}, randomDelay);
 
 		},
 		playAudio: function(audioObj, clicked) {
 
 			var thisAudio = audioObj.domEl;
 			if (audioObj.ready) {
-				console.log("audio " + audioObj.id + " ready to play - playing!");
+				customLog("audio " + audioObj.id + " ready to play - playing!");
 				thisAudio.play();
 
 				app.btnEvents.closePopup(clicked.parent());
 			} else {
-				customLog("audio not ready");
+				customLog("Play called but audio not ready");
 				$(clicked).html("Loading...");
 
+				var abortAudio = setTimeout(function() {
+					$(clicked).html("Load failed.");
+					setTimeout(function() {
+						app.btnEvents.closePopup(clicked.parent());
+					}, 2000);
+				}, 20000);
+
+				customLog("Attempting to load audio after play called");
+				thisAudio.load();
 				thisAudio.oncanplaythrough = function() {
+					clearTimeout(abortAudio);
 					customLog("now audio ready - playing");
 					thisAudio.play();
 					app.btnEvents.closePopup(clicked.parent());
 				};
+
+
 			}
 		}
 	},
@@ -378,6 +390,9 @@ app.handleSocketMsg = function(res, err) {
 							if (res.lockedSuspects == 1) {
 								popBtn.onClick = 'showAudioMessage';
 								popBtn.args = 'file1';
+							} else if (res.liveSuspects == 1) {
+								popBtn.onClick = 'showAudioMessage';
+								popBtn.args = 'file2';
 							}
 
 							popup({
@@ -461,6 +476,8 @@ app.handleSocketMsg = function(res, err) {
 		},
 
 		hubDown: function() {
+			//HACKY!!!
+			clientState.hubsHacked++;
 			switch (player.team) {
 				case "gov":
 					var downHub = app.getHubByName(res.hub.name);
@@ -470,9 +487,30 @@ app.handleSocketMsg = function(res, err) {
 					popup("Hackers have taken down a security hub!");
 					break;
 				case "ins":
-				default:
-					popup("SUCCESS: A surveillance site has been hacked!");
+
+
+					console.log("Data from server");
+					console.log(res);
+
+					var popBtn = {
+						'txt': 'OK',
+						onClick: 'closePopup'
+					};
+
+					if (clientState.hubsHacked == 1) {
+						customLog("Setting hacked popup to show first audio");
+						popBtn.onClick = 'showAudioMessage';
+						popBtn.args = 'file1';
+					} else if ((res.hackTarget - clientState.hubsHacked) == 1) {
+						popBtn.onClick = 'showAudioMessage';
+						popBtn.args = 'file2';
+					}
+					popup({
+						1: "SUCCESS: A surveillance site has been hacked!",
+						'button': popBtn
+					});
 					break;
+				default:
 			}
 		},
 

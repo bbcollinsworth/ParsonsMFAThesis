@@ -1,4 +1,5 @@
 var clientState = {
+	hubsHacked: 0,
 	settings: app.settings,
 	connected: false,
 	mapLoaded: false,

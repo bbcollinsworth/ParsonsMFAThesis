@@ -4,7 +4,7 @@
 	var playSettings = {
 		hubDownTarget: 3,
 		trackIntervalS: 3,
-		hackTimeM: 3.0,
+		hackTimeM: 3.0,//3.0,
 		trailDurationM: 2,
 		dataSkipInterval: 3,
 		teamPickMethod: 'insIfNoHash', //'alternate',
@@ -472,6 +472,20 @@
 				}
 			});
 			return liveHubs;
+		},
+
+		get hackedHubCount() {
+			var hackedHubs = 0;
+			hubs.forEach(function(hub) {
+				//for (var h in hubs) {
+				if (hub.live) {
+					//if (hubs[h].live) {
+					
+				} else {
+					hackedHubs++;
+				}
+			});
+			return hackedHubs;
 		},
 
 		get liveInsCount() {
