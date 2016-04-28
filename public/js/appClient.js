@@ -16,7 +16,7 @@ var app = {
 		clientState.initialized = true;
 		viz.hide('#footerText');
 
-		msg("Server and map initialized.");
+		msg("Initialized.<br /><i>Refresh window if no progress after 10 seconds.</i>");
 		emit('clientInitialized', {});
 	},
 

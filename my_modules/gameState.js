@@ -4,7 +4,7 @@
 	var playSettings = {
 		hubDownTarget: 3,
 		trackIntervalS: 3,
-		hackTimeM: 3.0,//3.0,
+		hackTimeM: 3.0,
 		trailDurationM: 2,
 		dataSkipInterval: 3,
 		teamPickMethod: 'insIfNoHash', //'alternate',
