@@ -1,5 +1,19 @@
 var viz = {
 
+	mainStyling: {
+		'gov': {
+			'#app':'gov-app-styling',
+			'#alertBox':'gov-alert-styling',
+			'#headerBackdrop':'gov-backdrop',
+			'#mobileFooter': 'gov-footer'
+		},
+		'ins': {
+			'#app':'ins-app-styling',
+			'#alertBox':'ins-alert-styling',
+			'#headerBackdrop':'ins-backdrop'
+		}
+	},
+
 	audio: {
 		'gov': {
 			'file1': {
@@ -400,13 +414,47 @@ var viz = {
 		}
 	},
 
+	makeFooter: function(){
+		viz.helpButton.create();
+		viz.scoreDisplay.create();
+	},
+
 	helpButton: {
 		id: '#helpMenuHeader',
-		create: function(){
+		create: function() {
+			var b = $('<div />', {
+				'html': "<span>Help</span>",
+				'id': "helpMenuHeader",
+				'class': "footer-button"
+			});
+			$('#mobileFooter').append(b);
 
+			viz.helpButton.attachEvents();
 		},
-		attachEvents: function(){
-			$(viz.helpButton.id).off('click').on('click',viz.helpScreen.show);
+		attachEvents: function() {
+			$(viz.helpButton.id).off('click').on('click', viz.helpScreen.show);
+		}
+	},
+
+	scoreDisplay: {
+		id: '#score',
+		text: {
+			'gov': 'Neutralized: <span id="scoreCount">0</span>',
+			'ins': 'Sites hacked: <span id="scoreCount">0</span>'//\/<span id="scoreTotal"></span>'
+		},
+		create: function(){
+			var t = viz.scoreDisplay.text[player.team];
+			var b = $('<div />', {
+				'html': "<span>"+t+"</span>",
+				'id': "score",
+				'class': "footer-button"
+			});
+
+			$('#mobileFooter').append(b);
+		},
+		update: function(newScore) {
+			customLog("Updating score to: " + newScore);
+			$('#scoreCount').text(newScore);
 		}
 	},
 
@@ -425,35 +473,60 @@ var viz = {
 				'search': {
 					type: 'help-img-key',
 					imgClass: 'search-icon',
-					text: 'Get latest locations (refreshes each time you press)'
+					text: 'Search Button: Tap to refresh locations of all active device users'
+				},
+				'hub': {
+					type: 'help-img-key',
+					imgClass: 'hub-icon',
+					text: 'Sensitive security sites that hackers may target'
+				},
+				'suspect': {
+					type: 'help-img-key',
+					imgClass: 'suspect-icon',
+					text: 'Location of suspected hacker (when hacker is using a device)'
+				},
+				'dark': {
+					type: 'help-img-key',
+					imgClass: 'dark-icon',
+					text: 'Last known location of suspects not currently using devices'
+				},
+				'agent': {
+					type: 'help-img-key',
+					imgClass: 'agent-icon',
+					text: 'Fellow agents and allies'
+				},
+				'locked': {
+					type: 'help-img-key',
+					imgClass: 'locked-icon',
+					text: 'Hackers who have already been neutralized'
 				}
 			},
 			'ins': {
 
 			}
 		},
-		create: function(){
+		create: function() {
 			var data = viz.helpScreen.info[player.team];
-			for (d in data){
+			for (d in data) {
 				console.log("ADDING ITEM " + d + " to helpScreen");
 				viz.helpScreen.addItem(data[d]);
 			}
 		},
-		addItem: function(info){
+		addItem: function(info) {
 			var itemTypes = {
-				'help-img-key': function(){
-					var i = '<div class="help-img ' + info.imgClass +'"></div>';
-					i+='<div class="helpText">' + info.text + '</div>';
+				'help-img-key': function() {
+					var i = '<div class="help-img ' + info.imgClass + '"></div>';
+					i += '<div class="help-text"><p>' + info.text + '</p></div>';
 
 					return i;
 				},
-				'help-text': function(){
-					return '<div class="helpText">' + info.text + '</div>';
+				'help-text': function() {
+					return '<div class="help-text"><p>' + info.text + '</p></div>';
 				}
 			};
 			//var itemObj = {};
 
-			var item=$("<div />",{
+			var item = $("<div />", {
 				'class': info.type,
 				'html': itemTypes[info.type]()
 			});
@@ -463,15 +536,15 @@ var viz = {
 
 			$(viz.helpScreen.textContainerID).append(item);
 		},
-		show: function(){
+		show: function() {
 			var e = viz.helpScreen.element;
 			e.addClass('help-visible').removeClass('help-invisible');
-			e.off('click').on('click',viz.helpScreen.hide);
+			e.off('click').on('click', viz.helpScreen.hide);
 		},
-		hide: function(){
+		hide: function() {
 			var e = viz.helpScreen.element;
 			e.addClass('help-invisible').removeClass('help-visible');
-		}//,
+		} //,
 		//toggle: function()
 	},
 
@@ -923,16 +996,16 @@ var viz = {
 		return h;
 	},
 
-	helpButton: function() {
-		var button = $("<div />", {
-			'class': "ui-btn basic-button help-btn help-btn-" + player.team,
-			'id': "helpButton",
-			'html': "<h3>?</h3>" //,
-		});
-		console.log("Created help button: ");
-		console.log(button);
-		return button;
-	},
+	// helpButtonNonFooter: function() {
+	// 	var button = $("<div />", {
+	// 		'class': "ui-btn basic-button help-btn help-btn-" + player.team,
+	// 		'id': "helpButton",
+	// 		'html': "<h3>?</h3>" //,
+	// 	});
+	// 	console.log("Created help button: ");
+	// 	console.log(button);
+	// 	return button;
+	// },
 
 	searchButton: function() {
 

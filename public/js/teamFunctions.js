@@ -313,6 +313,7 @@ var gov = {
 		$('#mobileFooter').prepend(pingButton);//,helpButton);
 
 		viz.helpScreen.create();
+		viz.makeFooter();
 
 		//app['ui']['headerToggle'] = viz.headerToggle.create('gov');
 		gov.ui['headerToggle'] = viz.headerToggle.create('gov');

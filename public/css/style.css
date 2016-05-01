@@ -322,13 +322,6 @@
 	display: inline-block;
 }
 
-.search-icon {
-	border-radius: 50%;
-	background-color: rgba(0,0,60,0.7);
-	background-repeat: no-repeat;
-	background-image: url("cssImages/GovEyeCustom.svg");
-	background-size: contain;
-}
 
 #svcChecklist .ui-collapsible-heading {
 	border-radius: 0px;
@@ -378,46 +371,103 @@
 	letter-spacing: 0.1em;
 }
 
-#helpOverlay {
-
+.gov-footer {
+	color: rgba(0,0,60,0.9);
 }
+
 
 #helpScreen {
 
+}
+
+.search-icon {
+	border-radius: 50%;
+	background-color: rgba(0,0,60,0.7);
+	background-repeat: no-repeat;
+	background-image: url("cssImages/GovEyeCustom.svg");
+	background-size: contain;
+	border: 2px solid white;
+	box-shadow: 0px 1px 5px 2px rgba(0,0,0,0.2);
+}
+
+.agent-icon {
+	background-color: rgba(0,0,60,0.7);
+	background-image: url("cssImages/police.svg");
+	border: 2px solid transparent;
+}
+
+.suspect-icon {
+	background-color: rgba(255,0,0,0.7);
+	background-image: url("cssImages/pitch.svg");
+	border: 2px solid transparent;
+}
+
+.dark-icon {
+	background-color: rgba(100,100,100,0.7);
+	background-image: url("cssImages/pitch.svg");
+	border: 2px solid transparent;
+}
+
+.hub-icon {
+	background-color: rgba(0,0,255,0.5);
+	border: 2px solid blue;
+}
+
+.locked-icon {
+	background-color: rgba(0,0,0,0.8);
+	border: 2px solid transparent;
+	background-image: url("cssImages/cross.svg");
 }
 
 .help-screen {
 	position: absolute;
 	width: inherit;
 	height: 100vh;
-	background: rgba(255,255,255,0.8);
+	/*background: rgba(255,255,255,0.8);*/
 	z-index: 10000;
+	transition-duration: 1s;
 }
 
 .help-body {
 	position: relative;
     top: 50%;
     transform: translateY(-50%);
-    padding: 2%;
+    background: rgba(255,255,255,0.9);
+    padding: 3%;
+    margin: 2%;
 }
 
 .help-visible {
+	top: 0vh;
 	opacity: 1;
 	pointer-events: auto;
 }
 
 .help-invisible {
+	top: 100vh;
 	opacity: 0;
 	pointer-events: none;
+}
+
+.help-img-key {
+		margin-top: 1em;
+	    margin-bottom: 1em;
+	    min-height: 2em;
 }
 
 .help-img {
 	width: 1.5em;
     height: 1.5em;
-    display: inline-block;
+    /*display: inline-block;*/
     margin-right: 1em;
-    transform: translateY(50%);
+    margin-bottom: 0.5em;
+    /*transform: translateY(50%);*/
+    border-radius: 50%;
+	background-repeat: no-repeat;
+	background-size: contain;
+	float: left;
 }
+
 
 .help-text {
 	text-align: left;

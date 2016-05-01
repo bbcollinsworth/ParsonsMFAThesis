@@ -23,7 +23,8 @@ var app = {
 	ready: function() {
 		//CATCH IF NOT FIRED IN GEOLOC READY-TEST
 		app.trackLocation();
-		app.addStyling[player.team]();
+		app.addStyling();
+		// app.addStyling[player.team]();
 		app.loadAudio();
 
 		emit('readyToPlay', {
@@ -55,20 +56,26 @@ var app = {
 		}
 	},
 
-	addStyling: {
-		//why here and not in viz.headerstyles?
-		gov: function() {
-			$('#app').addClass('gov-app-styling');
-			$('#alertBox').addClass('gov-alert-styling');
-			$('#headerBackdrop').addClass('gov-backdrop');
-		},
-		ins: function() {
-			$('#app').addClass('ins-app-styling');
-			$('#alertBox').addClass('ins-alert-styling');
-			$('#headerBackdrop').addClass('ins-backdrop');
+	addStyling: function(){
+		var styles = viz.mainStyling[player.team];
+		for (selector in styles){
+			$(selector).addClass(styles[selector]);
 		}
-
 	},
+	// {
+	// 	//why here and not in viz.headerstyles?
+	// 	gov: function() {
+	// 		$('#app').addClass('gov-app-styling');
+	// 		$('#alertBox').addClass('gov-alert-styling');
+	// 		$('#headerBackdrop').addClass('gov-backdrop');
+	// 	},
+	// 	ins: function() {
+	// 		$('#app').addClass('ins-app-styling');
+	// 		$('#alertBox').addClass('ins-alert-styling');
+	// 		$('#headerBackdrop').addClass('ins-backdrop');
+	// 	}
+
+	// },
 
 	getHubByName: function(name) {
 		for (var i in hubs) {
@@ -400,6 +407,10 @@ app.handleSocketMsg = function(res, err) {
 								1: "UPDATE: <br />A suspect has been successfully neutralized.",
 								'button': popBtn
 							});
+
+							//Should be more complicated -- store a score object server side
+							//and pass on player connection, then on any update
+							viz.scoreDisplay.update(res.lockedSuspects);
 
 							gov.ui.attachPingEvents();
 						}, 750);
