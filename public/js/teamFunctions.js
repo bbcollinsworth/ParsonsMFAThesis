@@ -246,7 +246,7 @@ var gov = {
 	ui: {
 		text: {
 			'ping': {
-				'special': '<span>Press <div id="textIconGov" class="icon-in-text"></div> below for latest locations of active suspects + allies. (Locations will only update when targets are using mobile devices.)</span><span><b>Get within 20 meters of an active suspect to lock their mobile device.</b></span>'
+				'special': '<span>Press <div id="textIconGov" class="icon-in-text search-icon"></div> below for latest locations of active suspects + allies. (Locations will only update when targets are using mobile devices.)</span><span><b>Get within 20 meters of an active suspect to lock their mobile device.</b></span>'
 				//2: "<b>Get within 20 meters of an active suspect to lock their mobile device.</b>"
 			},
 			'capturing': "Active suspect in range!<br />Locking their device...",
@@ -308,14 +308,17 @@ var gov = {
 		customLog("Rendering Gov UI");
 		viz.addSuspectContainer();
 
-		var helpButton = viz.helpButton();
+		//var helpButton = viz.helpButton();
 		var pingButton = viz.searchButton();
 		$('#mobileFooter').prepend(pingButton);//,helpButton);
+
+		viz.helpScreen.create();
 
 		//app['ui']['headerToggle'] = viz.headerToggle.create('gov');
 		gov.ui['headerToggle'] = viz.headerToggle.create('gov');
 		//store a reference for calling "Msg, etc"
 		app['headerToggle'] = gov.ui.headerToggle;
+		//app.headerToggle.forceExpand();
 		customLog('Added header toggle:');
 		console.log(gov.ui.headerToggle);
 		gov.ui['pingCircle'] = viz.pingCircle('pingCircleID'); //viz.addPingCircle();

@@ -251,11 +251,6 @@ var viz = {
 					default:
 						made.message += '<p>' + text[line] + '</p>';
 				}
-				// if (line === 'button') {
-				// 	//skip
-				// } else if (){
-				// 	made.message += '<p>' + text[line] + '</p>';
-				// }
 			}
 		}
 
@@ -405,6 +400,81 @@ var viz = {
 		}
 	},
 
+	helpButton: {
+		id: '#helpMenuHeader',
+		create: function(){
+
+		},
+		attachEvents: function(){
+			$(viz.helpButton.id).off('click').on('click',viz.helpScreen.show);
+		}
+	},
+
+	helpScreen: {
+		btn: "",
+		elID: '#helpScreen',
+		textContainerID: '#helpBody',
+		get element() {
+			return $(viz.helpScreen.elID);
+		},
+		get helpButton() {
+			return $('#helpMenuHeader');
+		},
+		info: {
+			'gov': {
+				'search': {
+					type: 'help-img-key',
+					imgClass: 'search-icon',
+					text: 'Get latest locations (refreshes each time you press)'
+				}
+			},
+			'ins': {
+
+			}
+		},
+		create: function(){
+			var data = viz.helpScreen.info[player.team];
+			for (d in data){
+				console.log("ADDING ITEM " + d + " to helpScreen");
+				viz.helpScreen.addItem(data[d]);
+			}
+		},
+		addItem: function(info){
+			var itemTypes = {
+				'help-img-key': function(){
+					var i = '<div class="help-img ' + info.imgClass +'"></div>';
+					i+='<div class="helpText">' + info.text + '</div>';
+
+					return i;
+				},
+				'help-text': function(){
+					return '<div class="helpText">' + info.text + '</div>';
+				}
+			};
+			//var itemObj = {};
+
+			var item=$("<div />",{
+				'class': info.type,
+				'html': itemTypes[info.type]()
+			});
+
+			console.log("Appending help item:");
+			console.log(item);
+
+			$(viz.helpScreen.textContainerID).append(item);
+		},
+		show: function(){
+			var e = viz.helpScreen.element;
+			e.addClass('help-visible').removeClass('help-invisible');
+			e.off('click').on('click',viz.helpScreen.hide);
+		},
+		hide: function(){
+			var e = viz.helpScreen.element;
+			e.addClass('help-invisible').removeClass('help-visible');
+		}//,
+		//toggle: function()
+	},
+
 	headerToggle: {
 		minClass: 'header-minimized',
 		expandIconClass: 'ui-icon-carat-d',
@@ -442,14 +512,16 @@ var viz = {
 			hT['icon'] = $('#alertBoxControl');
 
 			// hT.icon.off('click').on('click', function() {
-			$('#alertBox').off('click').on('click', function() {
+			setTimeout(function() {
+				$('#alertBox').off('click').on('click', function() {
 
-				if (hT.icon.hasClass(hT.expandIconClass)) {
-					hT.expand();
-				} else {
-					hT.contract();
-				}
-			});
+					if (hT.icon.hasClass(hT.expandIconClass)) {
+						hT.expand();
+					} else {
+						hT.contract();
+					}
+				});
+			}, 500);
 
 			return hT;
 		},

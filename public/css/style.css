@@ -308,18 +308,26 @@
 #alertBox span {
 	margin-top: 1em;
 	margin-bottom: 1em;
-    display: block;
+	display: block;
 }
 
 #textIconGov {
+/*	border-radius: 50%;
+	background-color: rgba(0,0,60,0.7);
+	background-repeat: no-repeat;
+	background-image: url("cssImages/GovEyeCustom.svg");
+	background-size: contain;*/
+	width: 1em;
+	height: 1em;
+	display: inline-block;
+}
+
+.search-icon {
 	border-radius: 50%;
 	background-color: rgba(0,0,60,0.7);
-    background-repeat: no-repeat;
-    background-image: url("cssImages/GovEyeCustom.svg");
-    background-size: contain;
-    width: 1em;
-    height: 1em;
-    display: inline-block;
+	background-repeat: no-repeat;
+	background-image: url("cssImages/GovEyeCustom.svg");
+	background-size: contain;
 }
 
 #svcChecklist .ui-collapsible-heading {
@@ -329,7 +337,6 @@
 .feature-list {
 	text-align: left;
 	border-radius: 0px;
-	/*width: 100%;*/
 }
 
 .ui-icon-check {
@@ -342,33 +349,78 @@
 }
 
 #map {
-	position: margin;
-	static: auto;
+	position: static;
+	margin: auto;
 	height: 100%;
 }
 
 #helpPopup {
 	z-index: 9000;
 	position: absolute;
-    bottom: 20px;
-    left: 50%;
-    transform: translateX(-50%);
-    margin: auto;
-    width: 80%;
-    /* min-height: 20px; */
-    background: rgba(255,255,255,0.7);
-    padding: 1em;
-    box-shadow: 0px 1px 10px 5px rgba(0,0,0,0.2);
-    transition-duration: 0.5s;
+	bottom: 20px;
+	left: 50%;
+	transform: translateX(-50%);
+	margin: auto;
+	width: 80%;
+	/* min-height: 20px; */
+	background: rgba(255,255,255,0.7);
+	padding: 1em;
+	box-shadow: 0px 1px 10px 5px rgba(0,0,0,0.2);
+	transition-duration: 0.5s;
 }
 
 .footer-button {
 	display: inline-block;
-    padding: 10px;
-    text-transform: uppercase;
-    width: 42%;
-    font-weight: 400;
-    letter-spacing: 0.1em;
+	padding: 10px;
+	text-transform: uppercase;
+	width: 42%;
+	font-weight: 400;
+	letter-spacing: 0.1em;
+}
+
+#helpOverlay {
+
+}
+
+#helpScreen {
+
+}
+
+.help-screen {
+	position: absolute;
+	width: inherit;
+	height: 100vh;
+	background: rgba(255,255,255,0.8);
+	z-index: 10000;
+}
+
+.help-body {
+	position: relative;
+    top: 50%;
+    transform: translateY(-50%);
+    padding: 2%;
+}
+
+.help-visible {
+	opacity: 1;
+	pointer-events: auto;
+}
+
+.help-invisible {
+	opacity: 0;
+	pointer-events: none;
+}
+
+.help-img {
+	width: 1.5em;
+    height: 1.5em;
+    display: inline-block;
+    margin-right: 1em;
+    transform: translateY(50%);
+}
+
+.help-text {
+	text-align: left;
 }
 
 #helpMenuHeader {
@@ -389,29 +441,29 @@
 
 .help-btn {
 	width: 35px;
-    height: 35px;
-    left: 0px;
-    top: -55px;
-    text-align: right;
-    font-weight: bold;
+	height: 35px;
+	left: 0px;
+	top: -55px;
+	text-align: right;
+	font-weight: bold;
 
 }
 
 #helpButton.help-btn-gov {
 	background-color: rgba(0,0,60,0.8);
-    border: 3px solid white;
-    color: white;
-    font-family: "Open Sans";
+	border: 3px solid white;
+	color: white;
+	font-family: "Open Sans";
 }
 
 #helpButton.help-btn-gov h3{
 	margin: 0;
-    position: absolute;
-    /* top: 0px; */
-    right: 10px;
-    /* transform: translateY(50%); */
-    font-size: 2em;
-    
+	position: absolute;
+	/* top: 0px; */
+	right: 10px;
+	/* transform: translateY(50%); */
+	font-size: 2em;
+
 }
 
 .help-btn-ins {
@@ -432,6 +484,7 @@
 	height: 50px;
 	box-shadow: 0px 1px 10px 5px rgba(0,0,0,0.2);
 	border-radius: 50%;
+	border: 5px double white;
 }
 
 #searchButton.searchIcon {
@@ -442,10 +495,10 @@
 	border: 6px solid rgba(255,255,255,0.5);*/
 
 	background-color: rgba(0,0,60,0.7);
-    background-repeat: no-repeat;
-    background-image: url("cssImages/GovEyeCustom.svg");
-    background-size: contain;
-    border: 5px double white;
+	background-repeat: no-repeat;
+	background-image: url("cssImages/GovEyeCustom.svg");
+	background-size: contain;
+	/*border: 5px double white;*/
 }
 
 
