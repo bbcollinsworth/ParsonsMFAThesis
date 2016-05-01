@@ -58,6 +58,7 @@ var app = {
 	addStyling: {
 		//why here and not in viz.headerstyles?
 		gov: function() {
+			$('#app').addClass('gov-app-styling');
 			$('#alertBox').addClass('gov-alert-styling');
 			$('#headerBackdrop').addClass('gov-backdrop');
 		},

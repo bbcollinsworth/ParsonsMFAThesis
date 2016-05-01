@@ -30,6 +30,11 @@
 	color: white;
 }
 
+#app.gov-app-styling {
+	font-family: 'Open Sans',sans-serif;
+	color: rgba(0,0,60,0.9);
+}
+
 #container {
 	position: absolute;
 	pointer-events: none;
@@ -300,6 +305,23 @@
     font-size: 1.5em;*/
 }
 
+#alertBox span {
+	margin-top: 1em;
+	margin-bottom: 1em;
+    display: block;
+}
+
+#textIconGov {
+	border-radius: 50%;
+	background-color: rgba(0,0,60,0.7);
+    background-repeat: no-repeat;
+    background-image: url("cssImages/GovEyeCustom.svg");
+    background-size: contain;
+    width: 1em;
+    height: 1em;
+    display: inline-block;
+}
+
 #svcChecklist .ui-collapsible-heading {
 	border-radius: 0px;
 }
@@ -325,29 +347,105 @@
 	height: 100%;
 }
 
+#helpPopup {
+	z-index: 9000;
+	position: absolute;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    margin: auto;
+    width: 80%;
+    /* min-height: 20px; */
+    background: rgba(255,255,255,0.7);
+    padding: 1em;
+    box-shadow: 0px 1px 10px 5px rgba(0,0,0,0.2);
+    transition-duration: 0.5s;
+}
+
+.footer-button {
+	display: inline-block;
+    padding: 10px;
+    text-transform: uppercase;
+    width: 42%;
+    font-weight: 400;
+    letter-spacing: 0.1em;
+}
+
+#helpMenuHeader {
+	text-align: left;
+}
+
+#score {
+	text-align: right;
+}
+
+.basic-button {
+	pointer-events: all;
+	position: absolute;
+	transform: translate(-50%,-50%);
+	box-shadow: 0px 1px 10px 5px rgba(0,0,0,0.2);
+	border-radius: 50%;
+}
+
+.help-btn {
+	width: 35px;
+    height: 35px;
+    left: 0px;
+    top: -55px;
+    text-align: right;
+    font-weight: bold;
+
+}
+
+#helpButton.help-btn-gov {
+	background-color: rgba(0,0,60,0.8);
+    border: 3px solid white;
+    color: white;
+    font-family: "Open Sans";
+}
+
+#helpButton.help-btn-gov h3{
+	margin: 0;
+    position: absolute;
+    /* top: 0px; */
+    right: 10px;
+    /* transform: translateY(50%); */
+    font-size: 2em;
+    
+}
+
+.help-btn-ins {
+
+}
+
+
 /*PING BUTTON FOR GOV TEAM*/
 #searchButton {
 	pointer-events: all;
 	position: absolute;
-	top: -75px;
+	/*top: -55px;*/
 	left: 50%;
 	transform: translate(-50%,-50%);
-	//left: calc(50% - 30px);
 	margin: auto;
 	padding: 0.1em;
 	width: 50px;
 	height: 50px;
 	box-shadow: 0px 1px 10px 5px rgba(0,0,0,0.2);
 	border-radius: 50%;
-	//background: rgba(255,255,255,0.5);
 }
 
 #searchButton.searchIcon {
-	background-color: rgba(255,255,255,0.5);
+/*	background-color: rgba(255,255,255,0.5);
 	background-repeat: no-repeat;
-	background-image: url("cssImages/specialeye.svg"); /*targeteye*/
+	background-image: url("cssImages/specialeye.svg"); 
 	background-size: contain;
-	border: 6px solid rgba(255,255,255,0.5);
+	border: 6px solid rgba(255,255,255,0.5);*/
+
+	background-color: rgba(0,0,60,0.7);
+    background-repeat: no-repeat;
+    background-image: url("cssImages/GovEyeCustom.svg");
+    background-size: contain;
+    border: 5px double white;
 }
 
 
@@ -516,8 +614,8 @@
 }
 
 .hub-area {
-	-webkit-filter: blur(2px);
-	filter: blur(2px);
+/*	-webkit-filter: blur(2px);
+filter: blur(2px);*/
 }
 
 .ping-circle {
@@ -546,38 +644,16 @@
 }
 
 
-/*.onMapPingCircle {
-	fill: rgba(255,255,255,0.0);
-	r: 0;
+.capture-circle {
+	width: 0px;
+	height: 0px;
+	margin-left: 0px;
+	margin-top: 0px;
+	//border: 10px dashed rgba(255,0,0,1.0);
 }
 
-.onMapPingCircle.run {
-	-webkit-animation: ping ease 1s 1; 
-	-moz-animation: ping ease 1s 1;
-	-o-animation: ping ease 1s 1; 
-	animation: ping ease 1s 1;
-
-}
-
-.pCircle.run {
-	//animation: ping ease 1s 1;
-
-	-webkit-animation: ping ease 1s 1; 
-	-moz-animation:    ping ease 1s 1; 
-	-o-animation:      ping ease 1s 1; 
-	animation:         ping ease 1s 1;
-	}*/
-
-	.capture-circle {
-		width: 0px;
-		height: 0px;
-		margin-left: 0px;
-		margin-top: 0px;
-		//border: 10px dashed rgba(255,0,0,1.0);
-	}
-
-	#captureCircleID {
-		background-color: rgba(255,0,0,0.1);
+#captureCircleID {
+	background-color: rgba(255,0,0,0.1);
 	/*width: 100px;
 	hight: 100px;*/
 	//position: absolute;

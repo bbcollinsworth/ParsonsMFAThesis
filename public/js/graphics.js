@@ -83,7 +83,7 @@ var viz = {
 					1: "<span class=\"setup-header\">ERROR: </span>Geolocation is currently <b>blocked</b> for this website or browser. Please go into the browser's settings and <b>allow geolocation</b>, then test again.",
 					2: "<span class=\"setup-header\">If you're using an iPHONE:</span>Go to SETTINGS > PRIVACY > LOCATION SERVICES and set this browser to 'while using.'"
 				}); //, true);
-			},
+			}
 		},
 		sendTestResult: function(eMsg, eCode) {
 			var rObj = {
@@ -241,11 +241,21 @@ var viz = {
 			made.message = '<p>' + text + '</p>';
 		} else {
 			for (line in text) {
-				if (line === 'button') {
-					//skip
-				} else {
-					made.message += '<p>' + text[line] + '</p>';
+				switch (line) {
+					case 'button':
+						//skip
+						break;
+					case 'special':
+						made.message += text[line];
+						break;
+					default:
+						made.message += '<p>' + text[line] + '</p>';
 				}
+				// if (line === 'button') {
+				// 	//skip
+				// } else if (){
+				// 	made.message += '<p>' + text[line] + '</p>';
+				// }
 			}
 		}
 
@@ -272,7 +282,7 @@ var viz = {
 
 		$(eventInfo.element).off('click').on('click', function() {
 			//will this be ok?
-			app.btnEvents[eventInfo.fnName](eventInfo.args,$(this));
+			app.btnEvents[eventInfo.fnName](eventInfo.args, $(this));
 		});
 
 	},
@@ -431,7 +441,8 @@ var viz = {
 
 			hT['icon'] = $('#alertBoxControl');
 
-			hT.icon.off('click').on('click', function() {
+			// hT.icon.off('click').on('click', function() {
+			$('#alertBox').off('click').on('click', function() {
 
 				if (hT.icon.hasClass(hT.expandIconClass)) {
 					hT.expand();
@@ -735,7 +746,15 @@ var viz = {
 			'weight': 3
 		},
 		greyOut: '#707070',
-		startingFlashSpeed: 1000
+		startingFlashSpeed: 1000,
+		customPopup: function(hubName) {
+			var opts = {
+				'className': 'hub-popup'
+			}
+
+			var hubPop = L.popup(opts).setContent('Security Site');
+			return hubPop;
+		}
 	},
 
 	hub: function(hData) {
@@ -772,9 +791,12 @@ var viz = {
 				h.flashing = true;
 				h['flasher'] = setInterval(function() {
 
-					h.area.setStyle({
+					var opts = {
 						fillColor: c
-					});
+					}
+					h.area.setStyle(opts);
+
+					h.marker.setStyle(opts);
 
 					if (c == '#ff0000') {
 						c = '#0033ff';
@@ -789,6 +811,9 @@ var viz = {
 					clearInterval(h.flasher);
 					if (h.live) {
 						h.area.setStyle({
+							fillColor: '#0033ff'
+						});
+						h.marker.setStyle({
 							fillColor: '#0033ff'
 						});
 					} else {
@@ -819,19 +844,32 @@ var viz = {
 
 		myExtend(h, hData);
 
+		h.marker.bindPopup(viz.hubOptions.customPopup());
+
 		//$.extend(true, h, hData);
 
 		return h;
 	},
 
+	helpButton: function() {
+		var button = $("<div />", {
+			'class': "ui-btn basic-button help-btn help-btn-" + player.team,
+			'id': "helpButton",
+			'html': "<h3>?</h3>" //,
+		});
+		console.log("Created help button: ");
+		console.log(button);
+		return button;
+	},
+
 	searchButton: function() {
 
 		var button = $("<div />", {
-			'class': "ui-btn",
+			'class': "ui-btn basic-button searchIcon",
 			'id': "searchButton" //,
 		});
 
-		button.addClass('searchIcon');
+		//button.addClass('searchIcon');
 
 		return button;
 

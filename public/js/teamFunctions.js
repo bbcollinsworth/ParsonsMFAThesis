@@ -3,7 +3,7 @@ var ins = {
 		'hubPointers': [],
 		'maxHubsDetected': 3,
 		'text': {
-			'scan': "Press the button below to scan for active surveillance sites nearby.",
+			'scan': 'Press the <div id="textIconIns" class="icon-in-text"></div> button below to scan for active surveillance sites nearby.',
 			'canHack': {
 				1: "Surveillence site in range!",
 				2: "<b>Press below to begin hacking.</b>"
@@ -246,8 +246,8 @@ var gov = {
 	ui: {
 		text: {
 			'ping': {
-				1: "Press the button below for latest locations of active suspects + allies. (Locations will only update when targets are using mobile devices.)",
-				2: "<b>Get within 20 meters of an active suspect to lock their mobile device.</b>"
+				'special': '<span>Press <div id="textIconGov" class="icon-in-text"></div> below for latest locations of active suspects + allies. (Locations will only update when targets are using mobile devices.)</span><span><b>Get within 20 meters of an active suspect to lock their mobile device.</b></span>'
+				//2: "<b>Get within 20 meters of an active suspect to lock their mobile device.</b>"
 			},
 			'capturing': "Active suspect in range!<br />Locking their device...",
 			'inRange': "Active suspect in range! Click their marker to disable/lock their mobile device.",
@@ -308,8 +308,9 @@ var gov = {
 		customLog("Rendering Gov UI");
 		viz.addSuspectContainer();
 
+		var helpButton = viz.helpButton();
 		var pingButton = viz.searchButton();
-		$('#mobileFooter').prepend(pingButton);
+		$('#mobileFooter').prepend(pingButton);//,helpButton);
 
 		//app['ui']['headerToggle'] = viz.headerToggle.create('gov');
 		gov.ui['headerToggle'] = viz.headerToggle.create('gov');
@@ -335,6 +336,7 @@ var gov = {
 
 			h.area.addTo(map);
 			h.marker.addTo(map);
+			h.marker.openPopup();
 
 			// if (h.alertState > 0){
 
