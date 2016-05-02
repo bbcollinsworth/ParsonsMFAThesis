@@ -3,7 +3,10 @@ var ins = {
 		'hubPointers': [],
 		'maxHubsDetected': 3,
 		'text': {
-			'scan': 'Press the <div id="textIconIns" class="icon-in-text"></div> button below to scan for active surveillance sites nearby.',
+			'scan': {
+				'special': '<span>Press <div id="textIconIns" class="icon-in-text scan-icon button-icon-style"></div> below to scan for active surveillance sites nearby.</span>'
+			},
+
 			'canHack': {
 				1: "Surveillence site in range!",
 				2: "<b>Press below to begin hacking.</b>"
@@ -23,7 +26,7 @@ var ins = {
 				.removeClass('uploadProgress')
 				.removeClass('hackAnim')
 				.removeClass('hackComplete')
-				.addClass('scanIcon');
+				.addClass('scan-icon');
 
 			$('#scanButton').off('click').on('click', function() {
 				customLog("SCAN BUTTON CLICKED");
@@ -53,13 +56,13 @@ var ins = {
 		attachHackEvents: function() {
 			var btn = $('#scanButton');
 
-			btn.removeClass('scanIcon').addClass('hackReady');
+			btn.removeClass('scan-icon').addClass('hack-icon');
 			btn.off('click').on('click', function() {
 				msg(ins.ui.text.hacking, 'ins-urgent');
 
 				ins.ui.refreshHackProgress();
 
-				btn.removeClass('hackReady')
+				btn.removeClass('hack-icon')
 					.addClass('uploadProgress')
 					.addClass('hackAnim');
 
@@ -101,18 +104,19 @@ var ins = {
 			this.ui.hubPointers.unshift(newPointer);
 		}
 
-		ins.ui['headerToggle'] = viz.headerToggle.create('ins');
+		app['headerToggle'] = ins.ui['headerToggle'] = viz.headerToggle.create('ins');
 		//store a reference for calling "Msg, etc"
-		app['headerToggle'] = ins.ui.headerToggle;
+		// app['headerToggle'] = ins.ui.headerToggle;
 
 		this.ui['scanButton'] = viz.scanButton();
 		$('#container').append(this.ui['scanButton']);
 
 		ins.ui.attachScanEvents();
-
 		customLog('Hub pointers created: ');
 		customLog(this.ui.hubPointers);
 
+		viz.helpScreen.create();
+		viz.makeFooter();
 	},
 
 	popPointers: function() {
@@ -310,7 +314,7 @@ var gov = {
 
 		//var helpButton = viz.helpButton();
 		var pingButton = viz.searchButton();
-		$('#mobileFooter').prepend(pingButton);//,helpButton);
+		$('#mobileFooter').prepend(pingButton); //,helpButton);
 
 		viz.helpScreen.create();
 		viz.makeFooter();
@@ -390,7 +394,7 @@ var gov = {
 						}
 					}
 					//if (dist <= gov.captureRange && !otherPlayers[id].goneDark && !capturableFound) {
-				
+
 				if (captureCriteriaMet(app.settings.autoCapture)) {
 					capturableFound = true;
 					otherPlayers[id].inCaptureRange = true;

@@ -5,12 +5,14 @@ var viz = {
 			'#app':'gov-app-styling',
 			'#alertBox':'gov-alert-styling',
 			'#headerBackdrop':'gov-backdrop',
-			'#mobileFooter': 'gov-footer'
+			'#mobileFooter': 'gov-footer',
+			'.help-body': 'help-gov'
 		},
 		'ins': {
 			'#app':'ins-app-styling',
 			'#alertBox':'ins-alert-styling',
-			'#headerBackdrop':'ins-backdrop'
+			'#headerBackdrop':'ins-backdrop',
+			'.help-body': 'help-ins'
 		}
 	},
 
@@ -502,7 +504,16 @@ var viz = {
 				}
 			},
 			'ins': {
-
+				'scan': {
+					type: 'help-img-key',
+					imgClass: 'scan-icon button-icon-style',
+					text: 'Scan Button: Tap to detect direction and distance of the 3 surveillance sites nearest you'
+				},
+				'hack': {
+					type: 'help-img-key',
+					imgClass: 'hack-icon button-icon-style',
+					text: 'Hack Button: This icon will show when you\'re close enough to hack a surveillance site'
+				}
 			}
 		},
 		create: function() {
@@ -1196,7 +1207,7 @@ var viz = {
 	scanButton: function() {
 
 		var button = $("<div />", {
-			'class': "ui-btn",
+			'class': "",//"ui-btn",
 			'id': "scanButton",
 			'data-icon': "eye"
 		});

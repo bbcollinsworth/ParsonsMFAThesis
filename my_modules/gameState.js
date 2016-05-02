@@ -4,7 +4,7 @@
 	var playSettings = {
 		hubDownTarget: 3,
 		trackIntervalS: 3,
-		hackTimeM: 3.0,
+		hackTimeM: 0.5,
 		trailDurationM: 2,
 		dataSkipInterval: 3,
 		teamPickMethod: 'insIfNoHash', //'alternate',
@@ -178,12 +178,12 @@
 		lng: -74.002029
 	}, {
 		name: 'Washington Ave and Lincoln Pl',
-		enabled: false,
-		lat: 40.672643,
-		lng: -73.962675
+		enabled: true,
+		lat: 40.672614,
+		lng: -73.962410
 	}, {
 		name: 'McNair Park',
-		enabled: false,
+		enabled: true,
 		lat: 40.670774,
 		lng: -73.961985
 	}];
@@ -353,7 +353,7 @@
 				//IF playercount is above a certain number
 				//else return this.random()
 			},
-			insIfNoHash: function(){
+			insIfNoHash: function() {
 				this.lastAssigned = 'ins';
 				log('No hash so new player set to ' + this.lastAssigned, colors.standout);
 				return this.lastAssigned;
@@ -480,7 +480,7 @@
 				//for (var h in hubs) {
 				if (hub.live) {
 					//if (hubs[h].live) {
-					
+
 				} else {
 					hackedHubs++;
 				}
@@ -491,9 +491,9 @@
 		get liveInsCount() {
 			var count = 0;
 
-			for (var i in state.players){
+			for (var i in state.players) {
 				var p = state.players[i];
-				if (p.team == 'ins' && !p.lockedOut){
+				if (p.team == 'ins' && !p.lockedOut) {
 					count++;
 				}
 			}
@@ -502,12 +502,12 @@
 
 		},
 
-		get lockoutCount(){
+		get lockoutCount() {
 			var count = 0;
 
-			for (var i in state.players){
+			for (var i in state.players) {
 				var p = state.players[i];
-				if (p.team == 'ins' && p.lockedOut){
+				if (p.team == 'ins' && p.lockedOut) {
 					count++;
 				}
 			}
