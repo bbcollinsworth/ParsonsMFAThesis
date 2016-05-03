@@ -13,7 +13,7 @@ var player = {
 		'heading': undefined,
 		update: function(newData) {
 			for (key in newData) {
-				this[key] = newData[key];
+				player.pos[key] = newData[key];
 			}
 		}
 	},
@@ -74,7 +74,8 @@ var sendStoredLocation = function(v1, v2) { //callback) {
 	}
 	//} else {
 	if (player.pos.lat === undefined) {
-		customLog("Position requested but no position stored yet.");
+		customLog("ERROR: Position requested but no position stored yet. Player.pos is");
+		customLog(player.pos);
 	}
 	//emit('locationError',{});
 	//}

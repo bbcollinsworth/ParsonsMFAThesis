@@ -204,8 +204,8 @@ var app = {
 				};
 
 				player.pos.update(newPos);
-				console.log("Playerpos updated: ");
-				console.log(player);
+				customLog("Playerpos updated to: ");
+				customLog(player);
 
 				//center map on player if team is ins or if it's first pos update
 				if (player.team == 'ins' || !clientState.centeredOnPlayer) {

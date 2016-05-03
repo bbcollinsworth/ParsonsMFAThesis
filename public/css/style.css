@@ -371,11 +371,17 @@
 .footer-button {
 	display: inline-block;
 	padding: 10px;
+	/*padding-bottom: 10px;*/
 	text-transform: uppercase;
-	width: 42%;
+	/*width: 42%;*/
 	font-weight: 400;
 	letter-spacing: 0.1em;
 }
+
+/*.footer-button span{
+	padding-left: 10px;
+	padding-right: 10px;
+}*/
 
 .gov-footer {
 	color: rgba(0,0,60,0.9);
@@ -506,10 +512,13 @@
 
 #helpMenuHeader {
 	text-align: left;
+	float: left;
+	/*width: 50%;*/
 }
 
 #score {
 	text-align: right;
+	float: right;
 }
 
 .basic-button {
