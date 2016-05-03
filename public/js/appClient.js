@@ -3,6 +3,17 @@ var app = {
 		autoCapture: false,
 		debugMode: true
 	},
+	//placeholder - to be filled in by data from server
+	score: {
+		hubs: {
+			hacked: 0,
+			goal: 0
+		},
+		hackers: {
+			locked: 0,
+			live: 0
+		}
+	},
 
 	init: function() {
 		startup.setup();
@@ -33,6 +44,19 @@ var app = {
 
 	},
 
+	updateScore: function(newScore) {
+		customLog("Updating score to... ");
+		app.score = $.extend({},newScore); //newScore
+		customLog(app.score);
+
+		var toUpdate = {
+			'ins': app.score.hubs.hacked,
+			'gov': app.score.hackers.locked
+		};
+
+		viz.scoreDisplay.update(toUpdate[player.team]);
+	},
+
 	loadAudio: function() {
 		var setToLoad = viz.audio[player.team];
 		for (file in setToLoad) {
@@ -56,9 +80,9 @@ var app = {
 		}
 	},
 
-	addStyling: function(){
+	addStyling: function() {
 		var styles = viz.mainStyling[player.team];
-		for (selector in styles){
+		for (selector in styles) {
 			$(selector).addClass(styles[selector]);
 		}
 	},
@@ -313,6 +337,7 @@ app.handleSocketMsg = function(res, err) {
 		},
 
 		insStartData: function() {
+			app.updateScore(res.score);
 			app.intro.content = res.introContent;
 
 			customLog("My lockout State is: " + res.playerLockedOut);
@@ -334,6 +359,7 @@ app.handleSocketMsg = function(res, err) {
 		},
 
 		govStartData: function() {
+			app.updateScore(res.score);
 			app.intro.content = res.introContent;
 			gov.renderHubs(res.hubs);
 
@@ -378,6 +404,7 @@ app.handleSocketMsg = function(res, err) {
 		// },
 
 		playerLockoutsUpdate: function() {
+			app.updateScore(res.score);
 			var lP = res.lockedPlayer;
 			var players = clientState.allPlayers;
 			if (lP.userID !== player.localID) {
@@ -395,10 +422,10 @@ app.handleSocketMsg = function(res, err) {
 								onClick: 'closePopup'
 							};
 
-							if (res.lockedSuspects == 1) {
+							if (app.score.hackers.locked == 1) { //res.lockedSuspects == 1) {
 								popBtn.onClick = 'showAudioMessage';
 								popBtn.args = 'file1';
-							} else if (res.liveSuspects == 1) {
+							} else if (app.score.hackers.live == 1) { //res.liveSuspects == 1) {
 								popBtn.onClick = 'showAudioMessage';
 								popBtn.args = 'file2';
 							}
@@ -410,7 +437,7 @@ app.handleSocketMsg = function(res, err) {
 
 							//Should be more complicated -- store a score object server side
 							//and pass on player connection, then on any update
-							viz.scoreDisplay.update(res.lockedSuspects);
+							// viz.scoreDisplay.update(res.lockedSuspects);
 
 							gov.ui.attachPingEvents();
 						}, 750);
@@ -488,8 +515,9 @@ app.handleSocketMsg = function(res, err) {
 		},
 
 		hubDown: function() {
+			app.updateScore(res.score);
 			//HACKY!!!
-			clientState.hubsHacked++;
+			// clientState.hubsHacked++;
 			switch (player.team) {
 				case "gov":
 					var downHub = app.getHubByName(res.hub.name);
@@ -500,7 +528,6 @@ app.handleSocketMsg = function(res, err) {
 					break;
 				case "ins":
 
-
 					console.log("Data from server");
 					console.log(res);
 
@@ -509,11 +536,13 @@ app.handleSocketMsg = function(res, err) {
 						onClick: 'closePopup'
 					};
 
-					if (clientState.hubsHacked == 1) {
+					//clientState.hubsHacked++;
+					if (app.score.hubs.hacked == 1) { //clientState.hubsHacked == 1) {
+						//doing this here so new hackers still get message
 						customLog("Setting hacked popup to show first audio");
 						popBtn.onClick = 'showAudioMessage';
 						popBtn.args = 'file1';
-					} else if ((res.hackTarget - clientState.hubsHacked) == 1) {
+					} else if ((app.score.hubs.goal - app.score.hubs.hacked) == 1) {
 						popBtn.onClick = 'showAudioMessage';
 						popBtn.args = 'file2';
 					}

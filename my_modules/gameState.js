@@ -296,7 +296,34 @@
 			this.gameID = "game" + startTimestamp;
 		},
 
-		settings: playSettings,
+		'settings': playSettings,
+
+		get score() {
+			
+			var s = {
+				hubs: {
+					hacked: state.hackedHubCount,
+					goal: state.settings.hubDownTarget
+				},
+				hackers: {
+					locked: state.lockoutCount,
+					live: state.liveInsCount
+				}
+			};
+			log("Current score is: ",colors.hilite);
+			log(s);
+			return s;
+		},
+		// 'score': {
+		// 	hubs: {
+		// 		hacked: state.hackedHubCount,
+		// 		goal: state.settings.hubDownTarget
+		// 	},
+		// 	hackers: {
+		// 		locked: state.lockoutCount,
+		// 		live: state.liveInsCount
+		// 	}
+		// },
 
 		//'trackIntervalInSeconds': 10,
 
@@ -464,7 +491,7 @@
 
 		get liveHubCount() {
 			var liveHubs = 0;
-			hubs.forEach(function(hub) {
+			state.hubs.forEach(function(hub) {
 				//for (var h in hubs) {
 				if (hub.live) {
 					//if (hubs[h].live) {
@@ -476,7 +503,7 @@
 
 		get hackedHubCount() {
 			var hackedHubs = 0;
-			hubs.forEach(function(hub) {
+			state.hubs.forEach(function(hub) {
 				//for (var h in hubs) {
 				if (hub.live) {
 					//if (hubs[h].live) {

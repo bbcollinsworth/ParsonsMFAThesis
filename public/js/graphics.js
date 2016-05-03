@@ -2,16 +2,16 @@ var viz = {
 
 	mainStyling: {
 		'gov': {
-			'#app':'gov-app-styling',
-			'#alertBox':'gov-alert-styling',
-			'#headerBackdrop':'gov-backdrop',
+			'#app': 'gov-app-styling',
+			'#alertBox': 'gov-alert-styling',
+			'#headerBackdrop': 'gov-backdrop',
 			'#mobileFooter': 'gov-footer',
 			'.help-body': 'help-gov'
 		},
 		'ins': {
-			'#app':'ins-app-styling',
-			'#alertBox':'ins-alert-styling',
-			'#headerBackdrop':'ins-backdrop',
+			'#app': 'ins-app-styling',
+			'#alertBox': 'ins-alert-styling',
+			'#headerBackdrop': 'ins-backdrop',
 			'.help-body': 'help-ins'
 		}
 	},
@@ -416,7 +416,7 @@ var viz = {
 		}
 	},
 
-	makeFooter: function(){
+	makeFooter: function() {
 		viz.helpButton.create();
 		viz.scoreDisplay.create();
 	},
@@ -441,18 +441,23 @@ var viz = {
 	scoreDisplay: {
 		id: '#score',
 		text: {
-			'gov': 'Neutralized: <span id="scoreCount">0</span>',
-			'ins': 'Sites hacked: <span id="scoreCount">0</span>'//\/<span id="scoreTotal"></span>'
+			gov: function() {
+				return 'Neutralized: <span id="scoreCount">' + app.score.hackers.locked + '</span>';
+			},
+			ins: function() {
+				return 'Sites hacked: <span id="scoreCount">' + app.score.hubs.hacked + '</span>'; //\/<span id="scoreTotal"></span>'
+			}
 		},
-		create: function(){
-			var t = viz.scoreDisplay.text[player.team];
+		create: function() {
+			var t = viz.scoreDisplay.text[player.team]();
 			var b = $('<div />', {
-				'html': "<span>"+t+"</span>",
+				'html': "<span>" + t + "</span>",
 				'id': "score",
 				'class': "footer-button"
 			});
 
 			$('#mobileFooter').append(b);
+			app.updateScore(app.score);
 		},
 		update: function(newScore) {
 			customLog("Updating score to: " + newScore);
@@ -1000,7 +1005,7 @@ var viz = {
 
 		myExtend(h, hData);
 
-		h.marker.bindPopup(viz.hubOptions.customPopup());
+		//h.marker.bindPopup(viz.hubOptions.customPopup());
 
 		//$.extend(true, h, hData);
 
@@ -1207,7 +1212,7 @@ var viz = {
 	scanButton: function() {
 
 		var button = $("<div />", {
-			'class': "",//"ui-btn",
+			'class': "", //"ui-btn",
 			'id': "scanButton",
 			'data-icon': "eye"
 		});

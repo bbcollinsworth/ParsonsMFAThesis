@@ -132,17 +132,22 @@ io.on('connection', function(socket) {
 	};
 
 	var insWinCheck = function() {
-		var hubsDown = gameState.startingHubs - gameState.liveHubCount;
-		log("There are " + hubsDown + " Hubs down.", colors.alert);
+		// var hubsDown = gameState.startingHubs - gameState.liveHubCount;
+		// log("There are " + hubsDown + " Hubs down.", colors.alert);
 
-		if (hubsDown >= gameState.settings.hubDownTarget) {
+		// if (hubsDown >= gameState.settings.hubDownTarget) {
+		//var hubsDown = gameState.startingHubs - gameState.liveHubCount;
+		log("There are " + gameState.score.hubs.hacked + " Hubs down.", colors.alert);
+
+		if (gameState.score.hubs.hacked >= gameState.score.hubs.goal) {
 			log("Ins win condition met!");
 			emitTo.all('insWon', {});
 		}
 	};
 
 	var govWinCheck = function() {
-		if (gameState.liveInsCount < 1) {
+		// if (gameState.liveInsCount < 1) {
+			if (gameState.score.hackers.live < 1) {
 			log("No Ins left - Gov win condition met!");
 			emitTo.all('govWon', {});
 		} //else 
@@ -289,6 +294,7 @@ io.on('connection', function(socket) {
 						emitTo.socket('govStartData', {
 							playStarted: player.playStarted,
 							hubs: hubs,
+							score: gameState.score,
 							introContent: gameState.settings.introContent
 						});
 
@@ -299,6 +305,7 @@ io.on('connection', function(socket) {
 							playStarted: player.playStarted,
 							playerLockedOut: player.lockedOut,
 							hubs: hubs,
+							score: gameState.score,
 							introContent: gameState.settings.introContent
 						});
 						break;
@@ -419,8 +426,9 @@ io.on('connection', function(socket) {
 				emitTo.all('playerLockoutsUpdate', {
 					'lockedPlayer': lockedPlayer,
 					'capturingPlayer': player.userID,
-					'liveSuspects': gameState.liveInsCount,
-					'lockedSuspects': gameState.lockoutCount
+					'liveSuspects': gameState.score.hackers.live,//liveInsCount,
+					'lockedSuspects': gameState.score.hackers.locked,//lockoutCount
+					'score': gameState.score
 				});
 
 				setTimeout(govWinCheck, 1000);
@@ -463,8 +471,9 @@ io.on('connection', function(socket) {
 							hubID: attackedHub.id,
 							hubIndex: res.hubIndex,
 							liveHubsLeft: hubsLeft,
-							hubsHacked: gameState.hackedHubCount,
-							hackTarget: gameState.settings.hubDownTarget
+							score: gameState.score
+							//hubsHacked: gameState.score.hubs.hacked,//hackedHubCount,
+							//hackTarget: gameState.score.hubs.goal//settings.hubDownTarget
 						});
 
 						setTimeout(insWinCheck, 1000);
