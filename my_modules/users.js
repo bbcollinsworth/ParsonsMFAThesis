@@ -37,10 +37,14 @@ module.exports = function(users, _emit) { //, _socket) {
 				'trackActive': false,
 				'svcCheckComplete': false,
 				'playStarted': false,
+				'closestGov': {
+					'id': undefined,
+					'dist': gameState.settings.maxGovDistance
+				},
 				'warned': {
 					'50': false,
-					'100': false,
-					'200': false
+					'100': false//,
+					//'200': false
 				},
 				'locationData': [],
 				'lastLocRequest': {},

@@ -115,6 +115,8 @@ var ins = {
 		customLog('Hub pointers created: ');
 		customLog(this.ui.hubPointers);
 
+		$('#mobileFooter').prepend(viz.threatMeter.create());
+		
 		viz.helpScreen.create();
 		viz.makeFooter();
 	},
@@ -366,6 +368,7 @@ var gov = {
 	suspectRangeCheck: function() {
 		var otherPlayers = clientState.allPlayers;
 		var capturableFound = false;
+		var playerRanges = {};
 
 		for (id in otherPlayers) {
 
@@ -402,7 +405,7 @@ var gov = {
 					// msg(gov.ui.text.inRange, 'urgent'); //MOVED TO CAPTURE EVENTS FOR MORE CONTROL
 
 				} else if (dist <= gov.captureRange && otherPlayers[id].goneDark) {
-					//msg("Suspect may be in range, but has gone dark. Suspect must be using device to successfully initiate lockout");
+					//mspg("Suspect may be in range, but has gone dark. Suspect must be using device to successfully initiate lockout");
 					if (otherPlayers[id].inCaptureRange) {
 						otherPlayers[id].inCaptureRange = false;
 						otherPlayers[id].clearCaptureEvents();
@@ -417,17 +420,33 @@ var gov = {
 					gov.ui.attachPingEvents();
 				}
 
-				if (dist < 100) {
+
+				var distThreshold = 2000;
+
+				if (dist < distThreshold) {
 					customLog("Sending close warning to " + id);
 
-					emit('agentGettingClose', {
-						playerID: player.localID,
-						otherPlayerID: id,
-						distance: '100'
-					});
-				}
+					playerRanges[id] = dist;
+					// otherPlayerID: id,
+					// distance: dist//'100'
+				} //);
 			}
+			// if (dist < 100) {
+			// 	customLog("Sending close warning to " + id);
+
+			// 	emit('agentGettingClose', {
+			// 		playerID: player.localID,
+			// 		otherPlayerID: id,
+			// 		distance: dist//'100'
+			// 	});
+			// }
+			//}
 		}
+
+		emit('agentGettingClose', {
+			govPlayerID: player.localID,
+			ranges: playerRanges //'100'
+		});
 	},
 
 	captureComplete: function(capturedPlayer) {

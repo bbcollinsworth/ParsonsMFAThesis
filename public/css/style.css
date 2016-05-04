@@ -652,7 +652,7 @@
 	box-shadow: 0px 1px 10px 5px rgba(0,0,0,0.2);
 	border-radius: 50%;
 	border: 3px solid transparent;
-}n
+}
 
 #scanButton.lockClass {
 	display: none;
@@ -738,6 +738,39 @@
 	line-height: 1em;
 	font-size: 1.8em;
 	//font-weight: 400;
+}
+
+.threat-meter {
+/*	transition-duration: 1.5s;
+    height: 30px;
+    width: 100%;
+    position: absolute;
+    top: 0;
+    transform: translateY(-100%);
+    background: linear-gradient(transparent,rgba(0,0,0,0.8));*/
+
+    transition-duration: 1.5s;
+    height: 20px;
+    overflow-y: hidden;
+    width: 100%;
+    position: absolute;
+    top: 0;
+    transform: translateY(-100%);
+    background: linear-gradient(transparent,rgba(0,0,0,0.8));
+}
+
+.data-face {
+/*	width: 50px;
+    position: relative;
+    bottom: -10px;
+    background: rgba(0, 0, 0, 0.8);
+    border: 2px solid white;
+    transition-duration: inherit;*/
+
+    width: 80px;
+    position: relative;
+    transform: scale(1);
+    transition-duration: inherit;
 }
 
 #pingContainer {

@@ -147,7 +147,7 @@ io.on('connection', function(socket) {
 
 	var govWinCheck = function() {
 		// if (gameState.liveInsCount < 1) {
-			if (gameState.score.hackers.live < 1) {
+		if (gameState.score.hackers.live < 1) {
 			log("No Ins left - Gov win condition met!");
 			emitTo.all('govWon', {});
 		} //else 
@@ -397,20 +397,50 @@ io.on('connection', function(socket) {
 			},
 
 			agentGettingClose: function() {
-				var otherPlayer = players[res.otherPlayerID];
-				if (!otherPlayer.warned[res.distance]) {
-					log("Warning " + otherPlayer.userID + "of Gov proximity", colors.orange);
+				log("agentGettingClose received:");
+				log(res);
 
-					otherPlayer.warned[res.distance] = true;
-					emitTo.user(otherPlayer, "agentCloseWarning", {
-						distance: res.distance
-					});
-					var warningResetTime = 180000;
-					log("Will reset warning for " + res.distance + "to false in " + warningResetTime / 60000 + " minutes.");
+				for (var id in res.ranges) {
+					var otherPlayer = players[id]; //res.otherPlayerID];
 
-					setTimeout(function() {
-						otherPlayer.warned[res.distance] = false;
-					}, warningResetTime);
+					if (otherPlayer.closestGov.id == res.govPlayerID || res.ranges[id] < otherPlayer.closestGov.dist) {
+						log("Updating closest gov for " + id + " from:", colors.hilite);
+						if ('closestGov' in otherPlayer) {
+							log(otherPlayer.closestGov);
+						} else {
+							log("Empty");
+						}
+
+						otherPlayer.closestGov = {
+							'id': res.govPlayerID,
+							'dist': res.ranges[id]
+						}
+						log("...to:");
+						log(otherPlayer.closestGov);
+					} else { //if range is closer than current closest
+
+					}
+
+					var warned = false;
+					for (var threshold in otherPlayer.warned) {
+						if (warned) {
+							continue;
+						} else if (otherPlayer.closestGov.dist < threshold && !otherPlayer.warned[threshold]) {
+							log("Warning " + otherPlayer.userID + "of Gov proximity", colors.orange);
+							warned = true;
+
+							otherPlayer.warned[threshold] = true;
+							emitTo.user(otherPlayer, "agentCloseWarning", {
+								distance: threshold
+							});
+							var warningResetTime = 180000;
+							log("Will reset warning for " + res.distance + "to false in " + warningResetTime / 60000 + " minutes.");
+
+							setTimeout(function() {
+								otherPlayer.warned[res.distance] = false;
+							}, warningResetTime);
+						}
+					}
 				}
 			},
 
@@ -426,8 +456,8 @@ io.on('connection', function(socket) {
 				emitTo.all('playerLockoutsUpdate', {
 					'lockedPlayer': lockedPlayer,
 					'capturingPlayer': player.userID,
-					'liveSuspects': gameState.score.hackers.live,//liveInsCount,
-					'lockedSuspects': gameState.score.hackers.locked,//lockoutCount
+					'liveSuspects': gameState.score.hackers.live, //liveInsCount,
+					'lockedSuspects': gameState.score.hackers.locked, //lockoutCount
 					'score': gameState.score
 				});
 

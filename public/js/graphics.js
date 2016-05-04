@@ -1023,6 +1023,21 @@ var viz = {
 	// 	return button;
 	// },
 
+	threatMeter: {
+		create: function() {
+			var meter = $("<div />", {
+				'html': '<img id="dataFace" class="data-face" src="css/cssImages/BigDataFace.png"></img>',
+				'class': "threat-meter",
+				'id': "threatMeter" //,
+			});
+
+			return meter;
+		},
+		update: function() {
+
+		}
+	},
+
 	searchButton: function() {
 
 		var button = $("<div />", {

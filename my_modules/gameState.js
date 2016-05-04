@@ -8,6 +8,7 @@
 		trailDurationM: 2,
 		dataSkipInterval: 3,
 		teamPickMethod: 'insIfNoHash', //'alternate',
+		maxGovDistance: 500, //in meters
 		introContent: {
 			'gov': {
 				'screen1': {
