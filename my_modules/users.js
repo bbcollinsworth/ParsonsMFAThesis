@@ -46,6 +46,7 @@ module.exports = function(users, _emit) { //, _socket) {
 					'100': false//,
 					//'200': false
 				},
+				'minWarned': 1000, //for not warning if greater than last
 				'locationData': [],
 				'lastLocRequest': {},
 				//'hubAttacking': {},

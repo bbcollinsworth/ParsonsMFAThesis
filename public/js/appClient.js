@@ -1,7 +1,8 @@
 var app = {
 	settings: {
 		autoCapture: false,
-		debugMode: true
+		debugMode: true,
+		maxGovRange: 500
 	},
 	//placeholder - to be filled in by data from server
 	score: {
@@ -46,7 +47,7 @@ var app = {
 
 	updateScore: function(newScore) {
 		customLog("Updating score to... ");
-		app.score = $.extend({},newScore); //newScore
+		app.score = $.extend({}, newScore); //newScore
 		customLog(app.score);
 
 		var toUpdate = {
@@ -384,8 +385,21 @@ app.handleSocketMsg = function(res, err) {
 		},
 
 		agentCloseWarning: function() {
-			popup("WARNING: State agents within " + res.distance + " meters. Minimize phone use to avoid detection!");
+			console.log("New agent dist data: ");
+			console.log(res);
 
+			var rangeNorm = Math.map(res.dist,app.settings.maxGovRange,0,0,1);
+			if (rangeNorm < 0){
+				rangeNorm = 0;
+			}
+
+			console.log("Normalized agent range is: " + rangeNorm);
+
+			viz.threatMeter.update(rangeNorm);
+
+			if ('threshold' in res) {
+				popup("WARNING: State agents within " + res.threshold + " meters. Minimize phone use to avoid detection!");
+			}
 			// popup("WARNING: State agents within " + res.distance + " meters. Minimize phone use to avoid detection!");
 		},
 

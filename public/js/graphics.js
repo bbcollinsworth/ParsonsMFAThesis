@@ -518,6 +518,11 @@ var viz = {
 					type: 'help-img-key',
 					imgClass: 'hack-icon button-icon-style',
 					text: 'Hack Button: This icon will show when you\'re close enough to hack a surveillance site'
+				},
+				'threat': {
+					type: 'help-img-key',
+					imgClass: 'threat-icon',
+					text: 'Threat Meter: This will turn red when State Agents are close'
 				}
 			}
 		},
@@ -1023,18 +1028,48 @@ var viz = {
 	// 	return button;
 	// },
 
-	threatMeter: {
+	'threatMeter': {
+		'id': "threatMeter",
+		'class': 'threat-meter',
 		create: function() {
 			var meter = $("<div />", {
 				'html': '<img id="dataFace" class="data-face" src="css/cssImages/BigDataFace.png"></img>',
-				'class': "threat-meter",
-				'id': "threatMeter" //,
+				'class': viz.threatMeter.class,
+				'id': viz.threatMeter.id //,
 			});
 
 			return meter;
 		},
-		update: function() {
+		update: function(scale) {
 
+			var style = {
+				'height': {
+					'pre': '',
+					'min': 20,
+					'max': 66,
+					'post': 'px'
+				},
+				'background-image': {
+					'pre': 'linear-gradient(transparent,rgba(',
+					'min': 0,
+					'max': 200,
+					'post': ',0,0,0.8))'
+				}
+			}
+
+			var scaleStyle = function(s) {
+				return s.pre + Math.floor(Math.map(scale, 0, 1, s.min, s.max)) + s.post;
+			};
+
+			var scaled = {};
+			for (var attr in style) {
+				scaled[attr] = scaleStyle(style[attr]);
+			}
+
+			customLog("Updating threatMeter style to: ");
+			customLog(scaled);
+
+			$('.' + viz.threatMeter.class).css(scaled);
 		}
 	},
 

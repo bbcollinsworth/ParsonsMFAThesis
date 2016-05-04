@@ -403,6 +403,8 @@ io.on('connection', function(socket) {
 				for (var id in res.ranges) {
 					var otherPlayer = players[id]; //res.otherPlayerID];
 
+					var warnObj = {};
+
 					if (otherPlayer.closestGov.id == res.govPlayerID || res.ranges[id] < otherPlayer.closestGov.dist) {
 						log("Updating closest gov for " + id + " from:", colors.hilite);
 						if ('closestGov' in otherPlayer) {
@@ -417,29 +419,45 @@ io.on('connection', function(socket) {
 						}
 						log("...to:");
 						log(otherPlayer.closestGov);
+
+						warnObj['dist'] = otherPlayer.closestGov.dist;
 					} else { //if range is closer than current closest
 
 					}
 
 					var warned = false;
+					// var minWarned = 1000;
+
 					for (var threshold in otherPlayer.warned) {
-						if (warned) {
+						log("MinWarned is " + otherPlayer.minWarned +" and threshold is " + threshold);
+						log("MinWarned < threshold is " + (+otherPlayer.minWarned < +threshold));
+						if (warned || (+otherPlayer.minWarned < +threshold)) {
 							continue;
 						} else if (otherPlayer.closestGov.dist < threshold && !otherPlayer.warned[threshold]) {
 							log("Warning " + otherPlayer.userID + "of Gov proximity", colors.orange);
 							warned = true;
 
 							otherPlayer.warned[threshold] = true;
-							emitTo.user(otherPlayer, "agentCloseWarning", {
-								distance: threshold
-							});
+							otherPlayer.minWarned = threshold;
+							log("MinWarned set to " + otherPlayer.minWarned,colors.hilite);
+
+							warnObj['threshold'] = threshold;
+							// emitTo.user(otherPlayer, "agentCloseWarning", {
+							// 	distance: threshold
+							// });
 							var warningResetTime = 180000;
-							log("Will reset warning for " + res.distance + "to false in " + warningResetTime / 60000 + " minutes.");
+							log("Will reset warning for " + threshold + " to false in " + warningResetTime / 60000 + " minutes.");
 
 							setTimeout(function() {
 								otherPlayer.warned[res.distance] = false;
+								otherPlayer.minWarned = 1000;
 							}, warningResetTime);
 						}
+					}
+
+					if ('dist' in warnObj) {
+
+						emitTo.user(otherPlayer, "agentCloseWarning", warnObj);
 					}
 				}
 			},
