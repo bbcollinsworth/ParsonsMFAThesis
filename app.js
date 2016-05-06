@@ -16,7 +16,16 @@ var include = require('./my_modules/moduleLoader.js');
 include('globalModules');
 var gameState = include('gameState');
 
-gameState.createGameSession(Date.now());
+var start = Date.parse("May 5, 2016 22:45:00");
+log(start,colors.hilite);
+
+gameState.createGameSession({
+	serverStart: Date.now(),
+	gameStart: start
+});
+
+log("Game start is: " + gameState.gameStart);
+//log("Timestamp of that is: " + Date.parse(gameState.gameStart));
 
 
 app.use(bodyParser.json());
@@ -74,8 +83,11 @@ io.on('connection', function(socket) {
 
 	log('The user ' + socket.id + ' just connected!', colors.yellow);
 	//emitTo.socket('connected', {});
+
+	//USED BUT IN STARTUP FUNCTIONS ON client side...
 	socket.emit('connected', {
-		gameStartTime: gameState.startTime
+		serverStartTime: gameState.serverStart,
+		gameStartTime: gameState.gameStart
 	});
 
 	//=================================
@@ -93,7 +105,7 @@ io.on('connection', function(socket) {
 		log("ExistingIDs List length: " + existingUserIDs.length);
 		emitTo.socket('playerTypeCheck', {
 			userIDs: existingUserIDs,
-			gameStartTime: gameState.startTime
+			gameStartTime: gameState.gameStart //should be ok as long as nothing's stored before game start
 		});
 		log("Checking if new player...");
 	};
@@ -192,12 +204,65 @@ io.on('connection', function(socket) {
 
 			clientInitialized: function() {
 				log(socket.id + " server and map are initialized!", colors.yellow);
-				checkPlayerType();
+
+				//ONLY SEND IF GAME STARTED. OTHERWISE, SHOW SPLASH SCREEN BASED ON HASH
+				if (gameState.gameStarted) {
+					checkPlayerType();
+				} else {
+					var team = gameState.getTeam(res.teamHash);
+					emitTo.socket('showPregame',{
+						team: team,
+						startTime: gameState.gameStart,
+						startZone: gameState.settings.startZone(team)
+					});
+
+					var millisToStart = gameState.gameStart - Date.now();
+					setTimeout(function(){
+						checkPlayerType();
+					},millisToStart);
+				}
 			},
 
 			connectedCheck: function() {
 				log('The user ' + player.userID + " / " + socket.id + ' pinged to see if still connected.', colors.yellow);
 				emitTo.socket('stillConnected', {});
+			},
+
+			newPlayer: function() {
+				player = userModule(players, emitTo); //socket); //instantiate new player object
+				var team = gameState.getTeam(res.teamHash); //create player
+				player.create(team);
+				player.addToTeam(team);
+
+				players[player.userID] = player; //add player to playersObject
+				//log("Total # of players: " + gameState.playerCount());
+				log("Total # of players: " + gameState.playerCount);
+				log('Added player to database:');
+				log(players[player.userID]);
+
+				//send new ID to player:
+				emitTo.socket('newUserID', {
+					newID: player.userID,
+					team: player.team
+				});
+
+				//var check = gameState.liveInsCount;
+
+			},
+
+			returningPlayer: function() {
+				log('Requesting update of player ' + players[res.userID].userID, colors.italic);
+				players[res.userID].update(emitTo); //socket);
+				player = players[res.userID];
+				player.addToTeam(player.team);
+				log("'Player' for socket " + socket.id + " is now:", colors.yellow.inverse);
+				log(player);
+
+				emitTo.socket('returningReadyCheck', {
+					team: player.team,
+					introComplete: player.playStarted,
+					svcCheckComplete: player.svcCheckComplete
+				});
 			},
 
 			geoTestStart: function() {
@@ -245,43 +310,6 @@ io.on('connection', function(socket) {
 				emitTo.socket('geoTestServerEval', {
 					finding: resultEval,
 					shouldRefresh: refreshOnNextTest
-				});
-			},
-
-			newPlayer: function() {
-				player = userModule(players, emitTo); //socket); //instantiate new player object
-				var team = gameState.getTeam(res.teamHash); //create player
-				player.create(team);
-				player.addToTeam(team);
-
-				players[player.userID] = player; //add player to playersObject
-				//log("Total # of players: " + gameState.playerCount());
-				log("Total # of players: " + gameState.playerCount);
-				log('Added player to database:');
-				log(players[player.userID]);
-
-				//send new ID to player:
-				emitTo.socket('newUserID', {
-					newID: player.userID,
-					team: player.team
-				});
-
-				//var check = gameState.liveInsCount;
-
-			},
-
-			returningPlayer: function() {
-				log('Requesting update of player ' + players[res.userID].userID, colors.italic);
-				players[res.userID].update(emitTo); //socket);
-				player = players[res.userID];
-				player.addToTeam(player.team);
-				log("'Player' for socket " + socket.id + " is now:", colors.yellow.inverse);
-				log(player);
-
-				emitTo.socket('returningReadyCheck', {
-					team: player.team,
-					introComplete: player.playStarted,
-					svcCheckComplete: player.svcCheckComplete
 				});
 			},
 
@@ -429,7 +457,7 @@ io.on('connection', function(socket) {
 					// var minWarned = 1000;
 
 					for (var threshold in otherPlayer.warned) {
-						log("MinWarned is " + otherPlayer.minWarned +" and threshold is " + threshold);
+						log("MinWarned is " + otherPlayer.minWarned + " and threshold is " + threshold);
 						log("MinWarned < threshold is " + (+otherPlayer.minWarned < +threshold));
 						if (warned || (+otherPlayer.minWarned < +threshold)) {
 							continue;
@@ -439,7 +467,7 @@ io.on('connection', function(socket) {
 
 							otherPlayer.warned[threshold] = true;
 							otherPlayer.minWarned = threshold;
-							log("MinWarned set to " + otherPlayer.minWarned,colors.hilite);
+							log("MinWarned set to " + otherPlayer.minWarned, colors.hilite);
 
 							warnObj['threshold'] = threshold;
 							// emitTo.user(otherPlayer, "agentCloseWarning", {

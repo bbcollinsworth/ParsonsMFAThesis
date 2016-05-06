@@ -1,5 +1,17 @@
 (function() { //module.exports = function() {
 
+	var startZones = {
+		'university center': {
+			lat: 40.735305,
+			lng: -73.994171
+		},
+		'McNair Park': {
+			//enabled: true,
+			lat: 40.670774,
+			lng: -73.961985
+		}
+
+	};
 
 	var playSettings = {
 		hubDownTarget: 3,
@@ -9,6 +21,13 @@
 		dataSkipInterval: 3,
 		teamPickMethod: 'insIfNoHash', //'alternate',
 		maxGovDistance: 500, //in meters
+		startZone: function(team) {
+			var z = {
+				'ins': 'university center',
+				'gov': 'McNair Park'
+			}
+			return startZones[z[team]];
+		},
 		introContent: {
 			'gov': {
 				'screen1': {
@@ -292,15 +311,27 @@
 
 	var state = {
 
-		createGameSession: function(startTimestamp) {
-			this.startTime = startTimestamp;
-			this.gameID = "game" + startTimestamp;
+		createGameSession: function(setup) {
+			this.serverStart = setup.serverStart;
+			this.gameStart = setup.gameStart;
+
+			this.gameID = "game-" + setup.serverStart;
+		},
+
+		get gameStarted(){
+			if (Date.now() > state.gameStart){
+				log("Game has started",colors.bgGreen);
+				return true;
+			} else {
+				log("Game not yet started",colors.error);
+				return false;
+			}
 		},
 
 		'settings': playSettings,
 
 		get score() {
-			
+
 			var s = {
 				hubs: {
 					hacked: state.hackedHubCount,
@@ -311,7 +342,7 @@
 					live: state.liveInsCount
 				}
 			};
-			log("Current score is: ",colors.hilite);
+			log("Current score is: ", colors.hilite);
 			log(s);
 			return s;
 		},

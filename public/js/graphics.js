@@ -60,6 +60,45 @@ var viz = {
 			'display': 'none'
 		});
 	},
+	pregame: {
+		get countdown() {
+			return $('#' + viz.pregame.countdownID);
+		},
+		countdownID: 'Countdown',
+		text: {
+			'gov': {
+				1: 'Suspected cyberattack commencing in...',
+				'special': 'Proceed to this location and await further instruction:'
+				//3: 
+			},
+			'ins': {
+				1: 'The revolution begins in...',
+				'special': 'Be here when it starts:'
+				//3: 
+			}
+		},
+		render: function(data) {
+			var team = data.team;
+			var start = data.startTime;
+			customLog("Game start time is: " + convertTimestamp(start));
+			customLog("Current time is: " + convertTimestamp(Date.now()));
+			var timer = function(){
+				console.log("Time to start is: "+ convertToCountdown(Date.now() - start));
+				var c = start - Date.now();
+				return convertToCountdown(c,true);
+			}
+
+			app.addStyling(team);
+
+			var t = viz.pregame.text[team];
+			t.special = '<div class="countdown" id="' + viz.pregame.countdownID + '">' + timer() + '</div><p>' + t.special + '</p>';
+			msg(t, 'pregame');
+
+			viz.pregame['countInterval'] = setInterval(function() {
+				viz.pregame.countdown.text(timer());
+			}, 1000);
+		}
+	},
 	geoPrompt: {
 		shouldRefresh: false,
 		button: {
@@ -391,9 +430,13 @@ var viz = {
 						return {};
 				}
 			},
-				'setup': {
-					boxClass: 'setup-alert',
+				'pregame': {
+					boxClass: 'pregame-alert',
 					controlClass: 'control-hidden'
+			},
+			'setup': {
+				boxClass: 'setup-alert',
+				controlClass: 'control-hidden'
 			},
 			'intro': {
 				controlClass: 'control-hidden'
@@ -900,7 +943,23 @@ var viz = {
 		return c;
 	},
 
+	startMarker: {
+		radius: 50,
+		options: {
+			'stroke': false,
+			'className': 'start-area'
+		},
+		create: function(pos) {
+			customLog("Creating Start Zone marker");
+			var m = L.circle([pos.lat, pos.lng],
+				this.radius, this.options);
 
+			m.addTo(map);
+			customLog("Panning map to start zone at: ");
+			customLog(m.getLatLng());
+			map.panTo(m.getLatLng());
+		}
+	},
 
 	// ====== HUB VISUALIZATION SETUP ==============//
 	hubOptions: {

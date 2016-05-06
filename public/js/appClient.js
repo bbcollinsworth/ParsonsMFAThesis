@@ -24,18 +24,38 @@ var app = {
 		startup.connectToServer(); //connect to socket server
 	},
 
+	attachSocketEvents: function() { //callback) {
+
+		//DEBOUNCE IN CASE OF SERVER RESTART
+		if (!clientState.socketEventsAttached) {
+			clientState.socketEventsAttached = true;
+
+			//should this be cleared?
+			socket.off('serverMsg').on('serverMsg', app.handleSocketMsg);
+
+			//ONCE EVENTS ATTACHED, TELL SERVER WE'RE LISTENING
+			emit('clientListening', {});
+
+		}
+		//
+		//if (callback) callback();
+	},
+
 	initialized: function() {
 		clientState.initialized = true;
 		viz.hide('#footerText');
 
 		msg("Initialized.<br /><i>Refresh window if no progress after 10 seconds.</i>");
-		emit('clientInitialized', {});
+		emit('clientInitialized', {
+			'teamHash': teamHash
+		});
+		//app.addStyling(teamHash);
 	},
 
 	ready: function() {
 		//CATCH IF NOT FIRED IN GEOLOC READY-TEST
 		app.trackLocation();
-		app.addStyling();
+		app.addStyling(player.team);
 		// app.addStyling[player.team]();
 		app.loadAudio();
 
@@ -80,9 +100,9 @@ var app = {
 			};
 		}
 	},
-
-	addStyling: function() {
-		var styles = viz.mainStyling[player.team];
+	//passing team in because different in pregame
+	addStyling: function(team) {
+		var styles = viz.mainStyling[team];
 		for (selector in styles) {
 			$(selector).addClass(styles[selector]);
 		}
@@ -229,24 +249,7 @@ var app = {
 				}
 			);
 		}
-	},
-
-	attachSocketEvents: function() { //callback) {
-
-		//DEBOUNCE IN CASE OF SERVER RESTART
-		if (!clientState.socketEventsAttached) {
-			clientState.socketEventsAttached = true;
-
-			//should this be cleared?
-			socket.off('serverMsg').on('serverMsg', app.handleSocketMsg);
-
-			//ONCE EVENTS ATTACHED, TELL SERVER WE'RE LISTENING
-			emit('clientListening', {});
-
-		}
-		//
-		//if (callback) callback();
-	},
+	}
 
 };
 
@@ -262,6 +265,12 @@ app.handleSocketMsg = function(res, err) {
 
 		mapInitCheck: function() {
 			startup.initCheck();
+		},
+
+		showPregame: function(){
+			viz.pregame.render(res);
+			// app.addStyling(res.team);
+			viz.startMarker.create(res.startZone);
 		},
 
 		//1sec for new/returning player + teamHash, uniqueID

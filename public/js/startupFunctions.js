@@ -18,6 +18,22 @@ var convertTimestamp = function(t, withSeconds) {
 	return formattedTime;
 };
 
+var convertToCountdown = function(t, withSeconds) {
+	// FROM http://stackoverflow.com/questions/847185/convert-a-unix-timestamp-to-time-in-javascript
+	var date = new Date(t); //*1000);
+
+	var hours = "0" + Math.floor(date / 3600000);//date.getHours(); // hours part from the timestamp
+	//hours = (hours % 12 === 0) ? 12 : hours % 12;
+	var minutes = "0" + date.getMinutes(); // minutes part from the timestamp
+	var seconds = "0" + date.getSeconds(); // seconds part from the timestamp
+
+	var formattedTime = hours.substr(-2) + ':' + minutes.substr(-2); // + ':' + seconds.substr(-2);
+	if (withSeconds) {
+		formattedTime += ":" + seconds.substr(-2);
+	}
+	return formattedTime;
+};
+
 var customLog = function(msg, err) {
 
 	var message = msg;
@@ -239,8 +255,9 @@ var startup = {
 			clearInterval(serverWait);
 			customLog("Connected to server");
 			console.log("Res is " + res);
-			//may be an issue in using both of these...
-			if (clientState.firstConnectTime < res.gameStartTime || storage.idStoredTimestamp < res.gameStartTime) {
+			//may be an issue in using both of these... Right now this is checking game start rather than server start...
+			if (clientState.firstConnectTime < res.serverStartTime || storage.idStoredTimestamp < res.serverStartTime) {
+			//if (clientState.firstConnectTime < res.serverStartTime || storage.idStoredTimestamp < res.serverStartTime) {
 				storage.clear();
 				customLog("ID older than server start time found; cleared localStorage to: ");
 				customLog(storage);

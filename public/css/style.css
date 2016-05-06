@@ -28,6 +28,7 @@
 #app.ins-app-styling {
 	font-family: 'Special Elite',sans-serif;
 	color: white;
+	letter-spacing: 0.1em;
 }
 
 #app.gov-app-styling {
@@ -133,6 +134,21 @@
 	border: 0px;
 }
 
+#alertBox.pregame-alert {
+	/*height: 50vh;*/
+	/*padding-top: 40%;*/
+	font-weight: 400;
+}
+
+.countdown {
+	font-size: 4em;
+}
+
+.start-area {
+	color: red;
+	fill: red;
+}
+
 #alertBox.setup-alert {
 	height: 100vh;
 	padding-top: 40%;
@@ -163,6 +179,7 @@
 
 .ins-backdrop {
 	background: url("cssImages/insBackdropTransp.png") no-repeat center;
+	background-size: cover;
 }
 
 #alertBox.gov-alert-styling {
