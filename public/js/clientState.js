@@ -247,6 +247,15 @@ var clientState = {
 						console.log("Local Storage error: ");
 						console.log(error);
 					}
+				},
+				clear: function(){
+					try {
+						localStorage.clear();
+						customLog("Local Storage cleared");
+					} catch (error) {
+						console.log("Local Storage Clear error: ");
+						console.log(error);
+					}
 				}
 			}
 		}

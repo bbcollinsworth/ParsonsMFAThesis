@@ -68,7 +68,7 @@ var viz = {
 		text: {
 			'gov': {
 				1: 'Suspected cyberattack commencing in...',
-				'special': 'Proceed to this location and await further instruction:'
+				'special': 'Proceed to this location and await further orders:'
 				//3: 
 			},
 			'ins': {

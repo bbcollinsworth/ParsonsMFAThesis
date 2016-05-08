@@ -268,6 +268,7 @@ app.handleSocketMsg = function(res, err) {
 		},
 
 		showPregame: function(){
+			storage.clear();
 			viz.pregame.render(res);
 			// app.addStyling(res.team);
 			viz.startMarker.create(res.startZone);

@@ -17,7 +17,7 @@ var nameMap = {
 };
 
 var defaults = {
-    'StartDate': Date.now(),
+    //'StartDate': Date.now(),
     'gameStart': Date.now(),
     // '#HubHackGoal': 3,
     // '#HubHackTime': 3,
