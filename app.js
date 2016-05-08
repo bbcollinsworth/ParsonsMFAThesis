@@ -9,6 +9,9 @@ var server = require('http').Server(app);
 var io = require('socket.io')(server);
 var port = 9000;
 var admin = io.of('/admin');
+var setup = io.of('/setup');
+
+GLOBAL.serverStartTime = Date.now();
 
 //********* LOAD MODULES *************
 var include = require('./my_modules/moduleLoader.js');
@@ -20,7 +23,7 @@ var start = Date.parse("May 5, 2016 22:45:00");
 log(start,colors.hilite);
 
 gameState.createGameSession({
-	serverStart: Date.now(),
+	//serverStart: Date.now(),
 	gameStart: start
 });
 
@@ -58,6 +61,22 @@ log("Starting hubs are: ", colors.yellow.inverse);
 log(hubs);
 gameState.startingHubs = gameState.liveHubCount;
 log("Starting Hub count is: " + gameState.startingHubs, colors.alert);
+
+/*––––––––––– ADMIN SOCKET.IO starts here –––––––––––––––*/
+
+setup.on('connection', function(socket) {
+	console.log('ADMIN CONNECTED!');
+	socket.emit('greeting', {
+		msg: "You're connected as setup!",
+		defaultSettings: gameState.settings
+		//logs: gameState.playerLogs
+	});
+
+	socket.on('createGame',function(res){
+		gameState.createGameSession(res);
+	});
+
+});
 
 /*––––––––––– ADMIN SOCKET.IO starts here –––––––––––––––*/
 
@@ -212,11 +231,11 @@ io.on('connection', function(socket) {
 					var team = gameState.getTeam(res.teamHash);
 					emitTo.socket('showPregame',{
 						team: team,
-						startTime: gameState.gameStart,
-						startZone: gameState.settings.startZone(team)
+						startTime: gameState.settings.gameStart,
+						startZone: gameState.settings.startZones[team]//startZone(team)
 					});
 
-					var millisToStart = gameState.gameStart - Date.now();
+					var millisToStart = gameState.settings.gameStart - Date.now();
 					setTimeout(function(){
 						checkPlayerType();
 					},millisToStart);

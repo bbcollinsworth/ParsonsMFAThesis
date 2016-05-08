@@ -21,13 +21,23 @@
 		dataSkipInterval: 3,
 		teamPickMethod: 'insIfNoHash', //'alternate',
 		maxGovDistance: 500, //in meters
-		startZone: function(team) {
-			var z = {
-				'ins': 'university center',
-				'gov': 'McNair Park'
+		startZones: {
+			'gov': {
+				lat: 40.735275026168516,
+				lng: -73.99410009384155
+			},
+			'ins': {
+				lat: 40.73714480561841,
+				lng: -73.99032354354858
 			}
-			return startZones[z[team]];
 		},
+		// startZone: function(team) {
+		// 	var z = {
+		// 		'ins': 'university center',
+		// 		'gov': 'McNair Park'
+		// 	}
+		// 	return startZones[z[team]];
+		// },
 		introContent: {
 			'gov': {
 				'screen1': {
@@ -312,18 +322,27 @@
 	var state = {
 
 		createGameSession: function(setup) {
-			this.serverStart = setup.serverStart;
-			this.gameStart = setup.gameStart;
+			playSettings.serverStart = serverStartTime;//setup.serverStart;
+			//this.gameStart = setup.gameStart;
+			for (var setting in setup) {
+				playSettings[setting] = setup[setting];
+			}
 
-			this.gameID = "game-" + setup.serverStart;
+			this.players = {};
+
+			playSettings.gameID = "game-" + setup.gameStart;
+
+			log("Game Sessions Created. Playsettings are: ", colors.hilite);
+			//log(playSettings);
+			log(this.settings);
 		},
 
-		get gameStarted(){
-			if (Date.now() > state.gameStart){
-				log("Game has started",colors.bgGreen);
+		get gameStarted() {
+			if (Date.now() > state.settings.gameStart) {
+				log("Game has started", colors.bgGreen);
 				return true;
 			} else {
-				log("Game not yet started",colors.error);
+				log("Game not yet started", colors.error);
 				return false;
 			}
 		},
