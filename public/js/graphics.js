@@ -78,15 +78,24 @@ var viz = {
 			}
 		},
 		render: function(data) {
+			viz.pregame.rendered = true;
+
 			var team = data.team;
 			var start = data.startTime;
 			customLog("Game start time is: " + convertTimestamp(start));
 			customLog("Current time is: " + convertTimestamp(Date.now()));
-			var timer = function(){
-				console.log("Time to start is: "+ convertToCountdown(Date.now() - start));
+
+			var timer = function() {
+
 				var c = start - Date.now();
-				return convertToCountdown(c,true);
-			}
+
+				// if (c < 0 && viz.pregame.countInterval) {
+				// 	clearInterval(viz.pregame.countInterval);
+				// 	console.log("Countdown complete - clearing interval");
+				// }
+				console.log("Time to start is: " + convertToCountdown(c, true));
+				return convertToCountdown(c, true);
+			};
 
 			app.addStyling(team);
 
@@ -94,9 +103,41 @@ var viz = {
 			t.special = '<div class="countdown" id="' + viz.pregame.countdownID + '">' + timer() + '</div><p>' + t.special + '</p>';
 			msg(t, 'pregame');
 
+			viz.pregame.startZone = viz.startMarker.create(data.startZone);
+			//viz.pregame.startZone
+
 			viz.pregame['countInterval'] = setInterval(function() {
 				viz.pregame.countdown.text(timer());
+				//clear is included in timer function
 			}, 1000);
+		},
+		clear: function() {
+			if (viz.pregame.rendered) {
+				map.removeLayer(viz.pregame.startZone);//.remove();
+				clearInterval(viz.pregame.countInterval);
+				customLog("Countdown complete - clearing interval and startZone");
+			} else {
+				customLog("No pregame to clear. Continuing...");
+			}
+		}
+	},
+	startMarker: {
+		radius: 50,
+		options: {
+			'stroke': false,
+			'className': 'start-area'
+		},
+		create: function(pos) {
+			customLog("Creating Start Zone marker");
+			var m = L.circle([pos.lat, pos.lng],
+				this.radius, this.options);
+
+			m.addTo(map);
+			customLog("Panning map to start zone at: ");
+			customLog(m.getLatLng());
+			map.panTo(m.getLatLng());
+
+			return m;
 		}
 	},
 	geoPrompt: {
@@ -943,23 +984,6 @@ var viz = {
 		return c;
 	},
 
-	startMarker: {
-		radius: 50,
-		options: {
-			'stroke': false,
-			'className': 'start-area'
-		},
-		create: function(pos) {
-			customLog("Creating Start Zone marker");
-			var m = L.circle([pos.lat, pos.lng],
-				this.radius, this.options);
-
-			m.addTo(map);
-			customLog("Panning map to start zone at: ");
-			customLog(m.getLatLng());
-			map.panTo(m.getLatLng());
-		}
-	},
 
 	// ====== HUB VISUALIZATION SETUP ==============//
 	hubOptions: {
@@ -975,7 +999,7 @@ var viz = {
 		customPopup: function(hubName) {
 			var opts = {
 				'className': 'hub-popup'
-			}
+			};
 
 			var hubPop = L.popup(opts).setContent('Security Site');
 			return hubPop;
@@ -1016,12 +1040,13 @@ var viz = {
 				h.flashing = true;
 				h['flasher'] = setInterval(function() {
 
-					var opts = {
+					h.area.setStyle({
 						fillColor: c
-					}
-					h.area.setStyle(opts);
+					});
 
-					h.marker.setStyle(opts);
+					h.marker.setStyle({
+						'color': c
+					});
 
 					if (c == '#ff0000') {
 						c = '#0033ff';
@@ -1036,10 +1061,10 @@ var viz = {
 					clearInterval(h.flasher);
 					if (h.live) {
 						h.area.setStyle({
-							fillColor: '#0033ff'
+							'fillColor': '#0033ff'
 						});
 						h.marker.setStyle({
-							fillColor: '#0033ff'
+							'color': '#0033ff'
 						});
 					} else {
 						h.shutDown();

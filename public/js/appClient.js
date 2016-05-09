@@ -271,11 +271,13 @@ app.handleSocketMsg = function(res, err) {
 			storage.clear();
 			viz.pregame.render(res);
 			// app.addStyling(res.team);
-			viz.startMarker.create(res.startZone);
+			//MOVED TO RENDER FUNCTION:
+			// viz.startMarker.create(res.startZone);
 		},
 
 		//1sec for new/returning player + teamHash, uniqueID
 		playerTypeCheck: function() {
+			viz.pregame.clear();
 			var storedUserFound = startup.storedUserCheck(res.userIDs, res.gameStartTime);
 			customLog("Stored user found is: " + storedUserFound);
 
