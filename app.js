@@ -10,8 +10,10 @@ var io = require('socket.io')(server);
 var port = 9000;
 var admin = io.of('/admin');
 var setup = io.of('/setup');
+var serverLog = io.of('/serverLog');
 
 GLOBAL.serverStartTime = Date.now();
+GLOBAL.logFile = {};
 
 //********* LOAD MODULES *************
 var include = require('./my_modules/moduleLoader.js');
@@ -89,6 +91,19 @@ admin.on('connection', function(socket) {
 
 });
 
+/*––––––––––– ADMIN SOCKET.IO starts here –––––––––––––––*/
+
+serverLog.on('connection', function(socket) {
+	console.log('SERVER LOG CONNECTED!');
+
+	console.log(logFile);
+	socket.emit('greeting', {
+		msg: "You're connected as server log!",
+		logs: logFile//;//gameState.playerLogs
+	});
+
+});
+
 
 /*––––––––––– SOCKET.IO starts here –––––––––––––––*/
 io.on('connection', function(socket) {
@@ -127,7 +142,9 @@ io.on('connection', function(socket) {
 		log("ExistingIDs List length: " + existingUserIDs.length);
 		emitTo.socket('playerTypeCheck', {
 			userIDs: existingUserIDs,
-			gameStartTime: gameState.gameStart //should be ok as long as nothing's stored before game start
+			gameStartTime: gameState.settings.gameStart, //should be ok as long as nothing's stored before game start
+			gameCreateTime: gameState.settings.gameCreateTime,
+			team: socket.team
 		});
 		log("Checking if new player...");
 	};
@@ -181,7 +198,8 @@ io.on('connection', function(socket) {
 
 	var govWinCheck = function() {
 		// if (gameState.liveInsCount < 1) {
-		if (gameState.score.hackers.live < 1) {
+		if (+gameState.score.hackers.live < 1) {
+			log("Live hacker count is: " + gameState.score.hackers.live);
 			log("No Ins left - Gov win condition met!");
 			emitTo.all('govWon', {});
 		} //else 
@@ -248,7 +266,7 @@ io.on('connection', function(socket) {
 				} else {
 					log("Client does NOT have stored team. Setting and storing team from hash: " + res.teamHash);
 					socket['team'] = gameState.getTeam(res.teamHash);
-					log(socket);
+					log("Team set to: "+ socket.team);
 				}
 				//ONLY SEND IF GAME STARTED. OTHERWISE, SHOW SPLASH SCREEN BASED ON HASH
 				if (gameState.gameStarted) {
@@ -375,6 +393,8 @@ io.on('connection', function(socket) {
 			readyToPlay: function() {
 				//player.connected = true;
 				player.svcCheckComplete = true;
+				log(player.userID + " / " + socket.id + " is ready to play!",colors.bgGreen);
+				log("Team is " + player.team,colors.bgGreen);
 
 				switch (player.team) {
 					case 'gov':

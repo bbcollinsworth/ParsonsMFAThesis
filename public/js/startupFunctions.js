@@ -285,9 +285,10 @@ var startup = {
 
 				// if (clientState.firstConnectTime < res.gameCreateTime) {
 				customLog("Game Create Time is: " + res.settings.gameCreateTime);
-		
+
 				customLog("Socket stored time minus start time is: " + (clientState.socketStoredTime - res.settings.gameCreateTime));
-						customLog("Stored Time older than create time is: " + (clientState.socketStoredTime < res.settings.gameCreateTime));
+				customLog("Stored Time older than create time is: " + (clientState.socketStoredTime < res.settings.gameCreateTime));
+				customLog("ID stored Timestamp is: " + storage.idStoredTimestamp);
 				if (clientState.socketStoredTime < res.gameCreateTime) {
 					storage.clear();
 					player.team = undefined;
@@ -367,7 +368,7 @@ var startup = {
 		}
 	},
 
-	storedUserCheck: function(allIDs, gameStart) {
+	storedUserCheck: function(allIDs, gameCreated) {
 		customLog("Checking for stored user. IDs from server are: ");
 		customLog(allIDs);
 		customLog("And locally stored ID is: ");
@@ -377,9 +378,9 @@ var startup = {
 		if (storage.userID !== undefined) {
 
 			//this may not be necessary now... on connection will always beat
-			if (storage.idStoredTimestamp < gameStart) {
+			if (storage.idStoredTimestamp < gameCreated) {
 				storage.clear();
-				customLog("ID older than server start time found; cleared localStorage to: ");
+				customLog("On stored user check, ID older than server start time found; cleared localStorage to: ");
 				customLog(storage);
 				//window.location.reload();
 			} else {
@@ -526,8 +527,14 @@ var startup = {
 			if (allServicesReady) {
 
 				msg("Ready!");
-				storage.setItem('svcCheckComplete', true);
-				customLog("Local value of SvcCheckComplete stored as: " + storage.svcCheckComplete);
+
+				try {
+					storage.setItem('svcCheckComplete', true);
+					customLog("Local value of SvcCheckComplete stored as: " + storage.svcCheckComplete);
+				} catch(err) {
+					customLog("Service Check Ready Storage Error: ");
+					customLog(err);
+				}
 
 				$('#footerText').html('');
 

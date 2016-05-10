@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>ServerLog: GoDark</title>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width">
+	<script src='https://api.mapbox.com/mapbox.js/v2.2.3/mapbox.js'></script>
+	<link href='https://api.mapbox.com/mapbox.js/v2.2.3/mapbox.css' rel='stylesheet' />
+	<link rel="stylesheet" href="http://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.css">
+	<script src="http://code.jquery.com/jquery-1.11.3.min.js"></script>
+	<!-- This disables jQueryMobile hash navigation -->
+	<script>
+	$(document).on("mobileinit", function () {
+		$.mobile.hashListeningEnabled = false;
+		$.mobile.pushStateEnabled = false;
+		$.mobile.changePage.defaults.changeHash = false;
+	});
+	</script>
+	<script src="http://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.js"></script>
+
+	<link href='http://fonts.googleapis.com/css?family=Oswald:400,300,700|Special+Elite|Open+Sans:300italic,400italic,600italic,700italic,400,300,600,700' rel='stylesheet' type='text/css'>
+</head>
+<body>
+
+	<div id="app">
+	</div>
+	<!-- SCRIPTS -->
+	<script type="text/javascript" src="/socket.io/socket.io.js"></script>
+	<script type="text/javascript" src="server-log.js"></script>
+
+</body>
+</html>

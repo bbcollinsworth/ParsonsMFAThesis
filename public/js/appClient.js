@@ -70,11 +70,15 @@ var app = {
 		};
 
 		if ('team' in storage) {
-			customLog("Stored team found for " + socket.id + ": " + storage.team);
-			initData.foundTeam = storage.team;
+			if (storage.team !== undefined) {
+				customLog("Stored team found for " + socket.id + ": " + storage.team);
+				initData.foundTeam = storage.team;
+			}
 		} else if (player.team !== undefined) {
 			customLog("Set player.team found for " + socket.id + ": " + player.team);
 			initData.foundTeam = player.team;
+		} else {
+			customLog("No stored team found");
 		}
 
 		emit('clientInitialized', initData);
@@ -340,12 +344,13 @@ app.handleSocketMsg = function(res, err) {
 		//1sec for new/returning player + teamHash, uniqueID
 		playerTypeCheck: function() {
 			viz.pregame.clear();
-			var storedUserFound = startup.storedUserCheck(res.userIDs, res.gameStartTime);
+			var storedUserFound = startup.storedUserCheck(res.userIDs, res.gameCreateTime);
 			customLog("Stored user found is: " + storedUserFound);
 
 			if (storedUserFound) { //send returning player
 				clientState.localID = localStorage.userID;
 				player.localID = localStorage.userID;
+				player.localUserID = localStorage.userID;
 				emit('returningPlayer', {
 					userID: localStorage.userID
 				});
@@ -363,12 +368,13 @@ app.handleSocketMsg = function(res, err) {
 			player.localID = storage.userID; //confusing, should be deprecated to below
 			player.localUserID = storage.userID;
 			player.team = res.team;
+			storage.setItem("team",res.team);
 			//app.addStyling(player.team);
 			customLog("UserID stored locally as: " + storage.userID);
 			msg('Hello Player ' + res.newID + '!');
 			app.addStyling(player.team);
 			startup.svcCheck();
-			
+
 		},
 
 		geoTestServerEval: function() {

@@ -11,6 +11,7 @@ var map;
 app.init = function() {
 
     $('#app').css({
+        'white-space': 'pre',
         'text-shadow': 'none',
         'font-family': "'Inconsolata','Courier New','sans-serif'"
     });
