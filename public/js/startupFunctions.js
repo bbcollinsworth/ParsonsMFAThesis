@@ -290,7 +290,8 @@ var startup = {
 						customLog("Stored Time older than create time is: " + (clientState.socketStoredTime < res.settings.gameCreateTime));
 				if (clientState.socketStoredTime < res.gameCreateTime) {
 					storage.clear();
-					customLog("Socket older than server start time found; clearing localStorage to: ");
+					player.team = undefined;
+					customLog("Socket older than server start time found; clearing team and localStorage to: ");
 					customLog(storage);
 					customLog("...and force-reloading page.");
 					window.location.reload();
@@ -299,7 +300,8 @@ var startup = {
 
 					//FIRST CLEAR OLD SOCKETS FROM PREVIOUS GAME SESSION
 					storage.clear();
-					customLog("ID older than server start time found; cleared localStorage to: ");
+					player.team = undefined;
+					customLog("ID older than server start time found; cleared team and localStorage to: ");
 					customLog(storage);
 					//window.location.reload();
 					// clientState.socketID = res.socketID;

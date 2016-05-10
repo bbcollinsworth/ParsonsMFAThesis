@@ -24,7 +24,7 @@ var gameState = include('gameState');
 
 gameState.createGameSession({
 	//serverStart: Date.now(),
-	gameStart: Date.now()//start
+	gameStart: Date.now() //start
 });
 
 log("Game start is: " + gameState.gameStart);
@@ -72,7 +72,7 @@ setup.on('connection', function(socket) {
 		//logs: gameState.playerLogs
 	});
 
-	socket.on('createGame',function(res){
+	socket.on('createGame', function(res) {
 		gameState.createGameSession(res);
 	});
 
@@ -220,14 +220,20 @@ io.on('connection', function(socket) {
 			},
 
 			clientListening: function() {
-				log("ClientID for " + socket.id + " is: " + res.clientID);
+				log("ClientData for " + socket.id + " is: ", colors.bgGreen);
+				log(res);
+				// if ('foundTeam' in res){
+				// 	socket['team'] = res.foundTeam;
+				// 	log("Client has team. Storing team " + res.foundTeam + " in socket info:");
+				// 	log(socket);
+				// }
 				//player.connected = true;
-				emitTo.socket('mapInitCheck',{ //'checkSocketAndMapInit', {
-					socketID: socket.id
+				emitTo.socket('mapInitCheck', { //'checkSocketAndMapInit', {
+					//socketID: socket.id
 				});
 			},
 
-			disconnectDuplicate: function(){
+			disconnectDuplicate: function() {
 				console.log("Disconnecting duplicate: " + socket.id);
 				socket.disconnect();
 			},
@@ -235,21 +241,31 @@ io.on('connection', function(socket) {
 			clientInitialized: function() {
 				log(socket.id + " server and map are initialized!", colors.yellow);
 
+				if ('foundTeam' in res) {
+					socket['team'] = res.foundTeam;
+					log("Client has team. Storing team " + res.foundTeam + " in socket info:");
+					log(socket);
+				} else {
+					log("Client does NOT have stored team. Setting and storing team from hash: " + res.teamHash);
+					socket['team'] = gameState.getTeam(res.teamHash);
+					log(socket);
+				}
 				//ONLY SEND IF GAME STARTED. OTHERWISE, SHOW SPLASH SCREEN BASED ON HASH
 				if (gameState.gameStarted) {
 					checkPlayerType();
 				} else {
-					var team = gameState.getTeam(res.teamHash);
-					emitTo.socket('showPregame',{
-						team: team,
+
+					//var team = gameState.getTeam(res.teamHash);
+					emitTo.socket('showPregame', {
+						team: socket.team,
 						startTime: gameState.settings.gameStart,
-						startZone: gameState.settings.startZones[team]//startZone(team)
+						startZone: gameState.settings.startZones[socket.team] //startZone(team)
 					});
 
 					var millisToStart = gameState.settings.gameStart - Date.now();
-					setTimeout(function(){
+					setTimeout(function() {
 						checkPlayerType();
-					},millisToStart);
+					}, millisToStart);
 				}
 			},
 
@@ -260,7 +276,20 @@ io.on('connection', function(socket) {
 
 			newPlayer: function() {
 				player = userModule(players, emitTo); //socket); //instantiate new player object
-				var team = gameState.getTeam(res.teamHash); //create player
+				var team = "";
+
+				if ('team' in socket) {
+					//SHOULD ALWAYS DO THIS BASED ON INITIALIZE ABOVE
+					log("Stored team for new player found in socket " + socket.id, colors.bgGreen);
+					//log("Setting team to: " + socket.team);
+					team = socket.team; //create player
+				} else {
+					//REDUNDANT...SHOULD NEVER FIRE...
+					log("NO stored team for new player found in socket " + socket.id, colors.err);
+					team = gameState.getTeam(res.teamHash);
+
+				}
+				log("Setting team to: " + team);
 				player.create(team);
 				player.addToTeam(team);
 

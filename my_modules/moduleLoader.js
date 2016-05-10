@@ -23,6 +23,7 @@ module.exports = function(moduleToLoad) {
 			var temp = require('colors');
 			temp.setTheme({
 				err: 'bgRed',
+				//error: 'bgRed',
 				standout: 'bgMagenta',
 				sendingMsg: 'magenta',
 				hilite: 'bgYellow',

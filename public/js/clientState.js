@@ -142,14 +142,18 @@ var clientState = {
 
 		clientState.allPlayers.localCount.update(newPlayer.type);
 
-		if (newPlayer.userID === storage.userID) {
-			newPlayer.localID = "you";
-		} else {
+		// if (newPlayer.userID === storage.userID) {
+		// 	newPlayer.localID = "you";
+		// } else {
 			newPlayer.localID = player.type + " " + clientState.allPlayers.localCount[player.type].toString();
+		//}
+		var pTitle = newPlayer.localID;
+		if (newPlayer.userID === storage.userID || newPlayer.userID === player.localUserID) {
+			pTitle= "you";
 		}
 
 		var popupData = {
-			'title': newPlayer.localID,
+			'title': pTitle,//newPlayer.localID,
 			'text': {
 				ln1: "(As of " + convertTimestamp(newPlayer.latestPos.time) + ")"
 			},

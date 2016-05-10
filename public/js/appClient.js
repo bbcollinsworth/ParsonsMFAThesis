@@ -18,8 +18,8 @@ var app = {
 
 	init: function() {
 		startup.setup();
-		clientID = Math.floor(Math.random()*100000);
-		customLog("Unique client ID set: " + clientID);
+		// clientID = Math.floor(Math.random()*100000);
+		// customLog("Unique client ID set: " + clientID);
 		msg('Connecting...');
 		startup.initServices();
 		startup.parseHash(); //check URL hash for team and playerID data
@@ -42,9 +42,19 @@ var app = {
 
 		}
 
-		emit('clientListening', {
+		var clientData = {
 			clientID: clientID
-		});
+		};
+
+		// if ('team' in storage){
+		// 	customLog("Stored team found for " + socket.id + ": " + storage.team);
+		// 	clientData.foundTeam = storage.team;
+		// } else if (player.team !== undefined){
+		// 	customLog("Set player.team found for " + socket.id + ": " + player.team);
+		// 	clientData.foundTeam = player.team;
+		// }
+
+		emit('clientListening', clientData);
 		//
 		//if (callback) callback();
 	},
@@ -54,9 +64,20 @@ var app = {
 		viz.hide('#footerText');
 
 		msg("Initialized.<br /><i>Refresh window if no progress after 10 seconds.</i>");
-		emit('clientInitialized', {
-			'teamHash': teamHash
-		});
+		
+		var initData = {
+			teamHash: teamHash
+		};
+
+		if ('team' in storage){
+			customLog("Stored team found for " + socket.id + ": " + storage.team);
+			initData.foundTeam = storage.team;
+		} else if (player.team !== undefined){
+			customLog("Set player.team found for " + socket.id + ": " + player.team);
+			initData.foundTeam = player.team;
+		}
+
+		emit('clientInitialized', initData);
 		//app.addStyling(teamHash);
 	},
 
@@ -323,7 +344,8 @@ app.handleSocketMsg = function(res, err) {
 		newUserID: function() {
 			storage.setItem("userID", res.newID);
 			storage.setItem("idStoredTimestamp", Date.now());
-			player.localID = storage.userID;
+			player.localID = storage.userID;//confusing, should be deprecated to below
+			player.localUserID = storage.userID;
 			player.team = res.team;
 			customLog("UserID stored locally as: " + storage.userID);
 			msg('Hello Player ' + res.newID + '!');
