@@ -198,17 +198,15 @@ io.on('connection', function(socket) {
 
 	var govWinCheck = function() {
 		// if (gameState.liveInsCount < 1) {
-		if (+gameState.score.hackers.live < 1) {
-			log("Live hacker count is: " + gameState.score.hackers.live);
-			log("No Ins left - Gov win condition met!");
-			emitTo.all('govWon', {});
-		} //else 
 
-		// if (gameState.lockoutCount == 1) {
-		// 	emitTo.team('gov', 'playMessage', {
-		// 		toPlay: 'file1'
-		// 	});
-		// }
+		//TEMPORARILY DISABLED
+		// if (+gameState.score.hackers.live < 1) {
+		// 	log("Live hacker count is: " + gameState.score.hackers.live);
+		// 	log("No Ins left - Gov win condition met!");
+		// 	emitTo.all('govWon', {});
+		// } 
+
+
 	};
 
 	//=================================
