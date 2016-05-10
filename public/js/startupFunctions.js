@@ -2,6 +2,9 @@ var govHash, insHash;
 var teamHash, uniqueHash;
 var vibrate, geo, storage, heading;
 
+var clientID; // = Math.floor(Math.random()*100000);
+//console.log("Unique client ID set: " + clientID);
+
 var convertTimestamp = function(t, withSeconds) {
 	// FROM http://stackoverflow.com/questions/847185/convert-a-unix-timestamp-to-time-in-javascript
 	var date = new Date(t); //*1000);
@@ -23,7 +26,7 @@ var convertToCountdown = function(t, withSeconds) {
 	var formattedTime = "";
 	if (t < 0) {
 		formattedTime = "00:00";
-		if (withSeconds){
+		if (withSeconds) {
 			formattedTime += ":00";
 		}
 	} else {
@@ -137,6 +140,9 @@ var startup = {
 
 	setup: function() {
 
+		var clientID = Math.floor(Math.random() * 100000);
+		customLog("Unique client ID set: " + clientID);
+
 		initLeafletExtensions();
 
 		//
@@ -220,10 +226,10 @@ var startup = {
 		//teamHash = parsedHash[0];
 		uniqueHash = parsedHash[1];
 		//NEED TO DO LOCALSTORAGE CHECK
-		if (clientState.features.localstorage.supported) {
-			localStorage.setItem("teamHash", teamHash);
-			localStorage.setItem("uniqueID", uniqueHash);
-		}
+		// if (clientState.features.localstorage.supported) {
+		// 	localStorage.setItem("teamHash", teamHash);
+		// 	localStorage.setItem("uniqueID", uniqueHash);
+		// }
 	},
 
 	initMap: function() {
@@ -259,25 +265,73 @@ var startup = {
 			customLog("Waiting for server connection... " + seconds + "s");
 		}, 1000);
 
+		//if (!clientState.connected) {
+
 		socket.on('connected', function(res, err) {
 			clientState.connected = true;
 			clearInterval(serverWait);
-			customLog("Connected to server");
-			console.log("Res is " + res);
+			customLog("Connected to server with socket " + res.socketID);
+			console.log("Res is ");
+			console.log(res);
 			//may be an issue in using both of these... Right now this is checking game start rather than server start...
-			if (clientState.firstConnectTime < res.serverStartTime || storage.idStoredTimestamp < res.serverStartTime) {
-				//if (clientState.firstConnectTime < res.serverStartTime || storage.idStoredTimestamp < res.serverStartTime) {
-				storage.clear();
-				customLog("ID older than server start time found; cleared localStorage to: ");
-				customLog(storage);
-				//window.location.reload();
-			} else {
-				clientState.firstConnectTime = Date.now();
-				//app.attachSocketEvents(); //(cb);
-			}
 
-			app.attachSocketEvents();
+			if (clientState.allowConnect) {
+				clientState.allowConnect = false;
+
+				setTimeout(function() {
+					customLog("Resetting allow connect to true");
+					clientState.allowConnect = true;
+				}, 2000);
+
+				// if (clientState.firstConnectTime < res.gameCreateTime) {
+				customLog("Game Create Time is: " + res.settings.gameCreateTime);
+		
+				customLog("Socket stored time minus start time is: " + (clientState.socketStoredTime - res.settings.gameCreateTime));
+						customLog("Stored Time older than create time is: " + (clientState.socketStoredTime < res.settings.gameCreateTime));
+				if (clientState.socketStoredTime < res.gameCreateTime) {
+					storage.clear();
+					customLog("Socket older than server start time found; clearing localStorage to: ");
+					customLog(storage);
+					customLog("...and force-reloading page.");
+					window.location.reload();
+				} else if (storage.idStoredTimestamp < res.settings.gameCreateTime) {
+					//if (clientState.firstConnectTime < res.serverStartTime || storage.idStoredTimestamp < res.serverStartTime) {
+
+					//FIRST CLEAR OLD SOCKETS FROM PREVIOUS GAME SESSION
+					storage.clear();
+					customLog("ID older than server start time found; cleared localStorage to: ");
+					customLog(storage);
+					//window.location.reload();
+					// clientState.socketID = res.socketID;
+					// clientState.firstConnectTime = Date.now();
+					// app.attachSocketEvents();
+				} else {
+					//clientState.firstConnectTime = Date.now();
+					//app.attachSocketEvents(); //(cb);
+				}
+				clientState.storedSocket = {
+					id: res.socketID,
+					timeStored: Date.now()
+				};
+				clientState.socketID = res.socketID;
+				clientState.socketStoredTime = Date.now();
+				clientState.firstConnectTime = Date.now();
+				customLog("Client State socketID and socketStoredTime updated to:");
+				customLog(clientState.socketID + " / " + clientState.socketStoredTime);
+				app.attachSocketEvents();
+
+			} else {
+				customLog("Second connection blocked.");
+				emit('disconnectDuplicate', {
+					socketID: res.socketID
+				});
+				//customLog("Reconnecting...");
+				//setup.connectToServer();
+			}
+			//clientState.firstConnectTime = Date.now();
+			// app.attachSocketEvents();
 		});
+		//}
 
 	},
 

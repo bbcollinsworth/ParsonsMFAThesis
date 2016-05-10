@@ -1,11 +1,13 @@
 var clientState = {
+	socketID: undefined,
+	allowConnect: true,
+	socketEventsAttached: false,
 	hubsHacked: 0,
 	settings: app.settings,
 	connected: false,
 	mapLoaded: false,
 	readyCheckRunning: false,
 	initialized: false,
-	socketEventsAttached: false,
 	//ready: false,
 	tracking: false,
 	posStored: false,
@@ -25,7 +27,7 @@ var clientState = {
 				}
 				this[playerType] = typeCount;
 				//clientState.allPlayers.localCount[type] = typeCount;
-				console.log("Now locally tracking " + this.agent + " agents and " + this.suspect + " suspects.");
+				customLog("Now locally tracking " + this.agent + " agents and " + this.suspect + " suspects.");
 			}
 		}
 	},
@@ -112,7 +114,7 @@ var clientState = {
 			updateLocData: function(newData) {
 				for (itemKey in newData) {
 					this[itemKey] = newData[itemKey];
-					console.log("Updated " + itemKey + " for player " + this.userID);
+					customLog("Updated " + itemKey + " for player " + this.userID);
 				}
 				//this.latestPos = this.locData[0];
 				if ('trail' in this) {
@@ -135,8 +137,8 @@ var clientState = {
 		newPlayer.marker = viz.marker(player.type, newPlayer.latestPos).addTo(map);
 		newPlayer.marker['playerRef'] = newPlayer;
 
-		console.log("ALL PLAYERS: ");
-		console.log(clientState.allPlayers);
+		customLog("ALL PLAYERS: ");
+		customLog(clientState.allPlayers);
 
 		clientState.allPlayers.localCount.update(newPlayer.type);
 
@@ -163,7 +165,7 @@ var clientState = {
 			$.extend(true, newPlayer, clientState.markerEvents.ins);
 		}
 
-		console.log("New player stored locally as " + newPlayer.localID);
+		customLog("New player stored locally as " + newPlayer.localID);
 
 	},
 	features: {
@@ -240,12 +242,15 @@ var clientState = {
 				//console.log('Ready test called for localStorage but no test.');
 			},
 			errorReturn: {
-				setItem: function(key, val) {
+				setItem: function(key, value) {
 					try {
 						localStorage.setItem(key, value);
+						customLog("Locally storing " + key + " as " + value);
+						customLog("All local storage is now: ");
+						customLog(localStorage);
 					} catch (error) {
-						console.log("Local Storage error: ");
-						console.log(error);
+						customLog("Local Storage error: ");
+						customLog(error);
 					}
 				},
 				clear: function(){
@@ -253,8 +258,8 @@ var clientState = {
 						localStorage.clear();
 						customLog("Local Storage cleared");
 					} catch (error) {
-						console.log("Local Storage Clear error: ");
-						console.log(error);
+						customLog("Local Storage Clear error: ");
+						customLog(error);
 					}
 				}
 			}

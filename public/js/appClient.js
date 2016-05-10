@@ -18,6 +18,8 @@ var app = {
 
 	init: function() {
 		startup.setup();
+		clientID = Math.floor(Math.random()*100000);
+		customLog("Unique client ID set: " + clientID);
 		msg('Connecting...');
 		startup.initServices();
 		startup.parseHash(); //check URL hash for team and playerID data
@@ -34,9 +36,15 @@ var app = {
 			socket.off('serverMsg').on('serverMsg', app.handleSocketMsg);
 
 			//ONCE EVENTS ATTACHED, TELL SERVER WE'RE LISTENING
-			emit('clientListening', {});
+			// emit('clientListening', {
+			// 	clientID: clientID
+			// });
 
 		}
+
+		emit('clientListening', {
+			clientID: clientID
+		});
 		//
 		//if (callback) callback();
 	},
@@ -263,12 +271,29 @@ app.handleSocketMsg = function(res, err) {
 			customLog("Still connected to server");
 		},
 
+		// checkSocketAndMapInit: function(){
+		// 	if (clientState.socketID === undefined){
+		// 		customLog("No stored socketID. Storing " + res.socketID + " and proceeding");
+		// 		clientState.socketID = res.socketID;
+		// 		startup.initCheck();
+		// 	} else if (clientState.socketID !== res.socketID){
+		// 		customLog("Client has bad socket ID. Sending old socket " +clientState.socketID+" for disconnect and resetting.");
+
+		// 		emit('disconnectOldSocket',{
+		// 			oldSocketID: clientState.socketID
+		// 		});
+		// 		clientState.socketID = res.socketID;
+		// 		startup.initCheck();
+		// 	}
+		// },
 		mapInitCheck: function() {
 			startup.initCheck();
 		},
 
-		showPregame: function(){
+		showPregame: function() {
 			storage.clear();
+			player.team = res.team;
+			storage.setItem('team', player.team);
 			viz.pregame.render(res);
 			// app.addStyling(res.team);
 			//MOVED TO RENDER FUNCTION:
@@ -400,8 +425,8 @@ app.handleSocketMsg = function(res, err) {
 			console.log("New agent dist data: ");
 			console.log(res);
 
-			var rangeNorm = Math.map(res.dist,app.settings.maxGovRange,0,0,1);
-			if (rangeNorm < 0){
+			var rangeNorm = Math.map(res.dist, app.settings.maxGovRange, 0, 0, 1);
+			if (rangeNorm < 0) {
 				rangeNorm = 0;
 			}
 

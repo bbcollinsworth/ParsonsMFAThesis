@@ -322,6 +322,7 @@
 	var state = {
 
 		createGameSession: function(setup) {
+			playSettings.gameCreateTime = Date.now();
 			playSettings.serverStart = serverStartTime;//setup.serverStart;
 			//this.gameStart = setup.gameStart;
 			for (var setting in setup) {

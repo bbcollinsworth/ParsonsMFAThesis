@@ -19,12 +19,12 @@ var include = require('./my_modules/moduleLoader.js');
 include('globalModules');
 var gameState = include('gameState');
 
-var start = Date.parse("May 5, 2016 22:45:00");
-log(start,colors.hilite);
+//var start = Date.parse("May 5, 2016 22:45:00");
+// log(start,colors.hilite);
 
 gameState.createGameSession({
 	//serverStart: Date.now(),
-	gameStart: start
+	gameStart: Date.now()//start
 });
 
 log("Game start is: " + gameState.gameStart);
@@ -65,7 +65,7 @@ log("Starting Hub count is: " + gameState.startingHubs, colors.alert);
 /*––––––––––– ADMIN SOCKET.IO starts here –––––––––––––––*/
 
 setup.on('connection', function(socket) {
-	console.log('ADMIN CONNECTED!');
+	console.log('SETUP CONNECTED!');
 	socket.emit('greeting', {
 		msg: "You're connected as setup!",
 		defaultSettings: gameState.settings
@@ -105,8 +105,11 @@ io.on('connection', function(socket) {
 
 	//USED BUT IN STARTUP FUNCTIONS ON client side...
 	socket.emit('connected', {
-		serverStartTime: gameState.serverStart,
-		gameStartTime: gameState.gameStart
+		socketID: socket.id,
+		settings: gameState.settings
+		// serverStartTime: gameState.serverStart,
+		// gameCreateTime: gameState.gameCreatedAt,
+		// gameStartTime: gameState.gameStart
 	});
 
 	//=================================
@@ -217,8 +220,16 @@ io.on('connection', function(socket) {
 			},
 
 			clientListening: function() {
+				log("ClientID for " + socket.id + " is: " + res.clientID);
 				//player.connected = true;
-				emitTo.socket('mapInitCheck', {});
+				emitTo.socket('mapInitCheck',{ //'checkSocketAndMapInit', {
+					socketID: socket.id
+				});
+			},
+
+			disconnectDuplicate: function(){
+				console.log("Disconnecting duplicate: " + socket.id);
+				socket.disconnect();
 			},
 
 			clientInitialized: function() {
