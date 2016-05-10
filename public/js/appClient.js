@@ -64,15 +64,15 @@ var app = {
 		viz.hide('#footerText');
 
 		msg("Initialized.<br /><i>Refresh window if no progress after 10 seconds.</i>");
-		
+
 		var initData = {
 			teamHash: teamHash
 		};
 
-		if ('team' in storage){
+		if ('team' in storage) {
 			customLog("Stored team found for " + socket.id + ": " + storage.team);
 			initData.foundTeam = storage.team;
-		} else if (player.team !== undefined){
+		} else if (player.team !== undefined) {
 			customLog("Set player.team found for " + socket.id + ": " + player.team);
 			initData.foundTeam = player.team;
 		}
@@ -235,6 +235,20 @@ var app = {
 
 	trackLocation: function() {
 
+		geo.getCurrentPosition(function(position) {
+			customLog('Ensuring resumed tracking for: ' + player.localUserID);
+			customLog('Storing pos as: ' + position.coords.latitude + ', ' + position.coords.longitude);
+			window.player.pos.update({
+				lat: position.coords.latitude,
+				lng: position.coords.longitude,
+				time: position.timestamp
+			});
+
+			//errorText = 'Client thinks test was successful';
+			//viz.geoPrompt.sendTestResult();
+
+		});
+
 		if (!clientState.tracking) {
 
 			clientState.tracking = true;
@@ -312,6 +326,8 @@ app.handleSocketMsg = function(res, err) {
 		},
 
 		showPregame: function() {
+			customLog("Pregame data is: ");
+			customLog(res);
 			storage.clear();
 			player.team = res.team;
 			storage.setItem('team', player.team);
@@ -344,13 +360,15 @@ app.handleSocketMsg = function(res, err) {
 		newUserID: function() {
 			storage.setItem("userID", res.newID);
 			storage.setItem("idStoredTimestamp", Date.now());
-			player.localID = storage.userID;//confusing, should be deprecated to below
+			player.localID = storage.userID; //confusing, should be deprecated to below
 			player.localUserID = storage.userID;
 			player.team = res.team;
+			//app.addStyling(player.team);
 			customLog("UserID stored locally as: " + storage.userID);
 			msg('Hello Player ' + res.newID + '!');
-
+			app.addStyling(player.team);
 			startup.svcCheck();
+			
 		},
 
 		geoTestServerEval: function() {

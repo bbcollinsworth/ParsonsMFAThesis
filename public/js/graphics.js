@@ -82,7 +82,7 @@ var viz = {
 
 			var team = data.team;
 			var start = data.startTime;
-			customLog("Game start time is: " + convertTimestamp(start));
+			customLog("Game start time is: " + convertTimestamp(+start));
 			customLog("Current time is: " + convertTimestamp(Date.now()));
 
 			var timer = function() {
