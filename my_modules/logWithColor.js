@@ -4,53 +4,53 @@ module.exports = function(text, styling) {
 
 	var addToLog = function(info) {
 
-		var safeStringify = function(obj) {
-			var isJSONstring = false;
-			var contentToReturn = "";
-			if (typeof obj === 'string' || obj === undefined) {
-				//console.log('this is a string or undefined!');
-				contentToReturn = obj;
-			} else if (typeof obj === 'object') {
-				//console.log('this is an object!');
-				isJSONstring = true;
-				try {
-					contentToReturn = JSON.stringify(obj); //,
-					// 	JSONstring: isJSONstring
-					// };
-				} catch (error) {
-					//isJSONstring = true;
-					console.log("Stringify error:");
-					console.log(error);
-					var simpleObject = {};
-					for (var prop in obj) {
-						if (!obj.hasOwnProperty(prop)) {
-							continue;
-						}
-						if (typeof(obj[prop]) == 'object') {
-							continue;
-						}
-						if (typeof(obj[prop]) == 'function') {
-							continue;
-						}
-						simpleObject[prop] = obj[prop]; //.toString();
+		// var safeStringify = function(obj) {
+		// 	var isJSONstring = false;
+		// 	var contentToReturn = "";
+		// 	if (typeof obj === 'string' || obj === undefined) {
+		// 		//console.log('this is a string or undefined!');
+		// 		contentToReturn = obj;
+		// 	} else if (typeof obj === 'object') {
+		// 		//console.log('this is an object!');
+		// 		isJSONstring = true;
+		// 		try {
+		// 			contentToReturn = JSON.stringify(obj); //,
+		// 			// 	JSONstring: isJSONstring
+		// 			// };
+		// 		} catch (error) {
+		// 			//isJSONstring = true;
+		// 			console.log("Stringify error:");
+		// 			console.log(error);
+		// 			var simpleObject = {};
+		// 			for (var prop in obj) {
+		// 				if (!obj.hasOwnProperty(prop)) {
+		// 					continue;
+		// 				}
+		// 				if (typeof(obj[prop]) == 'object') {
+		// 					continue;
+		// 				}
+		// 				if (typeof(obj[prop]) == 'function') {
+		// 					continue;
+		// 				}
+		// 				simpleObject[prop] = obj[prop]; //.toString();
 
-					}
-					contentToReturn = JSON.stringify(simpleObject);
-					// return {
-					// 	content JSON.stringify(simpleObject),
-					// 	JSONstring: isJSONstring
-					// };
-				}
-				//return JSON.stringify(simpleObject); // returns cleaned up JSON
-			} else if (obj !== undefined) {
-				//console.log('this is not an object!');
-				contentToReturn = obj.toString();
-			}
+		// 			}
+		// 			contentToReturn = JSON.stringify(simpleObject);
+		// 			// return {
+		// 			// 	content JSON.stringify(simpleObject),
+		// 			// 	JSONstring: isJSONstring
+		// 			// };
+		// 		}
+		// 		//return JSON.stringify(simpleObject); // returns cleaned up JSON
+		// 	} else if (obj !== undefined) {
+		// 		//console.log('this is not an object!');
+		// 		contentToReturn = obj.toString();
+		// 	}
 
-			return contentToReturn;//,
-				//JSONstring: isJSONstring
-			//};
-		};
+		// 	return contentToReturn;//,
+		// 		//JSONstring: isJSONstring
+		// 	//};
+		// };
 
 		var convertTimestamp = function(t, withSeconds) {
 			// FROM http://stackoverflow.com/questions/847185/convert-a-unix-timestamp-to-time-in-javascript
@@ -69,7 +69,7 @@ module.exports = function(text, styling) {
 		};
 
 		var now = Date.now();
-		var logTime = convertTimestamp(now)+"-"+now;
+		var logTime = convertTimestamp(now,true)+"-"+now;
 
 		logFile[logTime] = info;
 		// console.log("Added to server log at "+logTime+": ");

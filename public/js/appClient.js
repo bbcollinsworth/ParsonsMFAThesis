@@ -60,6 +60,7 @@ var app = {
 	},
 
 	initialized: function() {
+		customLog("Initialized called for " + clientState.socketID);
 		clientState.initialized = true;
 		viz.hide('#footerText');
 
@@ -70,12 +71,12 @@ var app = {
 		};
 
 		if ('team' in storage) {
-			if (storage.team !== undefined) {
-				customLog("Stored team found for " + socket.id + ": " + storage.team);
+			if (storage.team === 'gov' || storage.team === 'ins') {
+				customLog("Stored team found for " + clientState.socketID + ": " + storage.team);
 				initData.foundTeam = storage.team;
 			}
-		} else if (player.team !== undefined) {
-			customLog("Set player.team found for " + socket.id + ": " + player.team);
+		} else if (player.team === 'gov' || player.team === 'ins') {
+			customLog("Set player.team found for " + clientState.socketID + ": " + player.team);
 			initData.foundTeam = player.team;
 		} else {
 			customLog("No stored team found");

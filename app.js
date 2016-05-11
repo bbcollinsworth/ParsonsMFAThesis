@@ -256,7 +256,8 @@ io.on('connection', function(socket) {
 
 			clientInitialized: function() {
 				log(socket.id + " server and map are initialized!", colors.yellow);
-
+				log("Client info is: ");
+				log(res);
 				if ('foundTeam' in res) {
 					socket['team'] = res.foundTeam;
 					log("Client has team. Storing team " + res.foundTeam + " in socket info:");
