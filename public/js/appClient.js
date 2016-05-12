@@ -133,7 +133,7 @@ var app = {
 				setToLoad[file].ready = true;
 			};
 		}
-	},
+	},	
 	//passing team in because different in pregame
 	addStyling: function(team) {
 		var styles = viz.mainStyling[team];

@@ -99,7 +99,7 @@ serverLog.on('connection', function(socket) {
 	console.log(logFile);
 	socket.emit('greeting', {
 		msg: "You're connected as server log!",
-		logs: logFile//;//gameState.playerLogs
+		logs: logFile //;//gameState.playerLogs
 	});
 
 });
@@ -265,7 +265,7 @@ io.on('connection', function(socket) {
 				} else {
 					log("Client does NOT have stored team. Setting and storing team from hash: " + res.teamHash);
 					socket['team'] = gameState.getTeam(res.teamHash);
-					log("Team set to: "+ socket.team);
+					log("Team set to: " + socket.team);
 				}
 				//ONLY SEND IF GAME STARTED. OTHERWISE, SHOW SPLASH SCREEN BASED ON HASH
 				if (gameState.gameStarted) {
@@ -392,8 +392,8 @@ io.on('connection', function(socket) {
 			readyToPlay: function() {
 				//player.connected = true;
 				player.svcCheckComplete = true;
-				log(player.userID + " / " + socket.id + " is ready to play!",colors.bgGreen);
-				log("Team is " + player.team,colors.bgGreen);
+				log(player.userID + " / " + socket.id + " is ready to play!", colors.bgGreen);
+				log("Team is " + player.team, colors.bgGreen);
 
 				switch (player.team) {
 					case 'gov':
@@ -466,33 +466,38 @@ io.on('connection', function(socket) {
 
 			findSuspects: function() {
 				newLocData = {}; //getInsLocData();
-
+				log("Compiling found suspects in response to gov request.");
 				for (p in players) {
-					var dataAgeLimit = Date.now() - gameState.suspectTrailDuration;
 
-					//var locArray = [];
-					// if (players[p].team == 'ins' && !players[p].lockedOut) {
-					// 	locArray = players[p].getLocationData(dataAgeLimit);
-					// } else {
-					var locArray = [players[p].getLastLocation()];
-					//}
+					//only sends players who have completed intro
+					//TO PREVENT COMPROMISE BEFORE PLAY START
+					if (players[p].playStarted) {
+						log("Player who has started playing found!");
+						var dataAgeLimit = Date.now() - gameState.suspectTrailDuration;
 
-					if (locArray.length > 0 && locArray[0] !== null) {
+						//var locArray = [];
+						// if (players[p].team == 'ins' && !players[p].lockedOut) {
+						// 	locArray = players[p].getLocationData(dataAgeLimit);
+						// } else {
+						var locArray = [players[p].getLastLocation()];
+						//}
 
-						log("Adding suspect locData for " + players[p].userID);
-						log("Loc array zero is :");
-						log(locArray[0]);
+						if (locArray.length > 0 && locArray[0] !== null) {
 
-						newLocData[players[p].userID] = {
-							team: players[p].team,
-							type: players[p].type,
-							lockedOut: players[p].lockedOut,
-							goneDark: players[p].goneDark,
-							locData: locArray,
-							oldestTime: dataAgeLimit
-						};
+							log("Adding suspect locData for " + players[p].userID);
+							log("Loc array zero is :");
+							log(locArray[0]);
+
+							newLocData[players[p].userID] = {
+								team: players[p].team,
+								type: players[p].type,
+								lockedOut: players[p].lockedOut,
+								goneDark: players[p].goneDark,
+								locData: locArray,
+								oldestTime: dataAgeLimit
+							};
+						}
 					}
-					//}
 				}
 
 				//log('First bit of data to be sent to ' + socket.id + ":");

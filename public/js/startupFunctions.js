@@ -304,7 +304,7 @@ var startup = {
 					player.team = undefined;
 					customLog("ID older than server start time found; cleared team and localStorage to: ");
 					customLog(storage);
-					//window.location.reload();
+					window.location.reload();
 					// clientState.socketID = res.socketID;
 					// clientState.firstConnectTime = Date.now();
 					// app.attachSocketEvents();
