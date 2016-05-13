@@ -197,6 +197,9 @@ io.on('connection', function(socket) {
 	};
 
 	var govWinCheck = function() {
+
+		log("Live hacker count is: " + gameState.score.hackers.live);
+
 		// if (gameState.liveInsCount < 1) {
 
 		//TEMPORARILY DISABLED
@@ -315,6 +318,8 @@ io.on('connection', function(socket) {
 				log("Total # of players: " + gameState.playerCount);
 				log('Added player to database:');
 				log(players[player.userID]);
+				log("Score is now: ");
+				log(gameState.score);
 
 				//send new ID to player:
 				emitTo.socket('newUserID', {

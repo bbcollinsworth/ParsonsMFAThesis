@@ -289,7 +289,7 @@ var startup = {
 				customLog("Socket stored time minus start time is: " + (clientState.socketStoredTime - res.settings.gameCreateTime));
 				customLog("Stored Time older than create time is: " + (clientState.socketStoredTime < res.settings.gameCreateTime));
 				customLog("ID stored Timestamp is: " + storage.idStoredTimestamp);
-				if (clientState.socketStoredTime < res.gameCreateTime) {
+				if (clientState.socketStoredTime < res.settings.gameCreateTime) {
 					storage.clear();
 					player.team = undefined;
 					customLog("Socket older than server start time found; clearing team and localStorage to: ");
