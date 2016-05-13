@@ -2,6 +2,7 @@ var clientState = {
 	socketID: undefined,
 	allowConnect: true,
 	socketEventsAttached: false,
+	hubsRendered: false,
 	hubsHacked: 0,
 	settings: app.settings,
 	connected: false,

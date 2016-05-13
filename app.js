@@ -198,7 +198,10 @@ io.on('connection', function(socket) {
 
 	var govWinCheck = function() {
 
-		log("Live hacker count is: " + gameState.score.hackers.live);
+		log("LIVE INS COUNT IS: " + gameState.score.hackers.live,colors.hilite);
+
+
+		//log("Live hacker count is: " + gameState.score.hackers.live);
 
 		// if (gameState.liveInsCount < 1) {
 
@@ -320,6 +323,7 @@ io.on('connection', function(socket) {
 				log(players[player.userID]);
 				log("Score is now: ");
 				log(gameState.score);
+				log("LIVE INS COUNT IS: " + gameState.score.hackers.live,colors.hilite);
 
 				//send new ID to player:
 				emitTo.socket('newUserID', {

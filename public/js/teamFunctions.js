@@ -116,7 +116,7 @@ var ins = {
 		customLog(this.ui.hubPointers);
 
 		$('#mobileFooter').prepend(viz.threatMeter.create());
-		
+
 		viz.helpScreen.create();
 		viz.makeFooter();
 	},
@@ -336,21 +336,27 @@ var gov = {
 	renderHubs: function(hubData) {
 		//hubs = hubData;
 
-		$.each(hubData, function(index, h) {
-			var thisHub = viz.hub(h);
-			hubs.push(thisHub);
+		//only add hubs if not already rendered
+		if (!clientState.hubsRendered) {
 
-		});
+			$.each(hubData, function(index, h) {
+				var thisHub = viz.hub(h);
+				hubs.push(thisHub);
+
+			});
+		}
 
 		$.each(hubs, function(index, h) {
 
+			if (!clientState.hubsRendered) {
+
 			h.area.addTo(map);
 			h.marker.addTo(map);
-			h.marker.openPopup();
+			//h.marker.openPopup();
 
 			// if (h.alertState > 0){
 
-			// }
+			}
 
 			if (!h.live) {
 				h.shutDown();
@@ -361,6 +367,14 @@ var gov = {
 
 		customLog("Hub setup data from server: ");
 		customLog(hubs);
+
+		if (clientState.hubsRendered){
+			customLog("Hubs already rendered, just updating.");
+		} else {
+			customLog("Hubs not rendered yet, adding.");
+		}
+
+		clientState.hubsRendered = true;
 
 	},
 
