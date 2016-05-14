@@ -314,7 +314,7 @@ io.on('connection', function(socket) {
 				}
 				log("Setting team to: " + team);
 				player.create(team);
-				player.addToTeam(team);
+				//player.addToTeam(team);
 
 				players[player.userID] = player; //add player to playersObject
 				//log("Total # of players: " + gameState.playerCount());
@@ -339,7 +339,7 @@ io.on('connection', function(socket) {
 				log('Requesting update of player ' + players[res.userID].userID, colors.italic);
 				players[res.userID].update(emitTo); //socket);
 				player = players[res.userID];
-				player.addToTeam(player.team);
+				//player.addToTeam(player.team);
 				log("'Player' for socket " + socket.id + " is now:", colors.yellow.inverse);
 				log(player);
 
@@ -431,6 +431,8 @@ io.on('connection', function(socket) {
 
 			introCompleted: function() {
 				player.playStarted = true;
+				//Moved to here so team broadcasts wouldn't interrupt onboarding
+				player.addToTeam(player.team);
 			},
 
 			locationError: function() {
