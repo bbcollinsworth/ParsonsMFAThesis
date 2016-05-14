@@ -40,6 +40,10 @@ var clientState = {
 				//IMPORTANT: NEED TO START WATCHING POS TO FIGURE OUT IF MOVING
 				console.log("Starting capture on " + p.localID);
 				//clientState.captureInProgress = true;
+				if ('canCaptureTimeout' in p) {
+					clearTimeout(p.canCaptureTimeout);
+					customLog("Clearing canCapture timeout because capture clicked");
+				}
 
 				if (!('captureCircle' in p.marker)) {
 					p.marker.addCaptureCircle();
@@ -59,28 +63,40 @@ var clientState = {
 				newPlayer.captureCircle.animRunning = false;
 			},
 			attachCaptureEvents: function() {
+				var captureTime = app.settings.allowCaptureTime; //10; //in seconds
 				var playerToCapture = this;
 
 				//PROBABLY NOT NEEDED BECAUSE OF CHECK FOR CAPTURECIRCLE IN STARTCAPTURE FN
 				//if (!clientState.captureInProgress) {
-					console.log("Attaching Capture Events to " + playerToCapture.localID);
+				console.log("Attaching Capture Events to " + playerToCapture.localID);
 
-					if (app.settings.autoCapture) {
-						msg(gov.ui.text.capturing, 'urgent');
+				if (app.settings.autoCapture) {
+					msg(gov.ui.text.capturing, 'urgent');
+					clientState.markerEvents.ins.startCapture(playerToCapture);
+				} else {
+					msg(gov.ui.text.inRange, 'urgent');
+					playerToCapture.canCapture = true; //change color
+					playerToCapture.marker.refresh();
+					playerToCapture.marker.off('click').on('click', function(e) {
+
 						clientState.markerEvents.ins.startCapture(playerToCapture);
-					} else {
-						msg(gov.ui.text.inRange, 'urgent');
-						playerToCapture.marker.off('click').on('click', function(e) {
+					});
 
-							clientState.markerEvents.ins.startCapture(playerToCapture);
-						});
-					}
+					//timeout to close lockout window
+					playerToCapture['canCaptureTimeout'] = setTimeout(function() {
+						playerToCapture.clearCaptureEvents();
+						msg(gov.ui.text.captureExpired);
+						customLog("Capture time expired, removing capture events");
+					}, captureTime * 1000);
+				}
 				//}
 			},
 
 			clearCaptureEvents: function() {
 				var playerToCapture = this;
+				playerToCapture.canCapture = false;
 				playerToCapture.marker.off('click');
+				playerToCapture.marker.refresh();
 			}
 		}
 	},
@@ -90,6 +106,7 @@ var clientState = {
 			userID: uID,
 			team: player.team,
 			type: player.type,
+			canCapture: false,
 			get status() {
 				var p = this;
 				customLog("Checking status of " + p.localID);
@@ -99,6 +116,8 @@ var clientState = {
 						return 'locked';
 					} else if (p.goneDark) {
 						return 'dark';
+					} else if (p.canCapture) {
+						return 'canCapture';
 					} else {
 						return 'active';
 					}
@@ -146,15 +165,15 @@ var clientState = {
 		// if (newPlayer.userID === storage.userID) {
 		// 	newPlayer.localID = "you";
 		// } else {
-			newPlayer.localID = player.type + " " + clientState.allPlayers.localCount[player.type].toString();
+		newPlayer.localID = player.type + " " + clientState.allPlayers.localCount[player.type].toString();
 		//}
 		var pTitle = newPlayer.localID;
 		if (newPlayer.userID === storage.userID || newPlayer.userID === player.localUserID) {
-			pTitle= "you";
+			pTitle = "you";
 		}
 
 		var popupData = {
-			'title': pTitle,//newPlayer.localID,
+			'title': pTitle, //newPlayer.localID,
 			'text': {
 				ln1: "(As of " + convertTimestamp(newPlayer.latestPos.time) + ")"
 			},
@@ -258,7 +277,7 @@ var clientState = {
 						customLog(error);
 					}
 				},
-				clear: function(){
+				clear: function() {
 					try {
 						localStorage.clear();
 						customLog("Local Storage cleared");

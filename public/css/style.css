@@ -920,8 +920,8 @@ filter: blur(2px);*/
 }
 
 .ins-tag {
-	background-color: rgba(255,0,0,0.7);
-	border-color: rgba(255,0,0,0.7);
+	background-color: rgba(153,0,0,0.7);
+	border-color: rgba(153,0,0,0.7);
 }
 
 .dark-tag {
@@ -932,6 +932,11 @@ filter: blur(2px);*/
 .locked-tag {
 	background-color: rgba(0,0,0,0.7);
 	border-color: rgba(0,0,0,0.7);
+}
+
+.capture-tag {
+	background-color: rgba(255,0,0,0.7);
+	border-color: rgba(255,0,0,0.7);
 }
 
 
@@ -1127,4 +1132,3 @@ filter: blur(2px);*/
 /*.ui-collapsible-content {
 	box-shadow: 10px 0px 30px 0px rgba(0,0,0,0.3);
 	}*/auto
-	

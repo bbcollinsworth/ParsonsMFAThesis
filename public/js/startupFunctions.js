@@ -155,11 +155,32 @@ var startup = {
 		//custom map function
 		Math.map = function(varToMap, varMin, varMax, mapToMin, mapToMax, clamp) {
 			var mappedValue = mapToMin + (mapToMax - mapToMin) * ((varToMap - varMin) / (varMax - varMin));
+			
 			if (clamp) {
-				return Math.min(Math.max(mappedValue, mapToMin), mapToMax);
-			} else {
-				return mappedValue;
-			}
+				var runClamp = function(min, max) {
+					if (mappedValue < min) {
+						mappedValue = min;
+					} else if (mappedValue > max) {
+						mappedValue = max;
+					}
+				};
+				//Does claming differently if second map range is reversed
+				if (mapToMin > mapToMax) {
+					runClamp(mapToMax, mapToMin);
+				} else {
+					runClamp(mapToMin, MapToMax);
+				}
+
+				// if (mappedValue < mapToMin) {
+				// 	mappedValue = mapToMin;
+				// } else if (mappedValue > mapToMax) {
+				// 	mappedValue = mapToMax;
+				// }
+
+				//return Math.min(Math.max(mappedValue, mapToMin), mapToMax);
+			} //else {
+			return mappedValue;
+			//}
 		};
 
 		//custom first-letter capitalize function
@@ -531,7 +552,7 @@ var startup = {
 				try {
 					storage.setItem('svcCheckComplete', true);
 					customLog("Local value of SvcCheckComplete stored as: " + storage.svcCheckComplete);
-				} catch(err) {
+				} catch (err) {
 					customLog("Service Check Ready Storage Error: ");
 					customLog(err);
 				}

@@ -1310,7 +1310,7 @@ var viz = {
 			});
 
 			this.rotate(hubInfo.angleTo, 0);
-			var mappedScale = Math.map(normalizedDist, 0, 1, 1.0, 0.5);
+			var mappedScale = Math.map(normalizedDist, 0, 1, 1.0, 0.5,true);
 			this.scale(mappedScale);
 		},
 

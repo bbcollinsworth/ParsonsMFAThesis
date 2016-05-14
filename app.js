@@ -96,7 +96,7 @@ admin.on('connection', function(socket) {
 serverLog.on('connection', function(socket) {
 	console.log('SERVER LOG CONNECTED!');
 
-	console.log(logFile);
+	//console.log(logFile);
 	socket.emit('greeting', {
 		msg: "You're connected as server log!",
 		logs: logFile //;//gameState.playerLogs

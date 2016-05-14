@@ -257,7 +257,8 @@ var gov = {
 			},
 			'capturing': "Active suspect in range!<br />Locking their device...",
 			'inRange': "Active suspect in range! Click their marker to disable/lock their mobile device.",
-			'inRangeButDark': "Suspect may be in range, but has gone dark. A device can only be disabled when suspect is using it."
+			'inRangeButDark': "Suspect may be in range, but has gone dark. A device can only be disabled when suspect is using it.",
+			'captureExpired': {'special': '<span>Lockout window expired. Press <div id="textIconGov" class="icon-in-text search-icon"></div> again to see if suspect is still in range.'}
 		},
 		attachPingEvents: function() {
 			msg(gov.ui.text.ping);

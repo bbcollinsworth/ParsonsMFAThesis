@@ -13,8 +13,16 @@ var initLeafletExtensions = function() {
 				return L.mapbox.marker.icon({
 					'marker-size': 'large',
 					'marker-symbol': 'pitch',
-					'marker-color': '#ff0000',
+					'marker-color': '#990000',
 					'className': 'suspect-marker'
+				});
+			},
+			get canCapture() {
+				return L.mapbox.marker.icon({
+					'marker-size': 'large',
+					'marker-symbol': 'pitch',
+					'marker-color': '#ff0000',
+					'className': 'capture-marker'
 				});
 			},
 			get dark() {
@@ -122,7 +130,7 @@ var initLeafletExtensions = function() {
 			console.log("Amt to translate is " + pixelVOffset);
 		},
 
-		//tag: 
+		//also includes capturable check
 		darkLockedCheck: function() {
 			var thisMarker = this;
 			var classType = '';
@@ -141,11 +149,17 @@ var initLeafletExtensions = function() {
 				icon = thisMarker.icons.dark;
 				opacity = 0.5;
 				thisMarker['tag'].removeClass('ins-tag');
+			} else if (thisMarker.playerRef.canCapture) {
+				classType = 'capture';
+				icon = thisMarker.icons.canCapture;
+				opacity = 1.0;
+				zIndexOffset = 200;
+				thisMarker['tag'].removeClass('ins-tag');
 			} else {
 				classType = thisMarker.playerRef.team;
 				icon = thisMarker.icons[thisMarker.playerRef.type];
 				opacity = 0.8;
-				thisMarker['tag'].removeClass('dark-tag');
+				thisMarker['tag'].removeClass('dark-tag').removeClass('capture-tag');
 			}
 
 			thisMarker['tag'].addClass(classType + '-tag');

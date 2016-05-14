@@ -1,6 +1,7 @@
 var app = {
 	settings: {
 		autoCapture: false,
+		allowCaptureTime: 10,
 		debugMode: true,
 		maxGovRange: 500
 	},
