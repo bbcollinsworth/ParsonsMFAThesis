@@ -29,7 +29,7 @@ gameState.createGameSession({
 	gameStart: Date.now() //start
 });
 
-log("Game start is: " + gameState.gameStart);
+log("Game start is: " + gameState.settings.gameStart);
 //log("Timestamp of that is: " + Date.parse(gameState.gameStart));
 
 

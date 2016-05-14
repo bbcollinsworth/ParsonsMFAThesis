@@ -92,7 +92,7 @@ module.exports = function(text, styling) {
 
 	try {
 		console.log(styling(t));
-		addToLog(JSON.stringify(t));
+		addToLog(t);//JSON.stringify(t));
 
 	} catch (err) {
 		console.log(t);

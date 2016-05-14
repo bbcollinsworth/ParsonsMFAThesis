@@ -113,7 +113,7 @@ var viz = {
 		},
 		clear: function() {
 			if (viz.pregame.rendered) {
-				map.removeLayer(viz.pregame.startZone);//.remove();
+				map.removeLayer(viz.pregame.startZone); //.remove();
 				clearInterval(viz.pregame.countInterval);
 				customLog("Countdown complete - clearing interval and startZone");
 			} else {
@@ -162,6 +162,10 @@ var viz = {
 				});
 			},
 			success: function() {
+
+				clearInterval(viz.geoPrompt.resendTest);
+				customLog("Clearing resend test interval");
+
 				clientState.features.geolocation.ready = true;
 				clientState.posStored = true;
 				app.trackLocation();
@@ -174,6 +178,9 @@ var viz = {
 				}, 500);
 			},
 			blocked: function() {
+				clearInterval(viz.geoPrompt.resendTest);
+				customLog("Clearing resend test interval");
+				customLog("server says location error");
 				// storage.setItem('lastGeoTestResult', 'blocked');
 				viz.geoPrompt.fillMsg({
 					1: "<span class=\"setup-header\">ERROR: </span>Geolocation is currently <b>blocked</b> for this website or browser. Please go into the browser's settings and <b>allow geolocation</b>, then test again.",
@@ -200,50 +207,97 @@ var viz = {
 					window.location.reload();
 				} else {
 
+					viz.geoPrompt.testFunction();
+
+					viz.geoPrompt['resendTest'] = setInterval(function(){
+						customLog("No server response - repeating geotest");
+						viz.geoPrompt.testFunction();
+					},5000);
 					//viz.enableFullScreen();
 
-					emit('geoTestStart', {
-						timestamp: Date.now()
-					});
+					// emit('geoTestStart', {
+					// 	timestamp: Date.now()
+					// });
 
-					$('#locTestButton').text("Testing...");
+					// $('#locTestButton').text("Testing...");
 
-					var errorText = 'none';
+					// var errorText = 'none';
 
-					geo.getCurrentPosition(function(position) {
-						console.log('ReadyTest Position is: ' + position.coords.latitude + ', ' + position.coords.longitude);
-						window.player.pos.update({
-							lat: position.coords.latitude,
-							lng: position.coords.longitude,
-							time: position.timestamp
-						});
+					// geo.getCurrentPosition(function(position) {
+					// 	console.log('ReadyTest Position is: ' + position.coords.latitude + ', ' + position.coords.longitude);
+					// 	window.player.pos.update({
+					// 		lat: position.coords.latitude,
+					// 		lng: position.coords.longitude,
+					// 		time: position.timestamp
+					// 	});
 
-						//errorText = 'Client thinks test was successful';
-						viz.geoPrompt.sendTestResult();
+					// 	//errorText = 'Client thinks test was successful';
+					// 	viz.geoPrompt.sendTestResult();
 
-					}, function(error) {
+					// }, function(error) {
 
-						switch (error.code) {
-							case 1: // 1 === error.PERMISSION_DENIED
-								errorText = 'User does not want to share Geolocation data.';
-								break;
-							case 2: // 2 === error.POSITION_UNAVAILABLE
-								errorText = 'Position of the device could not be determined.';
-								break;
-							case 3: // 3 === error.TIMEOUT
-								errorText = 'Position Retrieval TIMEOUT.';
-								break;
-							default: // 0 means UNKNOWN_ERROR
-								errorText = 'Unknown Error';
-								break;
-						}
-						customLog(errorText);
-						viz.geoPrompt.sendTestResult(errorText, error.code);
+					// 	switch (error.code) {
+					// 		case 1: // 1 === error.PERMISSION_DENIED
+					// 			errorText = 'User does not want to share Geolocation data.';
+					// 			break;
+					// 		case 2: // 2 === error.POSITION_UNAVAILABLE
+					// 			errorText = 'Position of the device could not be determined.';
+					// 			break;
+					// 		case 3: // 3 === error.TIMEOUT
+					// 			errorText = 'Position Retrieval TIMEOUT.';
+					// 			break;
+					// 		default: // 0 means UNKNOWN_ERROR
+					// 			errorText = 'Unknown Error';
+					// 			break;
+					// 	}
+					// 	customLog(errorText);
+					// 	viz.geoPrompt.sendTestResult(errorText, error.code);
 
-					});
+					// });
 
 					// viz.geoPrompt.sendTestResult(errorText);
 				}
+			});
+		},
+		testFunction: function(){
+			emit('geoTestStart', {
+				timestamp: Date.now()
+			});
+
+			$('#locTestButton').text("Testing...");
+
+			var errorText = 'none';
+
+			geo.getCurrentPosition(function(position) {
+				console.log('ReadyTest Position is: ' + position.coords.latitude + ', ' + position.coords.longitude);
+				window.player.pos.update({
+					lat: position.coords.latitude,
+					lng: position.coords.longitude,
+					time: position.timestamp
+				});
+
+				//errorText = 'Client thinks test was successful';
+				viz.geoPrompt.sendTestResult();
+
+			}, function(error) {
+
+				switch (error.code) {
+					case 1: // 1 === error.PERMISSION_DENIED
+						errorText = 'User does not want to share Geolocation data.';
+						break;
+					case 2: // 2 === error.POSITION_UNAVAILABLE
+						errorText = 'Position of the device could not be determined.';
+						break;
+					case 3: // 3 === error.TIMEOUT
+						errorText = 'Position Retrieval TIMEOUT.';
+						break;
+					default: // 0 means UNKNOWN_ERROR
+						errorText = 'Unknown Error';
+						break;
+				}
+				customLog(errorText);
+				viz.geoPrompt.sendTestResult(errorText, error.code);
+
 			});
 		}
 	},
@@ -1310,7 +1364,7 @@ var viz = {
 			});
 
 			this.rotate(hubInfo.angleTo, 0);
-			var mappedScale = Math.map(normalizedDist, 0, 1, 1.0, 0.5,true);
+			var mappedScale = Math.map(normalizedDist, 0, 1, 1.0, 0.5, true);
 			this.scale(mappedScale);
 		},
 

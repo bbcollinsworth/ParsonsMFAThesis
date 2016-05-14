@@ -171,13 +171,6 @@ var startup = {
 					runClamp(mapToMin, MapToMax);
 				}
 
-				// if (mappedValue < mapToMin) {
-				// 	mappedValue = mapToMin;
-				// } else if (mappedValue > mapToMax) {
-				// 	mappedValue = mapToMax;
-				// }
-
-				//return Math.min(Math.max(mappedValue, mapToMin), mapToMax);
 			} //else {
 			return mappedValue;
 			//}

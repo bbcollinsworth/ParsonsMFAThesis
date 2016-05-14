@@ -45,7 +45,8 @@ socket.on('greeting', function(res, err) {
 
         var parsedLogs = JSON.stringify(res.logs[key], null, 4);
         console.log(parsedLogs);
-        parsedLogs.replace(', ','<br />');
+        parsedLogs = parsedLogs.replace(', ','<br />');
+        parsedLogs = parsedLogs.replace(/\\n/g, '');
 
         var playerLog = $('<div />', {
             html: parsedLogs,

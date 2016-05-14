@@ -45,8 +45,10 @@ socket.on('greeting', function(res, err) {
     }
 
     var parsedLogs = JSON.stringify(res.logs, null, 4);
+    parsedLogs = parsedLogs.replace(/\\u001b\[.{2}m/g,'');
+    
+    parsedLogs = parsedLogs.replace(/\\n/g, '<br />');
     console.log(parsedLogs);
-    parsedLogs.replace(', ', '<br />');
 
     var playerLog = $('<div />', {
         html: parsedLogs//,
