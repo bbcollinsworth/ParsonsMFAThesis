@@ -12,6 +12,7 @@ var clientState = {
 	//ready: false,
 	tracking: false,
 	posStored: false,
+	playStarted: false,
 	centeredOnPlayer: false,
 	captureInProgress: false,
 	allPlayers: {
