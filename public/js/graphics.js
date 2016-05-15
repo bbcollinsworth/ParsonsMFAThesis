@@ -209,10 +209,10 @@ var viz = {
 
 					viz.geoPrompt.testFunction();
 
-					viz.geoPrompt['resendTest'] = setInterval(function(){
+					viz.geoPrompt['resendTest'] = setInterval(function() {
 						customLog("No server response - repeating geotest");
 						viz.geoPrompt.testFunction();
-					},5000);
+					}, 5000);
 					//viz.enableFullScreen();
 
 					// emit('geoTestStart', {
@@ -259,7 +259,7 @@ var viz = {
 				}
 			});
 		},
-		testFunction: function(){
+		testFunction: function() {
 			emit('geoTestStart', {
 				timestamp: Date.now()
 			});
@@ -319,6 +319,12 @@ var viz = {
 	},
 
 	makeMessage: function(text, msgType) {
+
+		customLog("Making message from info:");
+		customLog(text);
+		console.log(text);
+		customLog("Message type is: ");
+		customLog(msgType);
 		//var madeMessage = "";
 		var made = {
 			message: "" //,
@@ -351,13 +357,20 @@ var viz = {
 
 		var makeButton = function(buttonInfo) {
 
+			customLog("Making button from info: ");
+			customLog(buttonInfo);
 			var idString = "";
 			var classString = "";
 			var elToAttachEvent = "";
 
 			var setClass = function(btnClass) {
 				classString = 'class="' + btnClass + ' ' + btnClass + '-' + player.team + '"';
-				elToAttachEvent = '.' + btnClass;
+				//elToAttachEvent = '.' + btnClass;
+			};
+
+			var setID = function(btnID) {
+				idString = 'id="' + btnID + '"';
+				elToAttachEvent = '#' + btnID;
 			};
 
 			if ('class' in buttonInfo) {
@@ -367,8 +380,14 @@ var viz = {
 			}
 
 			if ('id' in buttonInfo) {
-				idString = 'id="' + buttonInfo.id + '"';
-				elToAttachEvent = '#' + buttonInfo.id;
+				setID(buttonInfo.id);
+				// idString = 'id="' + buttonInfo.id + '"';
+				// elToAttachEvent = '#' + buttonInfo.id;
+			} else {
+				var genID = msgType+"Button"+Math.floor(Math.random()*10000);
+				customLog("No id so setting popup button ID to: ");
+				customLog(genID);
+				setID(genID);
 			}
 
 			made.message += '<div ' + idString + ' ' + classString + '>' + buttonInfo.txt + '</div>';
@@ -390,7 +409,7 @@ var viz = {
 		if (isString()) {
 			made.message = '<p>' + text + '</p>';
 		} else {
-			for (line in text) {
+			for (var line in text) {
 				switch (line) {
 					case 'button':
 						//skip
@@ -406,6 +425,7 @@ var viz = {
 
 		var buttonMade = false;
 		if (!isString() && ('button' in text)) {
+			customLog("Button found in message object. adding...");
 			makeButton(text.button);
 			buttonMade = true;
 		} else if (msgType in attr) {
@@ -423,7 +443,7 @@ var viz = {
 		return made;
 	},
 	attachMsgEvents: function(eventInfo) {
-		console.log("Button in object: attaching event!");
+		customLog("Button in object: attaching event!");
 
 		$(eventInfo.element).off('click').on('click', function() {
 			//will this be ok?
@@ -441,7 +461,8 @@ var viz = {
 			'ins': 'popup-ins'
 		};
 
-		viz.popupCount += 1;
+		viz.popupCount++;
+		customLog("Popup count is " + viz.popupCount.toString());
 
 		var msgHTML = viz.makeMessage(text, 'popup');
 
@@ -457,9 +478,16 @@ var viz = {
 
 		$(renderedAlert).removeClass('popup-invisible').addClass('popup-visible');
 
-		if ('event' in msgHTML) {
+		//SHOULD ALWAYS BE EVENT
+		//if ('event' in msgHTML) {
+		try {
 			viz.attachMsgEvents(msgHTML.event);
+			customLog("Successfully attached popup events");
+		} catch (err) {
+			customLog("ERROR: Failed to attach popup events because...");
+			customLog(err);
 		}
+		//}
 
 	},
 	headerMessage: function(text, styling) {
