@@ -318,7 +318,7 @@ var viz = {
 
 	},
 
-	makeMessage: function(text, msgType) {
+	makeMessage: function(text, msgType, msgID) {
 
 		customLog("Making message from info:");
 		customLog(text);
@@ -338,7 +338,7 @@ var viz = {
 					'id': 'popupButton' + viz.popupCount,
 					'txt': 'OK',
 					'onClick': 'closePopup',
-					'args': '#popupID' + viz.popupCount
+					'args': msgID
 				}
 			},
 			'header': {
@@ -384,7 +384,7 @@ var viz = {
 				// idString = 'id="' + buttonInfo.id + '"';
 				// elToAttachEvent = '#' + buttonInfo.id;
 			} else {
-				var genID = msgType+"Button"+Math.floor(Math.random()*10000);
+				var genID = msgType + "Button" + Math.floor(Math.random() * 10000);
 				customLog("No id so setting popup button ID to: ");
 				customLog(genID);
 				setID(genID);
@@ -392,15 +392,16 @@ var viz = {
 
 			made.message += '<div ' + idString + ' ' + classString + '>' + buttonInfo.txt + '</div>';
 
-			if ('onClick' in buttonInfo) {
-				made.event = {
-					element: elToAttachEvent,
-					fnName: buttonInfo.onClick
-				};
-				if ('args' in buttonInfo) {
-					made.event.args = buttonInfo.args;
-				}
+			//if ('onClick' in buttonInfo) {
+			made.event = {
+				element: elToAttachEvent,
+				fnName: buttonInfo.onClick,
+				id: msgID
+			};
+			if ('args' in buttonInfo) {
+				made.event.args = buttonInfo.args;
 			}
+			//}
 
 		};
 		//===========================================
@@ -447,7 +448,13 @@ var viz = {
 
 		$(eventInfo.element).off('click').on('click', function() {
 			//will this be ok?
-			app.btnEvents[eventInfo.fnName](eventInfo.args, $(this));
+			customLog("Button clicked! ID is...");
+			customLog($(this).attr('id'));
+			var id = $(this).attr('id').slice(0);
+			var clicked = "#" + id; //"#"+id.slice(0);
+
+			//app.btnEvents[eventInfo.fnName].call($(this), eventInfo.args, clicked);
+			app.btnEvents[eventInfo.fnName](eventInfo.id,eventInfo.args); //$(this));
 		});
 
 	},
@@ -464,11 +471,13 @@ var viz = {
 		viz.popupCount++;
 		customLog("Popup count is " + viz.popupCount.toString());
 
-		var msgHTML = viz.makeMessage(text, 'popup');
+		var pID = 'popupID' + viz.popupCount;
+
+		var msgHTML = viz.makeMessage(text, 'popup', '#'+pID);
 
 		var renderedAlert = $('<div />', {
 			'class': 'popup-alert popup-invisible ' + teamStyle[player.team],
-			'id': 'popupID' + viz.popupCount,
+			'id': pID,
 			'html': '<div class="popup-icon popup-icon-' + player.team + '">!</div>' + msgHTML.message, //'<p>Alert content</p><div id="popupButton">OK</div>'
 			'css': {
 				'z-index': viz.popupBaseZ - viz.popupCount
@@ -491,10 +500,11 @@ var viz = {
 
 	},
 	headerMessage: function(text, styling) {
+		
+		var mID = '#alertBodyText';
+		var msgHTML = viz.makeMessage(text, 'header', mID);
 
-		var msgHTML = viz.makeMessage(text, 'header');
-
-		$('#alertBodyText').html(msgHTML.message);
+		$(mID).html(msgHTML.message);
 
 		if ('event' in msgHTML) {
 			viz.attachMsgEvents(msgHTML.event);

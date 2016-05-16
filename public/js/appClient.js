@@ -185,15 +185,20 @@ var app = {
 			$('#app').trigger('introComplete');
 		},
 		closePopup: function(popupID) {
+			customLog("Calling close popup on: ");
+			customLog(popupID);
+			//$(clicked).parent().addClass('popup-invisible').removeClass('popup-visible');
+
 			$(popupID).addClass('popup-invisible').removeClass('popup-visible');
 			setTimeout(function() {
+				//$(clicked).parent().remove();
 				$(popupID).remove();
 			}, 2000);
 			//$('.popup-alert').addClass('popup-invisible');
 		},
-		showAudioMessage: function(toPlay, clicked) {
-
-			app.btnEvents.closePopup(clicked.parent());
+		showAudioMessage: function(popupID,toPlay) {
+			//is this causing issue?
+			app.btnEvents.closePopup(popupID);
 
 			var randomDelay = 500 + Math.random() * 1000;
 
@@ -206,22 +211,24 @@ var app = {
 			}, randomDelay);
 
 		},
-		playAudio: function(audioObj, clicked) {
+		playAudio: function(popupID,audioObj) {
 
 			var thisAudio = audioObj.domEl;
 			if (audioObj.ready) {
 				customLog("audio " + audioObj.id + " ready to play - playing!");
 				thisAudio.play();
 
-				app.btnEvents.closePopup(clicked.parent());
+				app.btnEvents.closePopup(popupID);
 			} else {
 				customLog("Play called but audio not ready");
-				$(clicked).html("Loading...");
+				var button = $(popupID).children('popup-button');
+				button.html("Loading...");
+				// $(clicked).html("Loading...");
 
 				var abortAudio = setTimeout(function() {
-					$(clicked).html("Load failed.");
+					button.html("Load failed.");
 					setTimeout(function() {
-						app.btnEvents.closePopup(clicked.parent());
+						app.btnEvents.closePopup(popupID);
 					}, 2000);
 				}, 20000);
 
@@ -231,7 +238,7 @@ var app = {
 					clearTimeout(abortAudio);
 					customLog("now audio ready - playing");
 					thisAudio.play();
-					app.btnEvents.closePopup(clicked.parent());
+					app.btnEvents.closePopup(popupID);
 				};
 
 
@@ -622,7 +629,7 @@ app.handleSocketMsg = function(res, err) {
 
 		hubDown: function() {
 			if (clientState.playStarted) {
-				
+
 				app.updateScore(res.score);
 				//HACKY!!!
 				// clientState.hubsHacked++;
