@@ -258,7 +258,9 @@ var gov = {
 			'capturing': "Active suspect in range!<br />Locking their device...",
 			'inRange': "Active suspect in range! Click their marker to disable/lock their mobile device.",
 			'inRangeButDark': "Suspect may be in range, but has gone dark. A device can only be disabled when suspect is using it.",
-			'captureExpired': {'special': '<span>Lockout window expired. Press <div id="textIconGov" class="icon-in-text search-icon"></div> again to see if suspect is still in range.'}
+			'captureExpired': {
+				'special': '<span>Lockout window expired. Press <div id="textIconGov" class="icon-in-text search-icon"></div> again to see if suspect is still in range.'
+			}
 		},
 		attachPingEvents: function() {
 			msg(gov.ui.text.ping);
@@ -312,26 +314,30 @@ var gov = {
 	},
 
 	renderUI: function() {
-		customLog("Rendering Gov UI");
-		viz.addSuspectContainer();
+		if (!clientState.uiRendered) {
+			clientState.uiRendered = true;
+			
+			customLog("Rendering Gov UI");
+			viz.addSuspectContainer();
 
-		//var helpButton = viz.helpButton();
-		var pingButton = viz.searchButton();
-		$('#mobileFooter').prepend(pingButton); //,helpButton);
+			//var helpButton = viz.helpButton();
+			var pingButton = viz.searchButton();
+			$('#mobileFooter').prepend(pingButton); //,helpButton);
 
-		viz.helpScreen.create();
-		viz.makeFooter();
+			viz.helpScreen.create();
+			viz.makeFooter();
 
-		//app['ui']['headerToggle'] = viz.headerToggle.create('gov');
-		gov.ui['headerToggle'] = viz.headerToggle.create('gov');
-		//store a reference for calling "Msg, etc"
-		app['headerToggle'] = gov.ui.headerToggle;
-		//app.headerToggle.forceExpand();
-		customLog('Added header toggle:');
-		console.log(gov.ui.headerToggle);
-		gov.ui['pingCircle'] = viz.pingCircle('pingCircleID'); //viz.addPingCircle();
+			//app['ui']['headerToggle'] = viz.headerToggle.create('gov');
+			gov.ui['headerToggle'] = viz.headerToggle.create('gov');
+			//store a reference for calling "Msg, etc"
+			app['headerToggle'] = gov.ui.headerToggle;
+			//app.headerToggle.forceExpand();
+			customLog('Added header toggle:');
+			console.log(gov.ui.headerToggle);
+			gov.ui['pingCircle'] = viz.pingCircle('pingCircleID'); //viz.addPingCircle();
 
-		gov.ui.attachPingEvents();
+			gov.ui.attachPingEvents();
+		}
 	},
 
 	renderHubs: function(hubData) {
@@ -351,11 +357,11 @@ var gov = {
 
 			if (!clientState.hubsRendered) {
 
-			h.area.addTo(map);
-			h.marker.addTo(map);
-			//h.marker.openPopup();
+				h.area.addTo(map);
+				h.marker.addTo(map);
+				//h.marker.openPopup();
 
-			// if (h.alertState > 0){
+				// if (h.alertState > 0){
 
 			}
 
@@ -369,7 +375,7 @@ var gov = {
 		customLog("Hub setup data from server: ");
 		customLog(hubs);
 
-		if (clientState.hubsRendered){
+		if (clientState.hubsRendered) {
 			customLog("Hubs already rendered, just updating.");
 		} else {
 			customLog("Hubs not rendered yet, adding.");

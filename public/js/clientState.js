@@ -9,6 +9,7 @@ var clientState = {
 	mapLoaded: false,
 	readyCheckRunning: false,
 	initialized: false,
+	uiRendered: false,
 	//ready: false,
 	tracking: false,
 	posStored: false,
