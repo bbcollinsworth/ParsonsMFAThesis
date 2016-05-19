@@ -97,28 +97,35 @@ var ins = {
 
 	renderUI: function() {
 
-		//***doing this in reverse so pointer[0] will be last appended (i.e. on top?)
-		for (var i = ins.ui.maxHubsDetected - 1; i >= 0; i--) {
-			var newPointer = viz.scanPointer.init('spinner' + i);
-			newPointer.addTo('#container');
-			this.ui.hubPointers.unshift(newPointer);
+		customLog("Render UI Called. ClientState.uiRendered is ");
+		customLog(clientState.uiRendered);
+		if (!clientState.uiRendered) {
+			clientState.uiRendered = true;
+
+			//***doing this in reverse so pointer[0] will be last appended (i.e. on top?)
+			for (var i = ins.ui.maxHubsDetected - 1; i >= 0; i--) {
+				var newPointer = viz.scanPointer.init('spinner' + i);
+				newPointer.addTo('#container');
+				this.ui.hubPointers.unshift(newPointer);
+			}
+
+			app['headerToggle'] = ins.ui['headerToggle'] = viz.headerToggle.create('ins');
+			//store a reference for calling "Msg, etc"
+			// app['headerToggle'] = ins.ui.headerToggle;
+
+			this.ui['scanButton'] = viz.scanButton();
+			$('#container').append(this.ui['scanButton']);
+
+			ins.ui.attachScanEvents();
+			customLog('Hub pointers created: ');
+			customLog(this.ui.hubPointers);
+
+			$('#mobileFooter').prepend(viz.threatMeter.create());
+
+			viz.helpScreen.create();
+			viz.makeFooter();
+
 		}
-
-		app['headerToggle'] = ins.ui['headerToggle'] = viz.headerToggle.create('ins');
-		//store a reference for calling "Msg, etc"
-		// app['headerToggle'] = ins.ui.headerToggle;
-
-		this.ui['scanButton'] = viz.scanButton();
-		$('#container').append(this.ui['scanButton']);
-
-		ins.ui.attachScanEvents();
-		customLog('Hub pointers created: ');
-		customLog(this.ui.hubPointers);
-
-		$('#mobileFooter').prepend(viz.threatMeter.create());
-
-		viz.helpScreen.create();
-		viz.makeFooter();
 	},
 
 	popPointers: function() {
@@ -316,7 +323,7 @@ var gov = {
 	renderUI: function() {
 		if (!clientState.uiRendered) {
 			clientState.uiRendered = true;
-			
+
 			customLog("Rendering Gov UI");
 			viz.addSuspectContainer();
 
