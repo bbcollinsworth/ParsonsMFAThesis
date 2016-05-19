@@ -16,10 +16,10 @@
 	var playSettings = {
 		hubDownTarget: 3,
 		trackIntervalS: 3,
-		hackTimeM: 0.25,
+		hackTimeM: 3.0,
 		trailDurationM: 2,
 		dataSkipInterval: 3,
-		teamPickMethod: 'alternate', //'insIfNoHash', //
+		teamPickMethod: 'insIfNoHash', //'alternate', //
 		maxGovDistance: 500, //in meters
 		startZones: {
 			'gov': {
