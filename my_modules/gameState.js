@@ -19,7 +19,7 @@
 		hackTimeM: 3.0,
 		trailDurationM: 2,
 		dataSkipInterval: 3,
-		teamPickMethod: 'insIfNoHash', //'alternate', //
+		teamPickMethod: 'alternate', //'insIfNoHash', //
 		maxGovDistance: 500, //in meters
 		startZones: {
 			'gov': {
