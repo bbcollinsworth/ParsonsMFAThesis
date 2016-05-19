@@ -99,6 +99,7 @@ var ins = {
 
 		customLog("Render UI Called. ClientState.uiRendered is ");
 		customLog(clientState.uiRendered);
+
 		if (!clientState.uiRendered) {
 			clientState.uiRendered = true;
 
@@ -116,7 +117,7 @@ var ins = {
 			this.ui['scanButton'] = viz.scanButton();
 			$('#container').append(this.ui['scanButton']);
 
-			ins.ui.attachScanEvents();
+			// ins.ui.attachScanEvents();
 			customLog('Hub pointers created: ');
 			customLog(this.ui.hubPointers);
 
@@ -126,6 +127,8 @@ var ins = {
 			viz.makeFooter();
 
 		}
+
+		ins.ui.attachScanEvents();
 	},
 
 	popPointers: function() {
@@ -321,6 +324,10 @@ var gov = {
 	},
 
 	renderUI: function() {
+
+		customLog("Render UI Called. ClientState.uiRendered is ");
+		customLog(clientState.uiRendered);
+
 		if (!clientState.uiRendered) {
 			clientState.uiRendered = true;
 
@@ -343,8 +350,10 @@ var gov = {
 			console.log(gov.ui.headerToggle);
 			gov.ui['pingCircle'] = viz.pingCircle('pingCircleID'); //viz.addPingCircle();
 
-			gov.ui.attachPingEvents();
+			// gov.ui.attachPingEvents();
 		}
+
+		gov.ui.attachPingEvents();
 	},
 
 	renderHubs: function(hubData) {
