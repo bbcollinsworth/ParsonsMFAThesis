@@ -23,12 +23,16 @@
 		maxGovDistance: 500, //in meters
 		startZones: {
 			'gov': {
-				lat: 40.735275026168516,
-				lng: -73.99410009384155
+				lat: 40.756061,
+				lng: -73.990745
+				//lat: 40.735275026168516,
+				//lng: -73.99410009384155
 			},
 			'ins': {
-				lat: 40.73714480561841,
-				lng: -73.99032354354858
+				lat: 40.756163,
+				lng: -73.986990
+				//lat: 40.73714480561841,
+				//lng: -73.99032354354858
 			}
 		},
 		// startZone: function(team) {
@@ -107,6 +111,51 @@
 	};
 
 	var hubs = [{
+		name: 'Microsoft TimesSquare',
+		enabled: true,
+		lat: 40.756757,
+		lng: -73.989790
+	}, {
+		name: '45th St btw 9th and 10th Aves',
+		enabled: true,
+		lat: 40.760893,
+		lng: -73.992612
+	}, {
+		name: 'Times Square',
+		enabled: true,
+		lat: 40.755944,
+		lng: -73.986549
+	}, {
+		name: '44th and 7th Ave',
+		enabled: true,
+		lat: 40.757423,
+		lng: -73.985701
+	}, {
+		name: 'SEIU 42nd St',
+		enabled: true,
+		lat: 40.757793,
+		lng: -73.991377
+	}, {
+		name: '8th Ave and 38th St',
+		enabled: true,
+		lat: 40.754863,
+		lng: -73.991640
+	}, {
+		name: 'Birdland Jazz Club',
+		enabled: true,
+		lat: 40.758975,
+		lng: -73.989661
+	}, {
+		name: '46th St and 8th Ave',
+		enabled: true,
+		lat: 40.759499,
+		lng: -73.987682
+	}, {
+		name: '40th St and 9th Ave',
+		enabled: true,
+		lat: 40.757203,
+		lng: -73.993449
+	}, {
 		name: 'tribeca bldg',
 		enabled: false,
 		lat: 40.720000,
@@ -190,7 +239,7 @@
 		name: '15th St and 9th Ave NE corner',
 		enabled: true,
 		lat: 40.741543,
- 		lng: -74.004475
+		lng: -74.004475
 		//lat: 40.741267,
 		//lng: -74.004077
 	}, {
