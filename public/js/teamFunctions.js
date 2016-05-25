@@ -256,7 +256,10 @@ var ins = {
 	renderLockout: function() {
 		msg(ins.ui.text.lockedOut, 'lockout');
 		$('#container').addClass('lockScreen');
-		$('#scanButton').off('click');
+		ins.clearTargetHub();
+		emit('playerLeftHubRange', {});
+
+		$('#scanButton').off('click').css({'display': 'none'});
 		//$('#scanButton').addClass('lockClass');
 	}
 };
