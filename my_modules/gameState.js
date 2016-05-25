@@ -189,8 +189,10 @@
 	}, {
 		name: '15th St and 9th Ave NE corner',
 		enabled: true,
-		lat: 40.741267,
-		lng: -74.004077
+		lat: 40.741543,
+ 		lng: -74.004475
+		//lat: 40.741267,
+		//lng: -74.004077
 	}, {
 		name: 'High Line at 14th',
 		enabled: false,

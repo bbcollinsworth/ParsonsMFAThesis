@@ -1378,7 +1378,12 @@ var viz = {
 
 			var ptr = this;
 
-			ptr.distanceReading = hubInfo.distance;
+			//subtracting hackrange to make this show distance to edge of range
+			ptr.distanceReading = hubInfo.distance-hubInfo.hackRange;
+
+			if (ptr.distanceReading < 0){
+				ptr.distanceReading = 0;
+			}
 
 			var normalizedDist = ptr.distanceReading / ptr.maxDistance;
 
