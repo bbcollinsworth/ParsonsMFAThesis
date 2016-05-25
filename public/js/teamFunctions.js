@@ -22,7 +22,8 @@ var ins = {
 		attachScanEvents: function() {
 			msg(ins.ui.text.scan);
 
-			$('#scanButton').removeClass('hackReady')
+			$('#scanButton').html("")
+				.removeClass('hackReady')
 				.removeClass('uploadProgress')
 				.removeClass('hackAnim')
 				.removeClass('hackComplete')
