@@ -188,7 +188,7 @@
 		lng: -73.992879
 	}, {
 		name: '15th St and 9th Ave NE corner',
-		enabled: false,
+		enabled: true,
 		lat: 40.741543,
 		lng: -74.004475
 	}, {
@@ -203,7 +203,7 @@
 		lng: -74.006278
 	}, {
 		name: '16th and 8th Ave park',
-		enabled: false,
+		enabled: true,
 		lat: 40.741359,
 		lng: -74.002029
 	}, {
