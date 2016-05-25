@@ -128,11 +128,15 @@ var ins = {
 
 		}
 
+		//clears in cases where client page doesn't reload but server link is broken
+		ins.clearTargetHub();
+		emit('playerLeftHubRange', {});
+
 		ins.ui.attachScanEvents();
 	},
 
 	popPointers: function() {
-		for (i in ins.ui.hubPointers) {
+		for (var i in ins.ui.hubPointers) {
 
 			ins.ui.hubPointers[i].show();
 

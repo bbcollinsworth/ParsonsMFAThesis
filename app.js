@@ -11,6 +11,7 @@ var port = 9000;
 var admin = io.of('/admin');
 var setup = io.of('/setup');
 var serverLog = io.of('/serverLog');
+var display = io.of('/display');
 
 GLOBAL.serverStartTime = Date.now();
 GLOBAL.logFile = {};
@@ -102,6 +103,25 @@ serverLog.on('connection', function(socket) {
 		logs: logFile //;//gameState.playerLogs
 	});
 
+});
+
+
+display.on('connection', function(socket) {
+	if (gameState.gameStarted) {
+		socket.emit('gameStarted',{});
+	} else {
+
+		//var team = gameState.getTeam(res.teamHash);
+		socket.emit('showCountdown', {
+			startTime: gameState.settings.gameStart,
+			startZone: gameState.settings.startZones[socket.team] //startZone(team)
+		});
+
+		var millisToStart = gameState.settings.gameStart - Date.now();
+		setTimeout(function() {
+			socket.emit('gameStarted',{});
+		}, millisToStart);
+	}
 });
 
 
@@ -198,7 +218,7 @@ io.on('connection', function(socket) {
 
 	var govWinCheck = function() {
 
-		log("LIVE INS COUNT IS: " + gameState.score.hackers.live,colors.hilite);
+		log("LIVE INS COUNT IS: " + gameState.score.hackers.live, colors.hilite);
 
 
 		//log("Live hacker count is: " + gameState.score.hackers.live);
@@ -323,7 +343,7 @@ io.on('connection', function(socket) {
 				log(players[player.userID]);
 				log("Score is now: ");
 				log(gameState.score);
-				log("LIVE INS COUNT IS: " + gameState.score.hackers.live,colors.hilite);
+				log("LIVE INS COUNT IS: " + gameState.score.hackers.live, colors.hilite);
 
 				//send new ID to player:
 				emitTo.socket('newUserID', {
