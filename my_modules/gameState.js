@@ -111,48 +111,73 @@
 	};
 
 	var hubs = [{
-		name: 'Microsoft TimesSquare',
+		name: 'Under Manhattan Bridge',
 		enabled: true,
+		lat: 40.704532,
+		lng: -73.988991
+	}, {
+		name: 'Janes Carousel',
+		enabled: true,
+		lat: 40.704284,
+		lng: -73.992172
+	}, {
+		name: 'York St Park',
+		enabled: true,
+		lat: 40.701527,
+		lng: -73.987795
+	}, {
+		name: 'Front and Main St',
+		enabled: true,
+		lat: 40.702588,
+		lng: -73.990756
+	}, {
+		name: 'Water and Jay',
+		enabled: true,
+		lat: 40.703192,
+		lng: -73.986748
+	}, {
+		name: 'Microsoft TimesSquare',
+		enabled: false,
 		lat: 40.756757,
 		lng: -73.989790
 	}, {
 		name: '45th St btw 9th and 10th Aves',
-		enabled: true,
+		enabled: false,
 		lat: 40.760893,
 		lng: -73.992612
 	}, {
 		name: 'Times Square',
-		enabled: true,
+		enabled: false,
 		lat: 40.755944,
 		lng: -73.986549
 	}, {
 		name: '44th and 7th Ave',
-		enabled: true,
+		enabled: false,
 		lat: 40.757423,
 		lng: -73.985701
 	}, {
 		name: 'SEIU 42nd St',
-		enabled: true,
+		enabled: false,
 		lat: 40.757793,
 		lng: -73.991377
 	}, {
 		name: '8th Ave and 38th St',
-		enabled: true,
+		enabled: false,
 		lat: 40.754863,
 		lng: -73.991640
 	}, {
 		name: 'Birdland Jazz Club',
-		enabled: true,
+		enabled: false,
 		lat: 40.758975,
 		lng: -73.989661
 	}, {
 		name: '46th St and 8th Ave',
-		enabled: true,
+		enabled: false,
 		lat: 40.759499,
 		lng: -73.987682
 	}, {
 		name: '40th St and 9th Ave',
-		enabled: true,
+		enabled: false,
 		lat: 40.757203,
 		lng: -73.993449
 	}, {
@@ -182,27 +207,27 @@
 		lng: -74.002291
 	}, {
 		name: '17th & Broadway PedPlaza',
-		enabled: true,
+		enabled: false,
 		lat: 40.737323,
 		lng: -73.990213
 	}, {
 		name: 'Union Square SE Circle',
-		enabled: true,
+		enabled: false,
 		lat: 40.734795,
 		lng: -73.990261
 	}, {
 		name: 'Union Square Lincoln statue',
-		enabled: true,
+		enabled: false,
 		lat: 40.736183,
 		lng: -73.990122
 	}, {
 		name: '15th Street near 5th Ave',
-		enabled: true,
+		enabled: false,
 		lat: 40.736462,
 		lng: -73.992086
 	}, {
 		name: 'Church of St. Francis Xavier',
-		enabled: true,
+		enabled: false,
 		lat: 40.738258,
 		lng: -73.995006
 	}, {
@@ -212,12 +237,12 @@
 		lng: -73.996032
 	}, {
 		name: '18th near 5th',
-		enabled: true,
+		enabled: false,
 		lat: 40.738731,
 		lng: -73.992364
 	}, {
 		name: 'University and 13th',
-		enabled: true,
+		enabled: false,
 		lat: 40.734386,
 		lng: -73.992503
 	}, {
@@ -232,12 +257,12 @@
 		lng: -73.995447
 	}, {
 		name: '16th and 5th Ave SW corner park',
-		enabled: true,
+		enabled: false,
 		lat: 40.737283,
 		lng: -73.992879
 	}, {
 		name: '15th St and 9th Ave NE corner',
-		enabled: true,
+		enabled: false,
 		lat: 40.741543,
 		lng: -74.004475
 		//lat: 40.741267,
@@ -254,17 +279,17 @@
 		lng: -74.006278
 	}, {
 		name: '16th and 8th Ave park',
-		enabled: true,
+		enabled: false,
 		lat: 40.741359,
 		lng: -74.002029
 	}, {
 		name: 'Washington Ave and Lincoln Pl',
-		enabled: true,
+		enabled: false,
 		lat: 40.672614,
 		lng: -73.962410
 	}, {
 		name: 'McNair Park',
-		enabled: true,
+		enabled: false,
 		lat: 40.670774,
 		lng: -73.961985
 	}];
